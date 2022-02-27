@@ -6,249 +6,249 @@
 
 if [ ! "${Red-}" ]; then
 
-# <html><h2>Reset </h2>
-# <p><strong><code>$Reset</code></strong> Color Reset .</p>
-# </html>
+  # <html><h2>Reset </h2>
+  # <p><strong><code>$Reset</code></strong> Color Reset .</p>
+  # </html>
   export Reset='\033[0m'
 
-# <html><h2>Black </h2>
-# <p><strong><code>$Black</code></strong> Color Black .</p>
-# </html>
+  # <html><h2>Black </h2>
+  # <p><strong><code>$Black</code></strong> Color Black .</p>
+  # </html>
   export Black='\033[30m'
 
-# <html><h2>Black Bold</h2>
-# <p><strong><code>$BlackBold</code></strong> Color Black Bold.</p>
-# </html>
+  # <html><h2>Black Bold</h2>
+  # <p><strong><code>$BlackBold</code></strong> Color Black Bold.</p>
+  # </html>
   export BlackBold='\033[30;1m'
 
-# <html><h2>Black Dim</h2>
-# <p><strong><code>$BlackDim</code></strong> Color Black Dim.</p>
-# </html>
+  # <html><h2>Black Dim</h2>
+  # <p><strong><code>$BlackDim</code></strong> Color Black Dim.</p>
+  # </html>
   export BlackDim='\033[30;2m'
 
-# <html><h2>Black Under</h2>
-# <p><strong><code>$BlackUnder</code></strong> Color Black Under.</p>
-# </html>
+  # <html><h2>Black Under</h2>
+  # <p><strong><code>$BlackUnder</code></strong> Color Black Under.</p>
+  # </html>
   export BlackUnder='\033[30;4m'
 
-# <html><h2>Black Invert</h2>
-# <p><strong><code>$BlackInvert</code></strong> Color Black Invert.</p>
-# </html>
+  # <html><h2>Black Invert</h2>
+  # <p><strong><code>$BlackInvert</code></strong> Color Black Invert.</p>
+  # </html>
   export BlackInvert='\033[30;7m'
 
-# <html><h2>Black Bg</h2>
-# <p><strong><code>$BlackBg</code></strong> Color Black Bg.</p>
-# </html>
+  # <html><h2>Black Bg</h2>
+  # <p><strong><code>$BlackBg</code></strong> Color Black Bg.</p>
+  # </html>
   export BlackBg='\033[40m'
 
-# <html><h2>Red </h2>
-# <p><strong><code>$Red</code></strong> Color Red .</p>
-# </html>
+  # <html><h2>Red </h2>
+  # <p><strong><code>$Red</code></strong> Color Red .</p>
+  # </html>
   export Red='\033[31m'
 
-# <html><h2>Red Bold</h2>
-# <p><strong><code>$RedBold</code></strong> Color Red Bold.</p>
-# </html>
+  # <html><h2>Red Bold</h2>
+  # <p><strong><code>$RedBold</code></strong> Color Red Bold.</p>
+  # </html>
   export RedBold='\033[31;1m'
 
-# <html><h2>Red Dim</h2>
-# <p><strong><code>$RedDim</code></strong> Color Red Dim.</p>
-# </html>
+  # <html><h2>Red Dim</h2>
+  # <p><strong><code>$RedDim</code></strong> Color Red Dim.</p>
+  # </html>
   export RedDim='\033[31;2m'
 
-# <html><h2>Red Under</h2>
-# <p><strong><code>$RedUnder</code></strong> Color Red Under.</p>
-# </html>
+  # <html><h2>Red Under</h2>
+  # <p><strong><code>$RedUnder</code></strong> Color Red Under.</p>
+  # </html>
   export RedUnder='\033[31;4m'
 
-# <html><h2>Red Invert</h2>
-# <p><strong><code>$RedInvert</code></strong> Color Red Invert.</p>
-# </html>
+  # <html><h2>Red Invert</h2>
+  # <p><strong><code>$RedInvert</code></strong> Color Red Invert.</p>
+  # </html>
   export RedInvert='\033[31;7m'
 
-# <html><h2>Red Bg</h2>
-# <p><strong><code>$RedBg</code></strong> Color Red Bg.</p>
-# </html>
+  # <html><h2>Red Bg</h2>
+  # <p><strong><code>$RedBg</code></strong> Color Red Bg.</p>
+  # </html>
   export RedBg='\033[41m'
 
-# <html><h2>Green </h2>
-# <p><strong><code>$Green</code></strong> Color Green .</p>
-# </html>
+  # <html><h2>Green </h2>
+  # <p><strong><code>$Green</code></strong> Color Green .</p>
+  # </html>
   export Green='\033[32m'
 
-# <html><h2>Green Bold</h2>
-# <p><strong><code>$GreenBold</code></strong> Color Green Bold.</p>
-# </html>
+  # <html><h2>Green Bold</h2>
+  # <p><strong><code>$GreenBold</code></strong> Color Green Bold.</p>
+  # </html>
   export GreenBold='\033[32;1m'
 
-# <html><h2>Green Dim</h2>
-# <p><strong><code>$GreenDim</code></strong> Color Green Dim.</p>
-# </html>
+  # <html><h2>Green Dim</h2>
+  # <p><strong><code>$GreenDim</code></strong> Color Green Dim.</p>
+  # </html>
   export GreenDim='\033[32;2m'
 
-# <html><h2>Green Under</h2>
-# <p><strong><code>$GreenUnder</code></strong> Color Green Under.</p>
-# </html>
+  # <html><h2>Green Under</h2>
+  # <p><strong><code>$GreenUnder</code></strong> Color Green Under.</p>
+  # </html>
   export GreenUnder='\033[32;4m'
 
-# <html><h2>Green Invert</h2>
-# <p><strong><code>$GreenInvert</code></strong> Color Green Invert.</p>
-# </html>
+  # <html><h2>Green Invert</h2>
+  # <p><strong><code>$GreenInvert</code></strong> Color Green Invert.</p>
+  # </html>
   export GreenInvert='\033[32;7m'
 
-# <html><h2>Green Bg</h2>
-# <p><strong><code>$GreenBg</code></strong> Color Green Bg.</p>
-# </html>
+  # <html><h2>Green Bg</h2>
+  # <p><strong><code>$GreenBg</code></strong> Color Green Bg.</p>
+  # </html>
   export GreenBg='\033[42m'
 
-# <html><h2>Yellow </h2>
-# <p><strong><code>$Yellow</code></strong> Color Yellow .</p>
-# </html>
+  # <html><h2>Yellow </h2>
+  # <p><strong><code>$Yellow</code></strong> Color Yellow .</p>
+  # </html>
   export Yellow='\033[33m'
 
-# <html><h2>Yellow Bold</h2>
-# <p><strong><code>$YellowBold</code></strong> Color Yellow Bold.</p>
-# </html>
+  # <html><h2>Yellow Bold</h2>
+  # <p><strong><code>$YellowBold</code></strong> Color Yellow Bold.</p>
+  # </html>
   export YellowBold='\033[33;1m'
 
-# <html><h2>Yellow Dim</h2>
-# <p><strong><code>$YellowDim</code></strong> Color Yellow Dim.</p>
-# </html>
+  # <html><h2>Yellow Dim</h2>
+  # <p><strong><code>$YellowDim</code></strong> Color Yellow Dim.</p>
+  # </html>
   export YellowDim='\033[33;2m'
 
-# <html><h2>Yellow Under</h2>
-# <p><strong><code>$YellowUnder</code></strong> Color Yellow Under.</p>
-# </html>
+  # <html><h2>Yellow Under</h2>
+  # <p><strong><code>$YellowUnder</code></strong> Color Yellow Under.</p>
+  # </html>
   export YellowUnder='\033[33;4m'
 
-# <html><h2>Yellow Invert</h2>
-# <p><strong><code>$YellowInvert</code></strong> Color Yellow Invert.</p>
-# </html>
+  # <html><h2>Yellow Invert</h2>
+  # <p><strong><code>$YellowInvert</code></strong> Color Yellow Invert.</p>
+  # </html>
   export YellowInvert='\033[33;7m'
 
-# <html><h2>Yellow Bg</h2>
-# <p><strong><code>$YellowBg</code></strong> Color Yellow Bg.</p>
-# </html>
+  # <html><h2>Yellow Bg</h2>
+  # <p><strong><code>$YellowBg</code></strong> Color Yellow Bg.</p>
+  # </html>
   export YellowBg='\033[43m'
 
-# <html><h2>Blue </h2>
-# <p><strong><code>$Blue</code></strong> Color Blue .</p>
-# </html>
+  # <html><h2>Blue </h2>
+  # <p><strong><code>$Blue</code></strong> Color Blue .</p>
+  # </html>
   export Blue='\033[34m'
 
-# <html><h2>Blue Bold</h2>
-# <p><strong><code>$BlueBold</code></strong> Color Blue Bold.</p>
-# </html>
+  # <html><h2>Blue Bold</h2>
+  # <p><strong><code>$BlueBold</code></strong> Color Blue Bold.</p>
+  # </html>
   export BlueBold='\033[34;1m'
 
-# <html><h2>Blue Dim</h2>
-# <p><strong><code>$BlueDim</code></strong> Color Blue Dim.</p>
-# </html>
+  # <html><h2>Blue Dim</h2>
+  # <p><strong><code>$BlueDim</code></strong> Color Blue Dim.</p>
+  # </html>
   export BlueDim='\033[34;2m'
 
-# <html><h2>Blue Under</h2>
-# <p><strong><code>$BlueUnder</code></strong> Color Blue Under.</p>
-# </html>
+  # <html><h2>Blue Under</h2>
+  # <p><strong><code>$BlueUnder</code></strong> Color Blue Under.</p>
+  # </html>
   export BlueUnder='\033[34;4m'
 
-# <html><h2>Blue Invert</h2>
-# <p><strong><code>$BlueInvert</code></strong> Color Blue Invert.</p>
-# </html>
+  # <html><h2>Blue Invert</h2>
+  # <p><strong><code>$BlueInvert</code></strong> Color Blue Invert.</p>
+  # </html>
   export BlueInvert='\033[34;7m'
 
-# <html><h2>Blue Bg</h2>
-# <p><strong><code>$BlueBg</code></strong> Color Blue Bg.</p>
-# </html>
+  # <html><h2>Blue Bg</h2>
+  # <p><strong><code>$BlueBg</code></strong> Color Blue Bg.</p>
+  # </html>
   export BlueBg='\033[44m'
 
-# <html><h2>Magenta </h2>
-# <p><strong><code>$Magenta</code></strong> Color Magenta .</p>
-# </html>
+  # <html><h2>Magenta </h2>
+  # <p><strong><code>$Magenta</code></strong> Color Magenta .</p>
+  # </html>
   export Magenta='\033[35m'
 
-# <html><h2>Magenta Bold</h2>
-# <p><strong><code>$MagentaBold</code></strong> Color Magenta Bold.</p>
-# </html>
+  # <html><h2>Magenta Bold</h2>
+  # <p><strong><code>$MagentaBold</code></strong> Color Magenta Bold.</p>
+  # </html>
   export MagentaBold='\033[35;1m'
 
-# <html><h2>Magenta Dim</h2>
-# <p><strong><code>$MagentaDim</code></strong> Color Magenta Dim.</p>
-# </html>
+  # <html><h2>Magenta Dim</h2>
+  # <p><strong><code>$MagentaDim</code></strong> Color Magenta Dim.</p>
+  # </html>
   export MagentaDim='\033[35;2m'
 
-# <html><h2>Magenta Under</h2>
-# <p><strong><code>$MagentaUnder</code></strong> Color Magenta Under.</p>
-# </html>
+  # <html><h2>Magenta Under</h2>
+  # <p><strong><code>$MagentaUnder</code></strong> Color Magenta Under.</p>
+  # </html>
   export MagentaUnder='\033[35;4m'
 
-# <html><h2>Magenta Invert</h2>
-# <p><strong><code>$MagentaInvert</code></strong> Color Magenta Invert.</p>
-# </html>
+  # <html><h2>Magenta Invert</h2>
+  # <p><strong><code>$MagentaInvert</code></strong> Color Magenta Invert.</p>
+  # </html>
   export MagentaInvert='\033[35;7m'
 
-# <html><h2>Magenta Bg</h2>
-# <p><strong><code>$MagentaBg</code></strong> Color Magenta Bg.</p>
-# </html>
+  # <html><h2>Magenta Bg</h2>
+  # <p><strong><code>$MagentaBg</code></strong> Color Magenta Bg.</p>
+  # </html>
   export MagentaBg='\033[45m'
 
-# <html><h2>Cyan </h2>
-# <p><strong><code>$Cyan</code></strong> Color Cyan .</p>
-# </html>
+  # <html><h2>Cyan </h2>
+  # <p><strong><code>$Cyan</code></strong> Color Cyan .</p>
+  # </html>
   export Cyan='\033[36m'
 
-# <html><h2>Cyan Bold</h2>
-# <p><strong><code>$CyanBold</code></strong> Color Cyan Bold.</p>
-# </html>
+  # <html><h2>Cyan Bold</h2>
+  # <p><strong><code>$CyanBold</code></strong> Color Cyan Bold.</p>
+  # </html>
   export CyanBold='\033[36;1m'
 
-# <html><h2>Cyan Dim</h2>
-# <p><strong><code>$CyanDim</code></strong> Color Cyan Dim.</p>
-# </html>
+  # <html><h2>Cyan Dim</h2>
+  # <p><strong><code>$CyanDim</code></strong> Color Cyan Dim.</p>
+  # </html>
   export CyanDim='\033[36;2m'
 
-# <html><h2>Cyan Under</h2>
-# <p><strong><code>$CyanUnder</code></strong> Color Cyan Under.</p>
-# </html>
+  # <html><h2>Cyan Under</h2>
+  # <p><strong><code>$CyanUnder</code></strong> Color Cyan Under.</p>
+  # </html>
   export CyanUnder='\033[36;4m'
 
-# <html><h2>Cyan Invert</h2>
-# <p><strong><code>$CyanInvert</code></strong> Color Cyan Invert.</p>
-# </html>
+  # <html><h2>Cyan Invert</h2>
+  # <p><strong><code>$CyanInvert</code></strong> Color Cyan Invert.</p>
+  # </html>
   export CyanInvert='\033[36;7m'
 
-# <html><h2>Cyan Bg</h2>
-# <p><strong><code>$CyanBg</code></strong> Color Cyan Bg.</p>
-# </html>
+  # <html><h2>Cyan Bg</h2>
+  # <p><strong><code>$CyanBg</code></strong> Color Cyan Bg.</p>
+  # </html>
   export CyanBg='\033[46m'
 
-# <html><h2>Grey </h2>
-# <p><strong><code>$Grey</code></strong> Color Grey .</p>
-# </html>
+  # <html><h2>Grey </h2>
+  # <p><strong><code>$Grey</code></strong> Color Grey .</p>
+  # </html>
   export Grey='\033[37m'
 
-# <html><h2>Grey Bold</h2>
-# <p><strong><code>$GreyBold</code></strong> Color Grey Bold.</p>
-# </html>
+  # <html><h2>Grey Bold</h2>
+  # <p><strong><code>$GreyBold</code></strong> Color Grey Bold.</p>
+  # </html>
   export GreyBold='\033[37;1m'
 
-# <html><h2>Grey Dim</h2>
-# <p><strong><code>$GreyDim</code></strong> Color Grey Dim.</p>
-# </html>
+  # <html><h2>Grey Dim</h2>
+  # <p><strong><code>$GreyDim</code></strong> Color Grey Dim.</p>
+  # </html>
   export GreyDim='\033[37;2m'
 
-# <html><h2>Grey Under</h2>
-# <p><strong><code>$GreyUnder</code></strong> Color Grey Under.</p>
-# </html>
+  # <html><h2>Grey Under</h2>
+  # <p><strong><code>$GreyUnder</code></strong> Color Grey Under.</p>
+  # </html>
   export GreyUnder='\033[37;4m'
 
-# <html><h2>Grey Invert</h2>
-# <p><strong><code>$GreyInvert</code></strong> Color Grey Invert.</p>
-# </html>
+  # <html><h2>Grey Invert</h2>
+  # <p><strong><code>$GreyInvert</code></strong> Color Grey Invert.</p>
+  # </html>
   export GreyInvert='\033[37;7m'
 
-# <html><h2>Grey Bg</h2>
-# <p><strong><code>$GreyBg</code></strong> Color Grey Bg.</p>
-# </html>
+  # <html><h2>Grey Bg</h2>
+  # <p><strong><code>$GreyBg</code></strong> Color Grey Bg.</p>
+  # </html>
   export GreyBg='\033[47m'
 
 fi
