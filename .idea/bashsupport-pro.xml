@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="bashsupport-pro.project">
+    <scriptLibraries>
+      <library name="bats.bash">
+        <targets>
+          <target path="tests" recursive="true" />
+        </targets>
+      </library>
+      <library name="rc">
+        <sources>
+          <source path="rc/lib" recursive="true" />
+          <source path="rc/profile.d" recursive="true" />
+          <source path="rc/rc.d" recursive="true" />
+        </sources>
+        <targets>
+          <target path="rc/bin" recursive="true" />
+          <target path="rc/color" recursive="true" />
+          <target path="rc/lib" recursive="true" />
+        </targets>
+      </library>
+    </scriptLibraries>
+  </component>
+</project>

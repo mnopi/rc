@@ -3,9 +3,6 @@
 #
 # Appended to /etc/profile during installation of rc
 
-#echo "SOURCED: profile"
-#echo "PS1: ${PS1}"
-
 # RC path
 #
 export RC="${RC_PREFIX:-/etc}/rc"

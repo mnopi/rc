@@ -1,4 +1,4 @@
-.PHONY: brew clean release tests
+.PHONY: brew color publish release tests
 
 MAKEFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 ROOT_DIR := $(patsubst %/,%,$(dir $(MAKEFILE_PATH)))
@@ -11,6 +11,11 @@ brew:
 
 color:
 	@color generate
+
+publish: tests
+	@git add .
+	@git commit -a -m "test" || true
+	@git push --quiet
 
 release:
 	@makeself release

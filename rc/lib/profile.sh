@@ -3,6 +3,8 @@
 #
 # Appended to /etc/profile during installation of rc
 
+umask 002
+
 # RC $PATH compat dir: sourced in order by $RC_PROFILE after $RC_PROFILE_D,
 # they can have a variable already defined in $RC_PROFILE_D
 #
