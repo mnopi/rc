@@ -10,5 +10,5 @@
 # </dd>
 # </dl>
 # </html>
-test "$#" -eq 0 || printf '%b' "${CyanDim}"; printf '%b' "$@"; printf '%b' "${Reset}"
+[ $# -eq 0 ] || printf '%b' "${CyanDim}"; printf '%b' "$@"; printf '%b' "${Reset}"
 
