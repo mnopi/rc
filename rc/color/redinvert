@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# <html><h2>redinvert - Show arguments in RedInvert</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments in RedInvert:</dt>
+# <dd>
+# <pre><code class="language-bash">redinvert Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+test "$#" -eq 0 || printf '%b' "${RedInvert}"; printf '%b' "$@"; printf '%b' "${Reset}"
+

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# <html><h2>greyinvert - Show arguments in GreyInvert</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments in GreyInvert:</dt>
+# <dd>
+# <pre><code class="language-bash">greyinvert Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+test "$#" -eq 0 || printf '%b' "${GreyInvert}"; printf '%b' "$@"; printf '%b' "${Reset}"
+

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# <html><h2>greenunder - Show arguments in GreenUnder</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments in GreenUnder:</dt>
+# <dd>
+# <pre><code class="language-bash">greenunder Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+test "$#" -eq 0 || printf '%b' "${GreenUnder}"; printf '%b' "$@"; printf '%b' "${Reset}"
+

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# <html><h2>magentabg - Show arguments in MagentaBg</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments in MagentaBg:</dt>
+# <dd>
+# <pre><code class="language-bash">magentabg Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+test "$#" -eq 0 || printf '%b' "${MagentaBg}"; printf '%b' "$@"; printf '%b' "${Reset}"
+

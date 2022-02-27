@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# <html><h2>blackdim - Show arguments in BlackDim</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments in BlackDim:</dt>
+# <dd>
+# <pre><code class="language-bash">blackdim Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+test "$#" -eq 0 || printf '%b' "${BlackDim}"; printf '%b' "$@"; printf '%b' "${Reset}"
+

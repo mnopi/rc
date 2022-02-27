@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# <html><h2>greendim - Show arguments in GreenDim</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments in GreenDim:</dt>
+# <dd>
+# <pre><code class="language-bash">greendim Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+test "$#" -eq 0 || printf '%b' "${GreenDim}"; printf '%b' "$@"; printf '%b' "${Reset}"
+

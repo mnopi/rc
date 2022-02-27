@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# <html><h2>yellowinvert - Show arguments in YellowInvert</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments in YellowInvert:</dt>
+# <dd>
+# <pre><code class="language-bash">yellowinvert Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+test "$#" -eq 0 || printf '%b' "${YellowInvert}"; printf '%b' "$@"; printf '%b' "${Reset}"
+

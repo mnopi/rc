@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# <html><h2>yellowbold - Show arguments in YellowBold</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments in YellowBold:</dt>
+# <dd>
+# <pre><code class="language-bash">yellowbold Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+test "$#" -eq 0 || printf '%b' "${YellowBold}"; printf '%b' "$@"; printf '%b' "${Reset}"
+

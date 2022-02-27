@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# <html><h2>cyanbg - Show arguments in CyanBg</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments in CyanBg:</dt>
+# <dd>
+# <pre><code class="language-bash">cyanbg Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+test "$#" -eq 0 || printf '%b' "${CyanBg}"; printf '%b' "$@"; printf '%b' "${Reset}"
+

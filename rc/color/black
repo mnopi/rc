@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# <html><h2>black - Show arguments in Black</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments in Black:</dt>
+# <dd>
+# <pre><code class="language-bash">black Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+test "$#" -eq 0 || printf '%b' "${Black}"; printf '%b' "$@"; printf '%b' "${Reset}"
+

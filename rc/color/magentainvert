@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# <html><h2>magentainvert - Show arguments in MagentaInvert</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments in MagentaInvert:</dt>
+# <dd>
+# <pre><code class="language-bash">magentainvert Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+test "$#" -eq 0 || printf '%b' "${MagentaInvert}"; printf '%b' "$@"; printf '%b' "${Reset}"
+

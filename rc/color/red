@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# <html><h2>red - Show arguments in Red</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments in Red:</dt>
+# <dd>
+# <pre><code class="language-bash">red Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+test "$#" -eq 0 || printf '%b' "${Red}"; printf '%b' "$@"; printf '%b' "${Reset}"
+

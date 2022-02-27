@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# <html><h2>yellowbg - Show arguments in YellowBg</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments in YellowBg:</dt>
+# <dd>
+# <pre><code class="language-bash">yellowbg Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+test "$#" -eq 0 || printf '%b' "${YellowBg}"; printf '%b' "$@"; printf '%b' "${Reset}"
+

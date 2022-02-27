@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# <html><h2>greybold - Show arguments in GreyBold</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments in GreyBold:</dt>
+# <dd>
+# <pre><code class="language-bash">greybold Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+test "$#" -eq 0 || printf '%b' "${GreyBold}"; printf '%b' "$@"; printf '%b' "${Reset}"
+

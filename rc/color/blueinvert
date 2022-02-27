@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# <html><h2>blueinvert - Show arguments in BlueInvert</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments in BlueInvert:</dt>
+# <dd>
+# <pre><code class="language-bash">blueinvert Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+test "$#" -eq 0 || printf '%b' "${BlueInvert}"; printf '%b' "$@"; printf '%b' "${Reset}"
+
