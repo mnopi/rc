@@ -11,4 +11,3 @@
 # </dl>
 # </html>
 [ $# -eq 0 ] || printf '%b' "${CyanBold}"; printf '%b' "$@"; printf '%b' "${Reset}"
-
