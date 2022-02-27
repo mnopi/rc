@@ -1,0 +1,3 @@
+# shellcheck shell=sh
+
+export BASH_SILENCE_DEPRECATION_WARNING=1
