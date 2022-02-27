@@ -14,7 +14,7 @@ color:
 
 publish: tests
 	@git add .
-	@git commit -a -m "test" || true
+	@git commit --quiet -a -m "test" || true
 	@git push --quiet
 
 release:
