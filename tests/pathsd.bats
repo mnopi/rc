@@ -5,9 +5,12 @@ setup_file() {
 }
 
 @test "$(cyan 'PATH ')" {
-  unset PATH
-  eval "$(/usr/libexec/path_helper -s)"
+#  unset PATH
+#  eval "$(/usr/libexec/path_helper -s)"
   for i in CLT LINUXBREW JETBRAINS JETBRAINS_APPLICATIONS NODE_PREFIX PYTHON_PREFIX RC; do
-    [ -z "${!i}" ] || [ -d "${!i}" ] || [[ "${!i}" =~ ${PATH} ]]
+    if [ -n "${!i}" ] && [ -d "${!i}" ]; then
+      >&3 echo "${i}: ${!i}"
+      [[ "${PATH}" =~ ${!i}  ]]
+    fi
   done
 }

@@ -3,6 +3,12 @@
   <component name="bashsupport-pro.project">
     <scriptLibraries>
       <library name="bats.bash">
+        <sources>
+          <source path="bats.bash/bats-assert/src" recursive="true" external="true" />
+          <source path="bats.bash/bats-file/src" recursive="true" external="true" />
+          <source path="bats.bash/bin" recursive="true" external="true" />
+          <source path="bats.bash/lib" recursive="true" external="true" />
+        </sources>
         <targets>
           <target path="tests" recursive="true" />
         </targets>
