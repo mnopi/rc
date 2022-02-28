@@ -5,7 +5,8 @@ setup_file() {
 }
 
 @test "$(cyan 'PATH ')" {
-  for i in CLT LINUXBREW JETBRAINS JEBRAINS_APPLICATIONS NODE_PREFIX PYTHON_PREFIX RC; do
+  eval "$(/usr/libexec/path_helper -s)"
+  for i in CLT LINUXBREW JETBRAINS JETBRAINS_APPLICATIONS NODE_PREFIX PYTHON_PREFIX RC; do
     [ -z "${!i}" ] || [ -d "${!i}" ] || [[ "${!i}" =~ ${PATH} ]]
   done
   type cyan
