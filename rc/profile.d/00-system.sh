@@ -307,16 +307,16 @@ pm_install() {
   if [ "${PM-}" ]; then
     case "${PM}" in
       # pacman -Sy (like apt update)
-      apk) PM_INSTALL="${PM} ${PM} add -q --no-progress"; NO_CACHE='--no-cache' ;;
+      apk) PM_INSTALL="sudo ${PM} ${PM} add -q --no-progress"; NO_CACHE='--no-cache' ;;
       apt)
-        PM_INSTALL="${PM} -qq update -y && ${PM} -qq install -y"
+        PM_INSTALL="sudo ${PM} -qq update -y && ${PM} -qq install -y"
         PM_UPGRADE="${PM} -qq full-upgrade -y && ${PM} -qq auto-remove -y && ${PM} -qq clean"
         ;;
       brew) PM_INSTALL="${PM} install --quiet" ;;
-      dnf) PM_INSTALL="${PM} install -y -q" ;;
-      nix) PM_INSTALL="${PM} --install -A" ;; # nixos -> nixos.curl, no nixos --> nixpkgs.curl
-      pacman) PM_INSTALL="${PM} -Sy && ${PM} -S --noconfirm" ;;
-      yum) PM_INSTALL="${PM} install -y -q" ;;
+      dnf) PM_INSTALL="sudo ${PM} install -y -q" ;;
+      nix) PM_INSTALL="sudo ${PM} --install -A" ;; # nixos -> nixos.curl, no nixos --> nixpkgs.curl
+      pacman) PM_INSTALL="sudo ${PM} -Sy && ${PM} -S --noconfirm" ;;
+      yum) PM_INSTALL="sudo ${PM} install -y -q" ;;
       *) PM_INSTALL=''
     esac
   fi
