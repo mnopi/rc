@@ -10,7 +10,6 @@ set -eu
 #   sudo arguments
 #######################################
 main () {
-  SUDOC="${SUDOC:-/usr/bin/sudo}"
   if [ "${SUDOC}" ] && [ "${1-}" = '-S' ] && [ "${PASSWORD-}" ]; then
     echo "${PASSWORD}" | exec "${SUDOC}" "$@"
   elif [ "${SUDOC}" ]; then
