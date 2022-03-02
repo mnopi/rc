@@ -1,0 +1,12 @@
+#!/bin/sh
+eval echo \""$(cat /Users/j5pu/rc/rc/paths.d/* /etc/paths.d/* 2>/dev/null)"\" | awk 'NF'
+eval echo \""$(cat /Users/j5pu/rc/rc/paths.d/* /etc/paths.d/* 2>/dev/null)"\" | awk 'NF' | tr '\n' '\0' | xargs -0 -n1 -I {} find "{}" -mindepth 0 -maxdepth 0 -type d 2>/dev/null
+
+echo "$HOME
+$HOME/bin" | tr '\n' '\0' | xargs -0 -n1 test -d
+#  while read -r line; do
+#    if [ -d "${line}" ]; then
+#      >&3 echo "line: ${line}"
+#      [[ "${PATH}" =~ ${line}  ]]
+#    fi
+#  done <<< "${paths-}"

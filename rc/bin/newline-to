@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -eu
+
+#######################################
+# replace newline with value and remove last newline always (adds prefix '^' and suffix '$' for default)
+# Arguments:
+#   value   the value to replace new lines.
+#   [to]    new value (default: |).
+# Examples:
+#   newline-to "$(find . -type f -maxdepth 1)"
+#   newline-to "$(find . -type f -maxdepth 1)" '*:'
+#######################################
+main() {
+  [ "${2-}" ] || { p='^'; s='$'; }
+  echo "${p-}$1${s-}" | awk 'NF' | sed -n "H;\${x;s/\n/${2:-|}/g;s/^${2:-|}//;p;}"
+}
+
+main "$@"

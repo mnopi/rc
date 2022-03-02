@@ -5,5 +5,5 @@
 
 # RC path
 #
-export RC="${RC_PREFIX:-/etc}/rc"
+export RC="${RC_PREFIX-}/rc"
 . "${RC}/lib/profile.sh"

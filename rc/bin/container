@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+
+. arrays.bash
+. helper.sh
+set -eu
+declare -Ag IMAGES=(
+  ["3.10"]=python3.10:alpine
+  ["3.10-bullseye"]=python3.10:bullseye
+  ["3.10-slim"]=python3.10:slim
+  ["debian-backports"]=debian:bullseye-backports
+  ["debian-slim"]=debian:bullseye-slim
+  ["kali"]=kalilinux:kali-rolling
+  ["kali-bleeding"]=kalilinux:kali-bleeding-edge
+  ["zsh"]=zshusers:zsh
+)
+for i in alpine archlinux bash busybox centos debian fedora nixos ubuntu; do
+  IMAGES["${i}"]="${i}"
+done
+
+#######################################
+# check argument or die
+# Arguments:
+#   1   message
+#   2   argument
+#######################################
+check() { [ "${2-}" ] || die "$1"; }
+
+#######################################
+# run command in a container, with no arguments for run will go to console/terminal
+# Globals:
+#   IMAGES
+# Arguments:
+#  None
+#######################################
+main() {
+  local command commands="commands name names image images run" dest entrypoint=( /bin/sh ) image images
+  local msg name names opts=( --rm --entrypoint ) t=() volume
+  images="$(sort -t ' ' <<< "${IMAGES[*]}")"
+  names="$(sort -t ' ' <<< "${!IMAGES[*]}")"
+
+  check "Invalid Command: '${1-}', Valid Commands: [${commands}]" "${1-}" || exit
+  command="$1"; shift
+  name="${1-}"
+  msg="Invalid Name/Image: '${name}', Valid Names: [${names}], Valid Images [${images}]"
+
+  case "${command}" in
+    commands) tr ' ' '\n' <<< "${commands}" && exit ;;
+    name)
+      msg="Invalid Image: '${name}', Valid Images: [${images}]"
+      check "${msg}" "${name}" || exit
+      set +u
+      image="${IMAGES["${name}"]}"
+      set -u
+      check "${msg}" "${image}" || exit
+      echo "${image}" && exit
+      ;;
+    names) printf '%s\n' "${!IMAGES[@]}" | sort && exit ;;
+    image)
+      msg="Invalid Name: '${name}', Valid Names: [${names}]"
+      check "${msg}"  "${name}" || exit
+      getkey "${name}" IMAGES 2>/dev/null || die "${msg}"
+      echo && exit;;
+    images) printf '%s\n' "${IMAGES[@]}" | sort && exit ;;
+    run)
+      check "${msg}" "${name}" || exit
+      shift
+      ;;
+    *) false || die "Invalid Command: '${command}', Valid Commands: [${commands}]" ;;
+  esac
+
+  # TODO: check if image in registry if not in list
+  # TODO: add docker password
+  # TODO: add entry point
+  # TODO: add --all for run. no
+  image="${IMAGES["${name}"]-}"
+  [ "${image-}" ] || { inarray "${name}" IMAGES 2>/dev/null || die "${msg}"; image="${name}"; }
+
+  volume="$(git super 2>/dev/null || true)"
+  volume="${volume:-${PWD}}"
+  dest="/${volume##*/}"
+
+  [ ! -f "${volume}/entrypoint.sh" ] || entrypoint=( "${dest}/entrypoint.sh" )
+
+  # [ $# -ne 0 ] || t=( -t )  # if no commands enter terminal/console entrypoint
+  ! test -t 0 || t=( -t )
+  docker run -i "${t[@]}" "${opts[@]}" "${entrypoint[@]}" -v "${volume}:${dest}" "${image}" "$@"
+}
+
+main "$@"
+
+## NO entrypoint.sh
+# container run alpine ## Enters sh without prompt (the default entrypoint)
+# container run alpine ls -la
+# container run alpine 'RC_PREFIX=/rc . ./rc/rc/profile; env'
+
+## entrypoint.sh
+# container run alpine ls -la
+# container run alpine -c color

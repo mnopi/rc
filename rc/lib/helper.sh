@@ -22,7 +22,7 @@
 #   --verbose          Show verbose messages.
 #   --warning          Show warning messages.
 # Output:
-#   Message to stdout.
+#   Message to stderr.
 #######################################
 debug() {
   fromman debug "$@" || exit 0
@@ -71,7 +71,7 @@ debug() {
       sep=''
     fi
 
-    printf '%b\n' "$(greybold '+')${sep}${add}$(greydim "${content}")" >&2
+    >&2 printf '%b\n' "$(greybold '+')${sep}${add}$(greydim "${content}")" >&2
     eval "${sets}"  # set -u, if it was set before
     unset add arg c content sep sets suffix
   fi
@@ -99,7 +99,7 @@ debug() {
 #  Previous error code is overwritten by the command substitution return code.
 #  $ cd "$(dirname "${input}")" 2>/dev/null || die Directory not Found: "$(dirname "${input}")"
 # Output:
-#   Message to stderr if error and stdout for success.
+#   Message to stderr.
 # Returns:
 #   1-255 for error, 0 for success.
 #######################################
@@ -274,10 +274,10 @@ error() {
     fi
 
     if [ "${WHITE-}" ]; then
-       [ ! "${add}" ] || printf '%b\n' "$(redbold "x${sep}${add}")" >&2
+       [ ! "${add}" ] || >&2 printf '%b\n' "$(redbold "✘${sep}${add}")"
       [ "$#" -eq 0 ] || echo "$@" >&2
     else
-       printf '%b\n' "$(redbold 'x')${sep}${add}$(redbold "$*")" >&2
+       >&2 printf '%b\n' "$(redbold 'x')${sep}${add}$(redbold "$*")"
     fi
 
     unset add c file line sep
@@ -287,7 +287,7 @@ error() {
 #######################################
 # parse common long optional arguments.
 # Output:
-#   Message to stderr if error and stdout for success.
+#   Message to stderr.
 # Arguments:
 #   --desc             Show description and exit.
 #   --help             Show help from man page and exit.
@@ -352,11 +352,11 @@ show() (
   warn='--warning'
   [ "$1" != "${warn}" ] || { rc="${warn}"; shift; }
   case $rc in
-    "${warn}") yellowbold ！; rc=0 ;;
-    0) greenbold ✔ ;;
-    *) redbold ✘ ;;
+    "${warn}") >&2 yellowbold ！; rc=0 ;;
+    0) >&2 greenbold ✔ ;;
+    *) >&2 redbold ✘ ;;
   esac
-  printf '%s\n' " $*"
+  [ ! "${*-}" ] || >&2 printf '%s\n' " $*"
   exit $rc
 )
 
@@ -437,7 +437,6 @@ strict() {
   # </ul>
   # </html>
   STRICT="${STRICT:-1}"
-
   if [ "${STRICT-1}" -eq 1 ] && [ ! "${PS1-}" ]; then
     echo "set +eu" > "${SETOPTS}"
     set -eu
@@ -447,7 +446,6 @@ strict() {
       # shellcheck disable=SC3040
       set -o pipefail
       echo "set +o pipefail" >> "${SETOPTS}"
-      . "${SETOPTS}"
       # shellcheck disable=SC3028,SC3054
       [ ! "${BASH_VERSINFO[0]}" -gt 4 ] \
         || { shopt -s inherit_errexit; echo "shopt -u inherit_errexit" >> "${SETOPTS}"; }
@@ -481,7 +479,7 @@ strict() {
 #   --verbose          Show verbose messages.
 #   --warning          Show warning messages.
 # Output:
-#   Message to stdout.
+#   Message to stderr.
 #######################################
 success() {
   fromman success "$@" || exit 0
@@ -489,7 +487,7 @@ success() {
   if [ "${QUIET-0}" -ne 1 ]; then
     sep=''
     [ "$#" -eq 0 ] || sep=' '
-    printf '%b\n' "$(greenbold '✓')${sep}$*"
+    >&2 printf '%b\n' "$(greenbold ✔)${sep}$*"
     unset sep
   fi
 }
@@ -514,7 +512,7 @@ success() {
 #   --verbose          Show verbose messages.
 #   --warning          Show warning messages.
 # Output:
-#   Message to stdout.
+#   Message to stderr.
 #######################################
 verbose() {
   fromman verbose "$@" || exit 0
@@ -543,7 +541,7 @@ verbose() {
   if [ "${QUIET-0}" -ne 1 ] && { [ "${VERBOSE}" -eq 1 ] || [ "${DRY_RUN-}" -eq 1 ]; }; then
     sep=''
     [ "$#" -eq 0 ] || sep=' '
-    printf '%b\n' "$(cyanbold '>')${sep}$(cyandim "$*")"
+    >&2 printf '%b\n' "$(cyanbold '>')${sep}$(cyandim "$*")"
     unset sep
   fi
 }
@@ -641,7 +639,7 @@ warning() {
       sep=''
     fi
 
-    printf '%b\n' "$(yellowbold '!')${sep}${add}$(yellowbold "$*")" >&2
+    >&2 printf '%b\n' "$(yellowbold ！)${sep}${add}$(yellowbold "$*")" >&2
     unset add c file line sep
   fi
 }

@@ -160,7 +160,7 @@
     <inspection_tool class="bashproMissingSourcePath" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="bashproShebangNotExecutable" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="bashproShellCheck" enabled="true" level="ERROR" enabled_by_default="true">
-      <shellcheck_settings value="SC1090,SC2123,SC3044" />
+      <shellcheck_settings value="SC1090,SC2034,SC2123,SC3044" />
     </inspection_tool>
     <inspection_tool class="dynamicSourcePath" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="executableNoShebang" enabled="true" level="WARNING" enabled_by_default="true" />
