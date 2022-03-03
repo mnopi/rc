@@ -3,7 +3,7 @@
 
 #
 # System wide git config
-type git >/dev/null || exit 0
+cmd git || exit 0
 
 #. helper.sh && stderr
 # . helper.sh && stderr

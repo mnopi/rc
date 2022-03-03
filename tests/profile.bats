@@ -10,5 +10,5 @@ setup_file() {
 
 @test "$(description::file profile.sh sourced)" {
   assert_dir_exist "${RC_PROFILE_D}"
-  assert type cyan
+  assert cmd cyan
 }

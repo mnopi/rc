@@ -1,5 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="pathsd.bats" type="bashpro.bats-core" singleton="false">
+    <option name="failingTestOutput" value="true" />
     <option name="testDataPath" value="$PROJECT_DIR$/tests/pathsd.bats" />
     <option name="workingDirectory" value="$PROJECT_DIR$/tests" />
     <EXTENSION ID="net.ashald.envfile">

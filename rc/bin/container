@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
+# TODO: --help or man page y --help en bats.bash
 . arrays.bash
 . helper.sh
 set -eu
 declare -Ag IMAGES=(
-  ["3.10"]=python3.10:alpine
-  ["3.10-bullseye"]=python3.10:bullseye
-  ["3.10-slim"]=python3.10:slim
+  ["3.10"]=python:3.10-alpine
+  ["3.10-bullseye"]=python:3.10-bullseye  # latest
+  ["3.10-slim"]=python:3.10-slim
   ["debian-backports"]=debian:bullseye-backports
   ["debian-slim"]=debian:bullseye-slim
   ["kali"]=kalilinux:kali-rolling
@@ -33,11 +34,12 @@ check() { [ "${2-}" ] || die "$1"; }
 #  None
 #######################################
 main() {
-  local command commands="commands name names image images run" dest entrypoint=( /bin/sh ) image images
-  local msg name names opts=( --rm --entrypoint ) t=() volume
+  local command commands="commands name names image images run" dest entrypoint=( ) image images
+  local msg name names opts=( --rm ) t=() volume
   images="$(sort -t ' ' <<< "${IMAGES[*]}")"
   names="$(sort -t ' ' <<< "${!IMAGES[*]}")"
 
+  [ "${1-}" != '--sh' ] || { entrypoint=( --entrypoint /bin/sh ); shift; }
   check "Invalid Command: '${1-}', Valid Commands: [${commands}]" "${1-}" || exit
   command="$1"; shift
   name="${1-}"
@@ -73,15 +75,23 @@ main() {
   # TODO: add entry point
   # TODO: add --all for run. no
   image="${IMAGES["${name}"]-}"
-  [ "${image-}" ] || { inarray "${name}" IMAGES 2>/dev/null || die "${msg}"; image="${name}"; }
+  if [ ! "${image-}" ]; then
+    if inarray "${name}" IMAGES 2>/dev/null || docker manifest inspect --insecure "${name}" 2>/dev/null; then
+      image="${name}"
+    else
+       die "${msg}, or Invalid Manifest [docker manifest inspect --insecure ${name}]"
+    fi
+  fi
 
   volume="$(git super 2>/dev/null || true)"
   volume="${volume:-${PWD}}"
   dest="/${volume##*/}"
 
-  [ ! -f "${volume}/entrypoint.sh" ] || entrypoint=( "${dest}/entrypoint.sh" )
+  if [ -f "${volume}/entrypoint.sh" ]; then
+    [ ! "${entrypoint-}" ] || die "--sh for --entrypoint /bin/sh can not be used if ${dest}/entrypoint.sh"
+    entrypoint=( --entrypoint "${dest}/entrypoint.sh" )
+  fi
 
-  # [ $# -ne 0 ] || t=( -t )  # if no commands enter terminal/console entrypoint
   ! test -t 0 || t=( -t )
   docker run -i "${t[@]}" "${opts[@]}" "${entrypoint[@]}" -v "${volume}:${dest}" "${image}" "$@"
 }

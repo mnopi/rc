@@ -3,6 +3,57 @@
 #
 # helper shell library (sets bash strict mode by default).
 
+# File with commands to be executed to restore shell opts with '. "${SETOPTS-}"'
+#
+export SETOPTS
+[ "${SETOPTS-}" ] || SETOPTS="$(mktemp)"
+
+# <html><h2>Bash Strict Mode</h2>
+# <p><strong><code>$STRICT</code></strong> set to 0 when sourcing helper.sh to not set strict mode (Default: 1).</p>
+# <h3>Examples</h3>
+# <dl>
+# <dt>No strict mode:</dt>
+# <dd>
+# <pre><code class="language-bash">STRICT=0 . helper.sh
+# </code></pre>
+# </dd>
+# </dl>
+# <h3>Links</h3>
+# <ul>
+# <li><a href="http://redsymbol.net/articles/unofficial-bash-strict-mode/">Unofficial Bash Strict Mode</a></li>
+# </ul>
+# </html>
+STRICT="${STRICT:-1}"
+if [ "${STRICT-1}" -eq 1 ] && [ ! "${PS1-}" ]; then
+  echo "set +eu" > "${SETOPTS}"
+  set -o errexit  # Exit when simple command fails               'set -e'
+  set -o nounset # Trigger error when expanding unset variables  'set -u'
+
+  if [ "${BASH_VERSION-}" ]; then
+    # SHELLOPTS exported for BASH so that new shells inherit '-x'
+    export SHELLOPTS
+    # shellcheck disable=SC3040
+    set -o pipefail
+    echo "set +o pipefail" >> "${SETOPTS}"
+    # shellcheck disable=SC3040
+    set -o errtrace  # Exit on error inside any functions or subshells.
+    echo "set +o errtrace" >> "${SETOPTS}"
+    # shellcheck disable=SC3028,SC3054
+    if [ "${BASH_VERSINFO[0]}" -gt 4 ]; then
+      shopt -s inherit_errexit   # command substitution inherits the value of the errexit option
+      echo "shopt -u inherit_errexit" >> "${SETOPTS}"
+    fi
+  fi
+fi
+
+# Sets shell xtrace 'set -x' when 1 (default: 0)
+XTRACE="${XTRACE-0}"
+[ "${XTRACE-0}" -eq 0 ] || set -x
+
+# Sets shell verbose 'set -x' when 1 (default: 0)
+XVERBOSE="${XVERBOSE-0}"
+[ "${XVERBOSE-0}" -eq 0 ] || set -v
+
 #######################################
 # show info message with > symbol in grey bold if DEBUG is set to 1, unless QUIET is set to 1
 # Globals:
@@ -415,52 +466,6 @@ stderr() {
   fi
 }
 
-strict() {
-  # File with commands to be executed to restore shell opts with '. "${SETOPTS-}"'
-  #
-  export SETOPTS
-  [ "${SETOPTS-}" ] || SETOPTS="$(mktemp)"
-
-  # <html><h2>Bash Strict Mode</h2>
-  # <p><strong><code>$STRICT</code></strong> set to 0 when sourcing helper.sh to not set strict mode (Default: 1).</p>
-  # <h3>Examples</h3>
-  # <dl>
-  # <dt>No strict mode:</dt>
-  # <dd>
-  # <pre><code class="language-bash">STRICT=0 . helper.sh
-  # </code></pre>
-  # </dd>
-  # </dl>
-  # <h3>Links</h3>
-  # <ul>
-  # <li><a href="http://redsymbol.net/articles/unofficial-bash-strict-mode/">Unofficial Bash Strict Mode</a></li>
-  # </ul>
-  # </html>
-  STRICT="${STRICT:-1}"
-  if [ "${STRICT-1}" -eq 1 ] && [ ! "${PS1-}" ]; then
-    echo "set +eu" > "${SETOPTS}"
-    set -eu
-    if [ "${BASH_VERSION-}" ]; then
-      # SHELLOPTS exported for BASH so that new shells inherit '-x'
-      export SHELLOPTS
-      # shellcheck disable=SC3040
-      set -o pipefail
-      echo "set +o pipefail" >> "${SETOPTS}"
-      # shellcheck disable=SC3028,SC3054
-      [ ! "${BASH_VERSINFO[0]}" -gt 4 ] \
-        || { shopt -s inherit_errexit; echo "shopt -u inherit_errexit" >> "${SETOPTS}"; }
-    fi
-  fi
-
-  # Sets shell xtrace 'set -x' when 1 (default: 0)
-  XTRACE="${XTRACE-0}"
-  [ "${XTRACE-0}" -eq 0 ] || set -x
-
-  # Sets shell verbose 'set -x' when 1 (default: 0)
-  XVERBOSE="${XVERBOSE-0}"
-  [ "${XVERBOSE-0}" -eq 0 ] || set -v
-}
-
 #######################################
 # show success message in white with green ✓ symbol, unless QUIET is set to 1
 # Globals:
@@ -645,7 +650,6 @@ warning() {
 }
 
 [ "${STDERR-0}" -eq 0 ] || stderr
-strict
 
 ####################################### Executed
 #

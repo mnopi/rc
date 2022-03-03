@@ -1,7 +1,5 @@
 #!/bin/sh
 
-set -eu
-
 #######################################
 # command or commands exists
 # Arguments:
@@ -9,16 +7,15 @@ set -eu
 # Returns:
 #  1 if any of the command does not exist
 #######################################
-main() {
+cmd() {
   if [ $# -eq 1 ]; then
     type "$1" >/dev/null 2>&1
   else
     tmp="$(mktemp)"
     type "$@" >/dev/null 2>"${tmp}"
-    grep -qv "not found" "${tmp}"
+    ! test -s "${tmp}" || grep -qv "not found" "${tmp}"
   fi
 }
 
-## Error
-# cmd foo
-# cmd ls foo cd
+[ "${0##*/}" != 'cmd' ] || { set -eu; cmd "$@"; }
+

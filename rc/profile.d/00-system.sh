@@ -1,7 +1,5 @@
 # shellcheck shell=sh
 
-[ "${UNAME-}" ] || {
-
 # '1' if 'DIST_ID' is 'alpine' and not: nix or busybox
 #
 export ALPINE
@@ -13,6 +11,10 @@ export ALPINE_LIKE
 # '1' if 'DIST_ID' is 'arch' for archlinux
 #
 export ARCH
+
+# Bash Deprecation
+#
+export BASH_SILENCE_DEPRECATION_WARNING
 
 # '1' if not '/etc/os-release' and not '/sbin'.
 #
@@ -93,6 +95,10 @@ export FEDORA
 #
 export FEDORA_LIKE
 
+# https://github.com/Homebrew/homebrew-command-not-found
+#
+export HB_CNF_HANDLER
+
 # Cask Versions (similar to opt)
 #
 export HOMEBREW_CASK
@@ -154,22 +160,12 @@ export HOST_PROMPT
 #
 export KALI
 
-# <html><h2>Is LINUX?</h2>
-# <p><strong><code>$LINUX</code></strong> (always exported).</p>
-# <p><strong><code>Boolean</code></strong></p>
-# <ul>
-# <li><code>true</code>: $UNAME is linux</li>
-# <li><code>false</code>: $UNAME is darwin</li>
-# </ul>
-# </html>
-export LINUX
-
 # <html><h2>Is MACOS?</h2>
 # <p><strong><code>$MACOS</code></strong> (always exported).</p>
 # <p><strong><code>Boolean</code></strong></p>
 # <ul>
-# <li><code>true</code>: $UNAME is darwin</li>
-# <li><code>false</code>: $UNAME is linux</li>
+# <li><code>1</code>: $UNAME is darwin</li>
+# <li><code>0</code>: $UNAME is linux</li>
 # </ul>
 # </html>
 export MACOS
@@ -232,6 +228,10 @@ export SHARE_COMPLETIONS_D
 #
 export SSH
 
+# Path with sudo command
+#
+export SUDOC='/usr/bin/sudo'
+
 # '1' if 'DIST_ID' is 'ubuntu'.
 #
 export UBUNTU
@@ -285,19 +285,16 @@ dist_id_like() {
 # homebrew variables
 #######################################
 homebrew() {
-  if [ -x "${HOMEBREW_PREFIX}/bin/brew" ]; then
-    HOMEBREW_CASK="${HOMEBREW_PREFIX}/Caskroom"
-    HOMEBREW_CELLAR="${HOMEBREW_PREFIX}/Cellar"
-    HOMEBREW_ETC="${HOMEBREW_PREFIX}/etc"
-    HOMEBREW_COMPLETIONS_D="${HOMEBREW_ETC}/bash_completion.d}"
-    HOMEBREW_LIB="${HOMEBREW_PREFIX}/lib"
-    HOMEBREW_OPT="${HOMEBREW_PREFIX}/opt"
-    HOMEBREW_PROFILE_D="${HOMEBREW_ETC}/profile.d"
-    HOMEBREW_REPOSITORY="${HOMEBREW_PREFIX}/Homebrew"
-    HOMEBREW_TAPS="${HOMEBREW_REPOSITORY}/Library/Taps"
-  else
-    unset HOMEBREW_KEGS HOMEBREW_PREFIX
-  fi
+  HOMEBREW_CASK="${HOMEBREW_PREFIX}/Caskroom"
+  HOMEBREW_CELLAR="${HOMEBREW_PREFIX}/Cellar"
+  HOMEBREW_ETC="${HOMEBREW_PREFIX}/etc"
+  HOMEBREW_COMPLETIONS_D="${HOMEBREW_ETC}/bash_completion.d"
+  HOMEBREW_LIB="${HOMEBREW_PREFIX}/lib"
+  HOMEBREW_OPT="${HOMEBREW_PREFIX}/opt"
+  HOMEBREW_PROFILE_D="${HOMEBREW_ETC}/profile.d"
+  HOMEBREW_REPOSITORY="${HOMEBREW_PREFIX}/Homebrew"
+  HOMEBREW_TAPS="${HOMEBREW_REPOSITORY}/Library/Taps"
+  HB_CNF_HANDLER="${HOMEBREW_TAPS}/homebrew/homebrew-command-not-found/handler.sh"
 }
 
 #######################################
@@ -330,6 +327,7 @@ system() {
   HOST="$(command -p hostname -s 2>/dev/null || command -p cut -d '.' -f 1 /etc/hostname)"
   UNAME="$(command -p uname)"
   if [ "${UNAME}" = 'Darwin' ]; then
+    BASH_SILENCE_DEPRECATION_WARNING=1
     CLT='/Library/Developer/CommandLineTools'
     DIST_ID="$(command -p sw_vers -ProductName)"
     DIST_VERSION="$(command -p sw_vers -ProductVersion)"
@@ -344,8 +342,7 @@ system() {
     esac
     HOMEBREW_KEGS='ruby'
     HOMEBREW_PREFIX='/usr/local'
-    LINUX=false
-    MACOS=true
+    MACOS=1
     PM='brew'
     PM_INSTALL="${PM} install"
     [ "${GITHUB_RUN_ID-}" ] || VGA=1
@@ -366,8 +363,8 @@ system() {
     SHARE_COMPLETIONS_D='/usr/share/bash-completion/completions'
     LINUXBREW='/home/linuxbrew/.linuxbrew'
     HOMEBREW_PREFIX="${LINUXBREW}"
-    LINUX=true
-    MACOS=false
+    MACOS=0
+    [ -x /usr/bin/sudo ] || SUDOC=
     VGA="$(lspci 2>/dev/null | awk '/VGA/ { print 1 }')"
   fi
 
@@ -388,4 +385,3 @@ system() {
 }
 
 system; unset -f system
-}

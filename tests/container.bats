@@ -1,8 +1,16 @@
 #!/usr/bin/env bats
-# shellcheck disable=SC2001,SC2088
+# shellcheck disable=SC2001,SC2088,SC2016
 
 setup_file() {
   . "${BATS_TEST_DIRNAME}/helpers/load_profile.bash"
+  repo="$(mktemp -d)"; export repo
+  git -C "${repo}" init
+  mkdir "${repo}/dir"
+}
+
+teardown_file() {
+  rm -rf "${repo}"
+  pkill -f 'Docker Desktop' || true
 }
 
 @test "$(description::file container parsing '->' failure)" {
@@ -16,6 +24,8 @@ run
 run foo
 EOF
 )"
+  skip::if::not cmd docker
+
   run container
   assert_failure
 
@@ -26,11 +36,15 @@ EOF
 }
 
 @test "$(description::file container commands)" {
+  skip::if::not cmd docker
+
   run container commands
   assert_line run
 }
 
 @test "$(description::file container 'image|name' alpine)" {
+  skip::if::not cmd docker
+
   for i in image name; do
     run container "${i}" alpine
     assert_success
@@ -39,6 +53,8 @@ EOF
 }
 
 @test "$(description::file container 'images|names')" {
+  skip::if::not cmd docker
+
   for i in images names; do
     run container "${i}"
     assert_success
@@ -46,21 +62,224 @@ EOF
   done
 }
 
-@test "$(description::file container run alpine)" {
+@test "$(description::file 'ls;exit | container run alpine <- ./entrypoint.sh')" {
+  skip::if::not cmd docker
+
   run sh -c 'echo "ls;exit" | container run alpine'
+
   assert_success
   assert_line "${BATS_TOP_BASENAME}"
 }
 
-@test "$(description::file container run alpine '->' failure)" {
+@test "$(description::file 'env;exit | container run alpine <- ./entrypoint.sh')" {
+  skip::if::not cmd docker
+
+  run sh -c 'echo "env;exit" | container run alpine'
+
+  assert_success
+  assert_line ALPINE=1
+  assert_line ALPINE_LIKE=1
+  assert_line CONTAINER=1
+  assert_line DIST_ID=alpine
+  assert_line DIST_ID_LIKE=alpine
+  assert_line --regexp DIST_VERSION=*
+  assert_line --regexp HOST=*
+  assert_line --regexp 'HOST_PROMPT=ꜿ *'
+  assert_line MACOS=0
+  assert_line PM=apk
+  assert_line 'PM_INSTALL=sudo apk apk add -q --no-progress --no-cache'
+  assert_line SUDOC=
+  assert_line UNAME=Linux
+  assert_line VGA=
+}
+
+@test "$(description::file 'ls foo;exit | container run alpine -> failure <- ./entrypoint.sh')" {
+  skip::if::not cmd docker
+
   run sh -c 'echo "ls foo;exit" | container run alpine'
+
   assert_failure
   assert_output 'ls: foo: No such file or directory'
 }
 
-@test "$(description::file container run alpine '<-' cd '~/')" {
+@test "$(description::file 'cd ~/; ls;exit | container run alpine <- no ./entrypoint.sh')" {
+  skip::if::not cmd docker
+
   cd ~
+
+  run sh -c 'echo "ls;exit" | container run alpine'
+
+  assert_success
+  assert_line "${PWD##*/}"
+}
+
+@test "$(description::file 'cd $repo/dir; ls;exit | container run alpine <- no ./entrypoint.sh')" {
+  skip::if::not cmd docker
+
+  cd "${repo}/dir"
   run sh -c 'echo "ls;exit" | container run alpine'
   assert_success
-  assert_line "${USER}"
+  assert_line "${repo##*/}"
+}
+
+@test "$(description::file container run alpine ls -1 '<-' ./entrypoint.sh)" {
+  skip::if::not cmd docker
+
+  run container run alpine ls -1
+
+  assert_success
+  assert_line --partial "${BATS_TOP_BASENAME}"  # is color tty (-t), directory in blue
+  refute_line "${BATS_TOP_BASENAME}"  # is color tty (-t), directory in blue
+}
+
+@test "$(description::file container run alpine env '<-' ./entrypoint.sh)" {
+  skip::if::not cmd docker
+
+  run container run alpine env
+
+  assert_success
+  assert_line --partial ALPINE=1
+  assert_line --partial ALPINE_LIKE=1
+  assert_line --partial CONTAINER=1
+  assert_line --partial DIST_ID=alpine
+  assert_line --partial DIST_ID_LIKE=alpine
+  assert_line --regexp DIST_VERSION=*
+  assert_line --regexp HOST=*
+  assert_line --regexp 'HOST_PROMPT=ꜿ *'
+  assert_line --partial MACOS=0
+  assert_line --partial PM=apk
+  assert_line --partial 'PM_INSTALL=sudo apk apk add -q --no-progress --no-cache'
+  assert_line --partial SUDOC=
+  assert_line --partial UNAME=Linux
+  assert_line --partial VGA=
+}
+
+@test "$(description::file "container run alpine -c 'printf \"%s\" \"\${ALPINE}\"' '<-' ./entrypoint.sh")" {
+  skip::if::not cmd docker
+
+  run container run alpine -c 'printf "%s" "${ALPINE}"'
+
+  assert_success
+  assert_line 1
+}
+
+@test "$(description::file container run alpine ls foo '<-' ./entrypoint.sh)" {
+  skip::if::not cmd docker
+
+  run container run alpine ls foo
+
+  assert_failure
+  assert_line --partial 'ls: foo: No such file or directory'
+}
+
+@test "$(description::file 'cd ~/; container run alpine ls -1 <- no ./entrypoint.sh')" {
+  skip::if::not cmd docker
+
+  cd ~
+
+  run container run alpine ls -1
+
+  assert_success
+  assert_line --partial "${PWD##*/}"  # is color tty (-t), directory in blue
+  refute_line "${PWD##*/}"  # is color tty (-t), directory in blue
+}
+
+@test "$(description::file 'cd ~/; container --sh run alpine -c ls <- no ./entrypoint.sh')" {
+  skip::if::not cmd docker
+
+  cd ~
+
+  run container --sh run alpine -c ls -1
+
+  assert_success
+  assert_line --partial "${PWD##*/}"  # is color tty (-t), directory in blue
+  refute_line "${PWD##*/}"  # is color tty (-t), directory in blue
+}
+
+@test "$(description::file 'cd $repo/dir; container run alpine ls -1 <- no ./entrypoint.sh')" {
+  skip::if::not cmd docker
+
+  cd "${repo}/dir"
+
+  run container run alpine ls -1
+
+  assert_success
+  assert_line --partial "${repo##*/}"  # is color tty (-t), directory in blue
+  refute_line "${repo##*/}"  # is color tty (-t), directory in blue
+}
+
+@test "$(description::file 'cd $repo/dir; container --sh run alpine -c ls -1 <- no ./entrypoint.sh')" {
+  skip::if::not cmd docker
+
+  cd "${repo}/dir"
+
+  run container --sh run alpine -c ls -1
+
+  assert_success
+  assert_line --partial "${repo##*/}" # is color tty (-t), directory in blue
+  refute_line "${repo##*/}"           # is color tty (-t), directory in blue
+}
+
+@test "$(description::file 'container --sh run alpine ls -1 -> failure <- ./entrypoint.sh')" {
+  skip::if::not cmd docker
+
+  run container --sh run alpine ls -1
+  assert_failure
+  assert_line --partial '--sh for --entrypoint /bin/sh can not be used if'
+}
+
+@test "$(description::file 'container run bash --help <- ./entrypoint.sh')" {
+  skip::if::not cmd docker
+
+  # Note: --version or any -- can not be used with sh in busybox since it goes to shell (only --help)
+  run container run bash --help
+
+  assert_success
+  assert_line --partial BusyBox
+  refute_line --partial 'GNU bash'
+}
+
+@test "$(description::file 'cd $repo/dir; container --sh run bash --help <- no ./entrypoint.sh')" {
+  skip::if::not cmd docker
+
+  cd "${repo}/dir"
+
+  run container --sh run bash --help
+
+  assert_success
+  assert_line --partial 'BusyBox'
+  refute_line --partial 'GNU bash'
+}
+
+@test "$(description::file 'cd $repo/dir; container run bash --version <- no ./entrypoint.sh')" {
+  skip::if::not cmd docker
+
+  cd "${repo}/dir"
+
+  run container run bash --version
+
+  # Note: --version or any -- can not be used with sh in busybox since it goes to shell (only --help)
+  # --version with alpine would hava hangout forever in shell
+  assert_success
+  assert_line --partial 'GNU bash'
+  assert_line --partial 'License GPLv3+: '
+}
+
+@test "$(description::file container run fail ls '->' failure invalid manifest)" {
+  skip::if::not cmd docker
+
+  run container run fail ls
+
+  assert_failure
+  assert_line --partial 'or Invalid Manifest '
+}
+
+@test "$(description::file container run bats/bats ls -1 '->' success manifest '<-' ./entrypoint.sh)" {
+  skip::if::not cmd docker
+
+  run container run bats/bats ls -1
+
+  assert_success
+  assert_line --partial "${BATS_TOP_BASENAME}"  # is color tty (-t), directory in blue
+  refute_line "${BATS_TOP_BASENAME}"  # is color tty (-t), directory in blue
 }

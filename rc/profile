@@ -6,4 +6,8 @@
 # RC path
 #
 export RC="${RC_PREFIX-}/rc"
-. "${RC}/lib/profile.sh"
+
+# RC profile.sh
+#
+export RC_PROFILE_SH="${RC}/lib/profile.sh"
+. "${RC_PROFILE_SH}"
