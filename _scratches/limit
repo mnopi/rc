@@ -1,0 +1,21 @@
+#!/bin/sh
+ulimit -a
+open files (-n) 12544
+max user processes (-u) 3480
+ulimit -n  # file descriptors
+
+ulimit -u  # user process
+
+launchctl limit maxproc
+5220 5220
+
+# https://apple.stackexchange.com/questions/296111/macos-sierra-ulimit-maxproc-only-2500#:~:text=maxproc%20(the%20maximum%20total%20number,under%20OS%20X%20is%201064.
+# Server Performance Mode
+kern.maxproc
+kern.maxprocperuid (2/3 of kern.maxproc)
+sysctl kern.maxproc  ## same as launchctl limit maxproc
+sysctl kern.maxprocperuid  # Da 65535
+
+if ! sudo nvram boot-args; then
+sudo nvram boot-args="serverperfmode=1 $(nvram boot-args 2>/dev/null | cut -f 2-)"
+fi

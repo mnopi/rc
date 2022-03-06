@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -eu
+
+#######################################
+# to upper case
+# Arguments:
+#   [value]   the value to upper case (default: /dev/stdin)
+#######################################
+main() { echo "$1" | tr '[:lower:]' '[:upper:]'; }
+
+main "${1:-"$(cat </dev/stdin)"}"

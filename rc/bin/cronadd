@@ -1,0 +1,79 @@
+#!/bin/sh
+
+STDERR=1 . helper.sh
+
+#######################################
+# check if line in file
+# Arguments:
+#   file        the file
+#   line        the line to add to cron
+# Returns:
+#  1 if line not in file or empty
+#######################################
+line() {
+  while read -r line; do
+    [ "$2" != "${line}" ] || return 0 2>/dev/null || exit 0
+  done < "$1"
+  false
+}
+
+#######################################
+# remove line from file
+# Arguments:
+#   file        the file
+#   line        the line to add to cron
+#######################################
+not() {
+  tmp1="$(mktemp)"
+  while read -r line; do
+    [ "$2" = "${line}" ] || echo "$2" >> "${tmp1}"
+  done < "$1"
+  mv "${tmp1}" "$1"
+}
+#######################################
+# writes crontab to file
+# Arguments:
+#   file        the file
+#######################################
+to() { crontab -l > "$1" 2>/dev/null || true; }
+
+#######################################
+# add or delete cron command
+# Globals:
+#   tmp
+# Arguments:
+#   [--rm]      delete a cron line
+#   command     the line to add to cron
+# Examples:
+#   cronadd @reboot sudo rm -f /var/db/.reboot-required
+#######################################
+main() {
+  cmd crontab || exit
+  rm=false; tmp="$(mktemp)"
+
+  [ "${1}" != '--rm' ] || { rm=true; shift; }
+
+  args="$(echo "${*}" | tr '\t' ' ')"
+
+  to "${tmp}"
+
+  if $rm; then
+    line "${tmp}" "${args}" || show Cron Not Found: "${args}" || exit
+
+    not "${tmp}" "${args}"
+    crontab "${tmp}"
+
+    to "${tmp}"
+    ! line "${tmp}" "${args}"  || show Cron Not Deleted: "${args}" || exit
+    show Cron Deleted: "${args}"
+  elif ! line "${tmp}" "${args}"; then
+    echo "${args}" >> "${tmp}"
+    crontab "${tmp}"
+
+    to "${tmp}"
+    line "${tmp}" "${args}" || show Cron: "${args}" || exit
+    show Cron: "${args}"
+  fi
+}
+
+main "$@"

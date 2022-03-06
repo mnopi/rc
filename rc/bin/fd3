@@ -1,0 +1,18 @@
+#!/bin/sh
+
+#######################################
+# check if fd3 is open
+# Arguments:
+#   None
+# Returns:
+#  '0' if fd3 is open
+#######################################
+main() {
+  if command >&3; then
+    exit
+  else
+    exit 1
+  fi 2<>/dev/null
+}
+
+main "$@"

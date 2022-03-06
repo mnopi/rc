@@ -1,0 +1,32 @@
+#!/bin/sh
+
+STDERR=1 . helper.sh
+
+#######################################
+# manages token reboot needed
+# Arguments:
+#   [cron]      set cron
+#   [file]      shows the file and exit
+#   [needed]    return 0 if reboot is needed
+#   [rm]        remove the token
+#   [touch]     touch the file and sets the cron (cron command)
+# Returns:
+#  0 if reboot is needed with needed command and 1 if reboot is not needed
+#######################################
+main() {
+  file=/var/db/.reboot-required
+  for arg; do
+    case "${arg}" in
+      cron) cronadd "@reboot sudo rm -f ${file}"; exit ;;
+      file) echo "${file}"; exit ;;
+      needed) sudo test -f "${file}"; exit ;;
+      rm) sudo rm -f "${file}" ;;
+      touch) sudo test -f "${file}" || { "$0" cron; sudo touch "${file}"; } ;;
+    esac
+  done
+  if sudo test -f "${file}"; then
+    show --warning "Reboot: Required"
+  fi
+}
+
+main "$@"

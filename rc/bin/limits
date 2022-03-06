@@ -1,0 +1,107 @@
+#!/bin/sh
+
+STDERR=0 . helper.sh
+
+# MAXFILES, we use it for macOS MAXPROC since it will be automatically capped based on the system
+#
+MAXFILES=1048576
+
+tmp="$(mktemp)"
+
+Darwin() {
+  for command in maxfiles maxproc; do
+    id="system.${command}"
+    file="/Library/LaunchDaemons/${id}.plist"
+    plist "${file}" "${id}" "${command}"
+    if $changed; then
+      sudo chown root:wheel "${file}"
+      if sudo launchctl print "system/${id}" >/dev/null 2>&1; then
+        sudo launchctl bootout "system/${id}"
+        sudo launchctl disable "system/${id}"
+      fi
+      sudo launchctl enable "system/${id}"
+      sudo launchctl bootstrap system "${file}"
+      sudo launchctl kickstart "system/${id}"
+    fi
+  done
+}
+
+Linux() {
+  cat > "${tmp}" <<EOT
+* soft core unlimited
+* hard core unlimited
+* soft data unlimited
+* hard data unlimited
+* soft fsize unlimited
+* hard fsize unlimited
+* soft memlock unlimited
+* hard memlock unlimited
+* soft nofile ${MAXFILES}
+* hard nofile ${MAXFILES}
+* soft rss unlimited
+* hard rss unlimited
+* soft stack unlimited
+* hard stack unlimited
+* soft cpu unlimited
+* hard cpu unlimited
+* soft nproc unlimited
+* hard nproc unlimited
+* soft as unlimited
+* hard as unlimited
+* soft maxlogins unlimited
+* hard maxlogins unlimited
+* soft maxsyslogins unlimited
+* hard maxsyslogins unlimited
+* soft locks unlimited
+* hard locks unlimited
+* soft sigpending unlimited
+* hard sigpending unlimited
+* soft msgqueue unlimited
+* hard msgqueue unlimited
+EOT
+  run /etc/security/limits.conf
+  ! $changed || token-reboot touch
+}
+
+plist() {
+    cat > "${tmp}" <<EOT
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+        "https://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>${2}</string>
+    <key>ProgramArguments</key>
+    <array>
+      <string>launchctl</string>
+      <string>limit</string>
+      <string>${3}</string>
+      <string>${MAXFILES}</string>
+      <string>${MAXFILES}</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>ServiceIPC</key>
+    <false/>
+    <key>StandardOutPath</key>
+    <string>/var/log/${2}.log</string>
+    <key>StandardErrorPath</key>
+    <string>/var/log/${2}.log</string>
+  </dict>
+</plist>
+EOT
+  run "$1"
+}
+
+run() {
+  changed=false
+  [ "$(sudo cat "$1" 2>/dev/null || true)" = "$(sudo cat "${tmp}")" ] || \
+    { sudo mkdir -p "${1%/*}"; sudo command -p cp "${tmp}" "$1" && changed=true && show Limits: "$1"; }
+}
+
+main() {
+  "$(uname -s)"
+}
+
+main "$@"

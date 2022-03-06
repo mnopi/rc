@@ -24,7 +24,7 @@ run
 run foo
 EOF
 )"
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   run container
   assert_failure
@@ -36,14 +36,14 @@ EOF
 }
 
 @test "$(description::file container commands)" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   run container commands
   assert_line run
 }
 
 @test "$(description::file container 'image|name' alpine)" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   for i in image name; do
     run container "${i}" alpine
@@ -53,7 +53,7 @@ EOF
 }
 
 @test "$(description::file container 'images|names')" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   for i in images names; do
     run container "${i}"
@@ -63,7 +63,7 @@ EOF
 }
 
 @test "$(description::file 'ls;exit | container run alpine <- ./entrypoint.sh')" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   run sh -c 'echo "ls;exit" | container run alpine'
 
@@ -72,7 +72,7 @@ EOF
 }
 
 @test "$(description::file 'env;exit | container run alpine <- ./entrypoint.sh')" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   run sh -c 'echo "env;exit" | container run alpine'
 
@@ -94,7 +94,7 @@ EOF
 }
 
 @test "$(description::file 'ls foo;exit | container run alpine -> failure <- ./entrypoint.sh')" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   run sh -c 'echo "ls foo;exit" | container run alpine'
 
@@ -103,7 +103,7 @@ EOF
 }
 
 @test "$(description::file 'cd ~/; ls;exit | container run alpine <- no ./entrypoint.sh')" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   cd ~
 
@@ -114,7 +114,7 @@ EOF
 }
 
 @test "$(description::file 'cd $repo/dir; ls;exit | container run alpine <- no ./entrypoint.sh')" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   cd "${repo}/dir"
   run sh -c 'echo "ls;exit" | container run alpine'
@@ -123,7 +123,7 @@ EOF
 }
 
 @test "$(description::file container run alpine ls -1 '<-' ./entrypoint.sh)" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   run container run alpine ls -1
 
@@ -133,7 +133,7 @@ EOF
 }
 
 @test "$(description::file container run alpine env '<-' ./entrypoint.sh)" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   run container run alpine env
 
@@ -155,7 +155,7 @@ EOF
 }
 
 @test "$(description::file "container run alpine -c 'printf \"%s\" \"\${ALPINE}\"' '<-' ./entrypoint.sh")" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   run container run alpine -c 'printf "%s" "${ALPINE}"'
 
@@ -164,7 +164,7 @@ EOF
 }
 
 @test "$(description::file container run alpine ls foo '<-' ./entrypoint.sh)" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   run container run alpine ls foo
 
@@ -173,7 +173,7 @@ EOF
 }
 
 @test "$(description::file 'cd ~/; container run alpine ls -1 <- no ./entrypoint.sh')" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   cd ~
 
@@ -185,7 +185,7 @@ EOF
 }
 
 @test "$(description::file 'cd ~/; container --sh run alpine -c ls <- no ./entrypoint.sh')" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   cd ~
 
@@ -197,7 +197,7 @@ EOF
 }
 
 @test "$(description::file 'cd $repo/dir; container run alpine ls -1 <- no ./entrypoint.sh')" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   cd "${repo}/dir"
 
@@ -209,7 +209,7 @@ EOF
 }
 
 @test "$(description::file 'cd $repo/dir; container --sh run alpine -c ls -1 <- no ./entrypoint.sh')" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   cd "${repo}/dir"
 
@@ -221,7 +221,7 @@ EOF
 }
 
 @test "$(description::file 'container --sh run alpine ls -1 -> failure <- ./entrypoint.sh')" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   run container --sh run alpine ls -1
   assert_failure
@@ -229,7 +229,7 @@ EOF
 }
 
 @test "$(description::file 'container run bash --help <- ./entrypoint.sh')" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   # Note: --version or any -- can not be used with sh in busybox since it goes to shell (only --help)
   run container run bash --help
@@ -240,7 +240,7 @@ EOF
 }
 
 @test "$(description::file 'cd $repo/dir; container --sh run bash --help <- no ./entrypoint.sh')" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   cd "${repo}/dir"
 
@@ -252,7 +252,7 @@ EOF
 }
 
 @test "$(description::file 'cd $repo/dir; container run bash --version <- no ./entrypoint.sh')" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   cd "${repo}/dir"
 
@@ -266,7 +266,7 @@ EOF
 }
 
 @test "$(description::file container run fail ls '->' failure invalid manifest)" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   run container run fail ls
 
@@ -275,7 +275,7 @@ EOF
 }
 
 @test "$(description::file container run bats/bats ls -1 '->' success manifest '<-' ./entrypoint.sh)" {
-  skip::if::not cmd docker
+  skip::if '! cmd docker'
 
   run container run bats/bats ls -1
 

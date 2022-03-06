@@ -391,7 +391,7 @@ psargs() {
 }
 
 #######################################
-# show message based on return code
+# show message based on return code to stdout (can be used with 'stderr' or 'xtrace' to show error first
 # Arguments:
 #   [--warning]   print warning
 # Returns:
@@ -403,11 +403,12 @@ show() (
   warn='--warning'
   [ "$1" != "${warn}" ] || { rc="${warn}"; shift; }
   case $rc in
-    "${warn}") >&2 yellowbold ！; rc=0 ;;
-    0) >&2 greenbold ✔ ;;
-    *) >&2 redbold ✘ ;;
+    "${warn}") rc=0; yellowbold ! ;;
+    0) greenbold ✔ ;;
+    *) redbold ✘ ;;
   esac
-  [ ! "${*-}" ] || >&2 printf '%s\n' " $*"
+
+  [ $# -eq 0 ] || printf '%s\n' " $*"
   exit $rc
 )
 
@@ -424,8 +425,8 @@ _stderr() {
   # set -u err not caught in signal EXIT.
   # if lsof is posix then use: stderr="$(lsof -d2 | grep $$ | awk '{ print $NF }')"
   rc=$?
+  ! echo $- | grep -q -E 'x|v' 2>/dev/null || was_debug=1
   set +xv
-  ! grep -q -E 'set \+x|set \+v' "${SETOPTS-}" 2>/dev/null || was_debug=1
 
   # Quiets any stderr/$XTRACE/$XVERBOSE when 1 (default: 0)
   #
@@ -433,21 +434,35 @@ _stderr() {
 
   if test -s "${EXIT_STDERR-}"; then
     # Unset debug so grep unbound works and grep + 2 times just in case set -x and set +x was put in the middle.
-    grep -qv -m2 '^\+\{0,\} ' "${EXIT_STDERR}" || was_debug=1
+    if grep -q -m2 '^\+\{0,\} ' "${EXIT_STDERR}"; then
+      was_debug=1
+    fi
 
     if [ $rc -eq 0 ] && grep -qE ': unbound variable$|: parameter null or not set' "${EXIT_STDERR}"; then
       rc=1
     fi
+
     if { [ "${was_debug-0}" -eq 1 ] || [ $rc -ne 0 ]; } && [ "${QQUIET-0}" -eq 0 ]; then
-      sed "s/^\(+\)\1\{0,\} /$(magentabold 'debug>')  &/g; \
-        /^.*\[.*debug>/!s/^/$(redbold 'stderr>') /g" "${EXIT_STDERR}"
+      echo
+      cyanbold '## EXIT_STDERR'
+      echo
+      # https://unix.stackexchange.com/questions/475548/removing-all-non-ascii-characters-from-a-workflow-file
+      LC_ALL=C tr -dc '\0-\177' < "${EXIT_STDERR}" | sed "s/^\(+\)\1\{0,\} /$(magentabold 'debug>  &')/g; \
+        /^.*\[.*debug>/!s/^/$(redbold 'stderr>') /g"
     fi
+
   fi
-  exit "${rc}"
+  if test -s "${EXIT_XTRACE-}" && [ "${QQUIET-0}" -eq 0 ]; then
+    echo
+    cyanbold  '## EXIT_XTRACE'
+    echo
+    LC_ALL=C tr -dc '\0-\177' < "${EXIT_XTRACE}" | sed "s/^\(+\)\1\{0,\} /$(magentabold 'debug>  &')/g"
+  fi
+  exit $rc
 }
 
 #######################################
-# sets trap with '_stderr' function on EXIT and redirects stderr to FD 4
+# sets trap with '_stderr' function on EXIT and redirects stderr to FD 3
 # Globals:
 #   EXIT_STDERR
 # Examples:
@@ -461,7 +476,7 @@ stderr() {
   xtrace
   if test -t 2; then
     EXIT_STDERR="$(mktemp)"; export EXIT_STDERR
-    exec 4>&2 2>"${EXIT_STDERR}"
+    exec 3>&2 2>"${EXIT_STDERR}"
     trap _stderr EXIT
   fi
 }
@@ -495,6 +510,19 @@ success() {
     >&2 printf '%b\n' "$(greenbold ✔)${sep}$*"
     unset sep
   fi
+}
+
+#######################################
+# get value of var with eval from argument or stdin
+# Arguments:
+#   [variable]    variable name (default: stdin)
+# Returns:
+#   1 if variable is not defined
+#######################################
+value() {
+  variable="${1:-"$(cat </dev/stdin)"}"
+  set | grep -q "^${variable}=" || die Undefined Variable: "${variable}"
+  eval echo "\$${variable}"
 }
 
 #######################################
@@ -561,7 +589,7 @@ verbose() {
 #######################################
 _xtrace() {
   if test -s "${EXIT_XTRACE-}" && [ "${QQUIET-0}" -eq 0 ]; then
-    sed "s/^\(+\)\1\{0,\} /$(magentabold 'debug>')  &/g" "${EXIT_XTRACE}"
+    LC_ALL=C tr -dc '\0-\177' < "${EXIT_XTRACE}" | sed "s/^\(+\)\1\{0,\} /$(magentabold 'debug>  &')/g"
   fi
 }
 
@@ -573,14 +601,17 @@ _xtrace() {
 #   None
 # Examples:
 #   . helpers.sh && xtrace
+# Notice:
+#   If shells started with sh will not show the output separated (i.e: sudo)
 #######################################
 xtrace() {
-  if [ "${BASH_VERSION-}" ] && [ ! "${EXIT_XTRACE-}" ]; then
+  . bash4.sh
+  if [ "${BASH4}" -eq 1 ] && [ ! "${EXIT_XTRACE-}" ]; then
     EXIT_XTRACE="$(mktemp)"; export EXIT_XTRACE
     # shellcheck disable=SC3023
     exec 19>"${EXIT_XTRACE}"
     export BASH_XTRACEFD=19
-    trap _xtrace EXIT
+    trap _stderr EXIT
   fi
 }
 
