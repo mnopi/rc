@@ -16,12 +16,15 @@ teardown_file() {
 @test "$(description::file container parsing '->' failure)" {
   commands="$(cat <<EOF
 foo
+all
+alias
+alias foo
 image
 image foo
-name
-name foo
 run
 run foo
+sh
+sh foo
 EOF
 )"
   skip::if '! cmd docker'
@@ -30,7 +33,8 @@ EOF
   assert_failure
 
   while read -r args; do
-    run container "${args}"
+    # : fix to avoid passing commands stdin to "container all"
+    : | run container "${args}"
     assert_failure
   done <<< "${commands}"
 }
@@ -42,39 +46,39 @@ EOF
   assert_line run
 }
 
-@test "$(description::file container 'image|name' alpine)" {
+@test "$(description::file container 'alias|image' alpine)" {
   skip::if '! cmd docker'
 
-  for i in image name; do
+  for i in alias image; do
     run container "${i}" alpine
     assert_success
     assert_output alpine
   done
 }
 
-@test "$(description::file container 'images|names')" {
+@test "$(description::file container 'aliases|images')" {
   skip::if '! cmd docker'
 
-  for i in images names; do
+  for i in aliases images; do
     run container "${i}"
     assert_success
     assert_line alpine
   done
 }
 
-@test "$(description::file 'ls;exit | container run alpine <- ./entrypoint.sh')" {
+@test "$(description::file 'ls | container run alpine <- ./entrypoint.sh')" {
   skip::if '! cmd docker'
 
-  run sh -c 'echo "ls;exit" | container run alpine'
+  run sh -c 'echo "ls" | container run alpine'
 
   assert_success
   assert_line "${BATS_TOP_BASENAME}"
 }
 
-@test "$(description::file 'env;exit | container run alpine <- ./entrypoint.sh')" {
+@test "$(description::file 'env | container run alpine <- ./entrypoint.sh')" {
   skip::if '! cmd docker'
 
-  run sh -c 'echo "env;exit" | container run alpine'
+  run sh -c 'echo "env" | container run alpine'
 
   assert_success
   assert_line ALPINE=1
@@ -93,31 +97,31 @@ EOF
   assert_line VGA=
 }
 
-@test "$(description::file 'ls foo;exit | container run alpine -> failure <- ./entrypoint.sh')" {
+@test "$(description::file 'ls foo | container run alpine -> failure <- ./entrypoint.sh')" {
   skip::if '! cmd docker'
 
-  run sh -c 'echo "ls foo;exit" | container run alpine'
+  run sh -c 'printf "%s\n" ls foo | container run alpine'
 
   assert_failure
-  assert_output 'ls: foo: No such file or directory'
+  assert_output --partial 'ls: foo: No such file or directory'
 }
 
-@test "$(description::file 'cd ~/; ls;exit | container run alpine <- no ./entrypoint.sh')" {
+@test "$(description::file 'cd ~; ls | container run alpine <- no ./entrypoint.sh')" {
   skip::if '! cmd docker'
 
   cd ~
 
-  run sh -c 'echo "ls;exit" | container run alpine'
+  run sh -c 'echo "ls" | container run alpine'
 
   assert_success
   assert_line "${PWD##*/}"
 }
 
-@test "$(description::file 'cd $repo/dir; ls;exit | container run alpine <- no ./entrypoint.sh')" {
+@test "$(description::file 'cd $repo/dir; ls | container run alpine <- no ./entrypoint.sh')" {
   skip::if '! cmd docker'
 
   cd "${repo}/dir"
-  run sh -c 'echo "ls;exit" | container run alpine'
+  run sh -c 'echo "ls" | container run alpine'
   assert_success
   assert_line "${repo##*/}"
 }
@@ -184,12 +188,12 @@ EOF
   refute_line "${PWD##*/}"  # is color tty (-t), directory in blue
 }
 
-@test "$(description::file 'cd ~/; container --sh run alpine -c ls <- no ./entrypoint.sh')" {
+@test "$(description::file 'cd ~/; container sh alpine -c ls -1 <- no ./entrypoint.sh')" {
   skip::if '! cmd docker'
 
   cd ~
 
-  run container --sh run alpine -c ls -1
+  run container sh alpine -c ls -1
 
   assert_success
   assert_line --partial "${PWD##*/}"  # is color tty (-t), directory in blue
@@ -208,24 +212,16 @@ EOF
   refute_line "${repo##*/}"  # is color tty (-t), directory in blue
 }
 
-@test "$(description::file 'cd $repo/dir; container --sh run alpine -c ls -1 <- no ./entrypoint.sh')" {
+@test "$(description::file 'cd $repo/dir; container sh alpine -c ls -1 <- no ./entrypoint.sh')" {
   skip::if '! cmd docker'
 
   cd "${repo}/dir"
 
-  run container --sh run alpine -c ls -1
+  run container sh alpine -c ls -1
 
   assert_success
   assert_line --partial "${repo##*/}" # is color tty (-t), directory in blue
   refute_line "${repo##*/}"           # is color tty (-t), directory in blue
-}
-
-@test "$(description::file 'container --sh run alpine ls -1 -> failure <- ./entrypoint.sh')" {
-  skip::if '! cmd docker'
-
-  run container --sh run alpine ls -1
-  assert_failure
-  assert_line --partial '--sh for --entrypoint /bin/sh can not be used if'
 }
 
 @test "$(description::file 'container run bash --help <- ./entrypoint.sh')" {
@@ -239,12 +235,12 @@ EOF
   refute_line --partial 'GNU bash'
 }
 
-@test "$(description::file 'cd $repo/dir; container --sh run bash --help <- no ./entrypoint.sh')" {
+@test "$(description::file 'cd $repo/dir; container sh bash --help <- no ./entrypoint.sh')" {
   skip::if '! cmd docker'
 
   cd "${repo}/dir"
 
-  run container --sh run bash --help
+  run container sh bash --help
 
   assert_success
   assert_line --partial 'BusyBox'
@@ -282,4 +278,58 @@ EOF
   assert_success
   assert_line --partial "${BATS_TOP_BASENAME}"  # is color tty (-t), directory in blue
   refute_line "${BATS_TOP_BASENAME}"  # is color tty (-t), directory in blue
+}
+
+@test "$(description::file container all uname -s)" {
+  skip::if '! cmd docker'
+
+  run container all uname -s
+
+  assert_success
+  assert_output < <(cat <<EOF
+Linux
+Linux
+Linux
+Linux
+Linux
+Linux
+Linux
+Linux
+Linux
+Linux
+Linux
+Linux
+Linux
+Linux
+Linux
+Linux
+EOF
+)
+}
+
+@test "$(description::file container all -c 'echo $DIST_ID')" {
+  skip::if '! cmd docker'
+
+  run container all -c 'echo $DIST_ID'
+
+  assert_success
+  assert_output < <(cat <<EOF
+debian
+arch
+debian
+fedora
+debian
+alpine
+alpine
+busybox
+ubuntu
+kali
+kali
+debian
+debian
+debian
+centos
+alpine
+EOF
+)
 }

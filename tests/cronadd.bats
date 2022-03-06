@@ -1,9 +1,7 @@
 #!/usr/bin/env bats
 # shellcheck disable=SC2016
 
-setup_file() {
-  . "${BATS_TEST_DIRNAME}/helpers/load_profile.bash"
-}
+setup_file() { . "${BATS_TEST_DIRNAME}/helpers/load_profile.bash"; }
 
 setup() {
   crondel

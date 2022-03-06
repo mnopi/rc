@@ -401,7 +401,7 @@ show() (
   rc=$?
   export PROMPT_EOL_MARK=''
   warn='--warning'
-  [ "$1" != "${warn}" ] || { rc="${warn}"; shift; }
+  [ "${1-}" != "${warn}" ] || { rc="${warn}"; shift; }
   case $rc in
     "${warn}") rc=0; yellowbold ! ;;
     0) greenbold ✔ ;;

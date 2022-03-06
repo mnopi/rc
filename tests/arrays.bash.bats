@@ -1,9 +1,7 @@
 #!/usr/bin/env bats
 # shellcheck disable=SC2153,SC2034
 
-setup_file() {
-  . "${BATS_TEST_DIRNAME}/helpers/load_profile.bash"
-}
+setup_file() { . "${BATS_TEST_DIRNAME}/helpers/load_profile.bash"; }
 
 setup() {
   . arrays.bash

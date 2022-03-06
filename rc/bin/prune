@@ -1,0 +1,13 @@
+#!/bin/sh
+
+#######################################
+# remove unused docker data (containers, dangling images and volumes ), --all to for all unused images
+# Arguments:
+#  [--all]
+#######################################
+main() {
+  cmd docker || exit
+  docker system prune --volumes --force "$@"
+}
+
+main "$@"

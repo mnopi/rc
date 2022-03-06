@@ -18,7 +18,7 @@ main () {
   manpaths="$(mktemp)"
   infopaths="$(mktemp)"
 
-  command -p cat "${RC_PATHS_D}"/* /etc/paths.d/* 2>/dev/null | command -p awk 'NF' \
+  command -p cat "${RC_PATHS_D}"/* /etc/paths.d/* 2>/dev/null | command awk 'NF' \
     | while read -r line || [ -n "${line-}" ]; do
     line="$(eval echo "${line}")"
     if [ "${line##*/}" = 'bin' ]; then

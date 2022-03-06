@@ -30,6 +30,7 @@ not() {
   done < "$1"
   mv "${tmp1}" "$1"
 }
+
 #######################################
 # writes crontab to file
 # Arguments:

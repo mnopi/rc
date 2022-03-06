@@ -324,15 +324,15 @@ pm_install() {
 #######################################
 system() {
   _strip() { echo "${value}" | sed 's/^"//;s/"$//'; }
-  HOST="$(command -p hostname -s 2>/dev/null || command -p cut -d '.' -f 1 /etc/hostname)"
-  UNAME="$(command -p uname)"
+  HOST="$(command -p hostname -s 2>/dev/null || command cut -d '.' -f 1 /etc/hostname)"
+  UNAME="$(command uname)"
   if [ "${UNAME}" = 'Darwin' ]; then
     BASH_SILENCE_DEPRECATION_WARNING=1
     CLT='/Library/Developer/CommandLineTools'
     DIST_ID="$(command -p sw_vers -ProductName)"
     DIST_VERSION="$(command -p sw_vers -ProductVersion)"
       # shellcheck disable=SC2016
-      case "$(echo "${DIST_VERSION}" | command -p awk -F. '{ print $1 $2 }')" in
+      case "$(echo "${DIST_VERSION}" | command awk -F. '{ print $1 $2 }')" in
       1013) DIST_CODENAME='High Sierra' ;;
       1014) DIST_CODENAME='Mojave' ;;
       1015) DIST_CODENAME='Catalina' ;;
@@ -358,6 +358,7 @@ system() {
       done < '/etc/os-release'
     else
       BUSYBOX=1; PM=''
+      DIST_ID='busybox'
     fi
     unset _strip name value
     SHARE_COMPLETIONS_D='/usr/share/bash-completion/completions'
@@ -365,7 +366,7 @@ system() {
     HOMEBREW_PREFIX="${LINUXBREW}"
     MACOS=0
     [ -x /usr/bin/sudo ] || SUDOC=
-    VGA="$(lspci 2>/dev/null | awk '/VGA/ { print 1 }')"
+    VGA="$(command lspci 2>/dev/null | command awk '/VGA/ { print 1 }')"
   fi
 
   homebrew; unset -f homebrew
