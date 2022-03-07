@@ -2,3 +2,7 @@
 	path = bats.bash
 	url = https://github.com/j5pu/bats.bash.git
 	branch = main
+[submodule "bats"]
+	path = bats
+	url = https://github.com/j5pu/bats.git
+	branch = main
