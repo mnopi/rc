@@ -8,6 +8,7 @@
 #  1 if any of the command does not exist
 #######################################
 cmd() {
+  : "${1?}"
   if [ $# -eq 1 ]; then
     type "$1" >/dev/null 2>&1
   else
@@ -17,5 +18,7 @@ cmd() {
   fi
 }
 
-[ "${0##*/}" != 'cmd' ] || { set -eu; cmd "$@"; }
+case "${0##*/}" in
+  cmd|cmd.sh) set -eu; cmd "$@" ;;
+esac
 
