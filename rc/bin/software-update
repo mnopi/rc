@@ -1,0 +1,37 @@
+#!/bin/bash
+
+STDERR=1 . helper.sh
+
+#######################################
+# labels to be updated
+# Globals:
+#   MACOS
+# Arguments:
+#   None
+#######################################
+labels () {
+  labels="$(sudo softwareupdate -l | awk -v p='.* Label: ' '$0 ~ p { gsub(p, ""); print $0 }')"
+  [ "${labels-}" ] && echo "${labels}"
+}
+
+#######################################
+# updates software
+# Globals:
+#   MACOS
+# Arguments:
+#   None
+#######################################
+main() {
+  local i
+  if [ "${MACOS-1}" -eq 1 ]; then
+
+    while labels; do
+      while read -r i; do
+        >&2 sudo softwareupdate --install "${i}"
+        show Software Update: "${i}"
+      done <<<"${labels}"
+    done
+  fi
+}
+
+main "$@"
