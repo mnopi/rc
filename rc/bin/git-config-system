@@ -5,11 +5,9 @@
 # System wide git config
 cmd git || exit 0
 
-#. helper.sh && stderr
-# . helper.sh && stderr
+STDERR=1 . helper.sh
 
 branch='main'
-
 remote='origin'
 template='/etc/git/template'; sudo mkdir -p "${template}"
 
@@ -31,6 +29,33 @@ aliases () {
     rev-parse --show-toplevel \
     "$(git basename-if-file "${1-}")" | grep -m 1 "^.*" #'
   update alias.url 'config --get remote.origin.url'
+}
+
+credential() {
+  # TODO: cask broken (tap "microsoft/git", cask "git-credential-manager-core")
+  file='--system'
+  gcm=/usr/local/share/gcm-core/git-credential-manager-core
+
+  if [ ! "${GITHUB_RUN_ID-}" ]; then
+    if test -f /etc/ssh/id_rsa || test -f ~/.ssh/id_rsa; then
+      update url.ssh://git@github.com/.insteadOf https://github.com/
+    fi
+    if test -x "${gcm}"; then
+      update credential.helper "${gcm}"
+      update credential."https://dev.azure.com".useHttpPath true
+    elif [ "$(git config --system credential.helper)" = "${gcm}" ]; then
+      sudo git config --system --unset-all credential.helper && show --warning Git Config Removed: credential.helper
+      sudo git config --system --unset-all credential."https://dev.azure.com".useHttpPath \
+        && show --warning Git Config Removed: credential."https://dev.azure.com".useHttpPath
+    fi
+    if [ "${MACOS}" -eq 1 ]; then
+      update credential.credentialStore keychain
+    elif [ "${VGA}" -eq 1 ]; then
+      update credential.credentialStore secretservice
+    else
+      update credential.credentialStore plaintext
+    fi
+  fi
 }
 
 default () {
@@ -78,8 +103,6 @@ default () {
   update user.email root@example.com
   update user.username root
 
-  [ "${GITHUB_RUN_ID-}" ] || { [ "${CONTAINER-0}" -eq 1 ] && [ "${TOKEN-}" ]; }\
-    || update url.ssh://git@github.com/.insteadOf https://github.com/
 }
 
 template () {
@@ -109,10 +132,12 @@ main() {
     case "${arg}" in
       --force)
         sudo rm -rf /etc/gitconfig "${template}"/*
-        show --warning Removed: /etc/gitconfig "${template}"/*
+        show --warning Git Config Removed: /etc/gitconfig "${template}"/*
         ;;
     esac
   done
+
+  credential
   default
   template
   aliases

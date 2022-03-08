@@ -473,7 +473,7 @@ _strict() {
     for ((i=0; i < ${#FUNCNAME[@]} - 1; i++)); do
       funcname="$(green "${FUNCNAME[$i]}")"
       [ "$i" -ne "0" ] || funcname="${last}"
-      echo -e "   ${BASH_SOURCE[$i + 1]}:${BASH_LINENO[$i]} ${funcname}"
+      echo "   ${BASH_SOURCE[$i + 1]}:${BASH_LINENO[$i]} ${funcname}"
     done
   fi
   exit "${code}"
