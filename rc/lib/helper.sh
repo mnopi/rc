@@ -3,11 +3,6 @@
 #
 # helper shell library (sets bash strict mode by default).
 
-# File with commands to be executed to restore shell opts with '. "${SETOPTS-}"'
-#
-export SETOPTS
-[ "${SETOPTS-}" ] || SETOPTS="$(mktemp)"
-
 # <html><h2>Bash Strict Mode</h2>
 # <p><strong><code>$STRICT</code></strong> set to 0 when sourcing helper.sh to not set strict mode (Default: 1).</p>
 # <h3>Examples</h3>
@@ -24,35 +19,14 @@ export SETOPTS
 # </ul>
 # </html>
 STRICT="${STRICT:-1}"
-if [ "${STRICT-1}" -eq 1 ] && [ ! "${PS1-}" ]; then
-  echo "set +eu" > "${SETOPTS}"
-  set -o errexit  # Exit when simple command fails               'set -e'
-  set -o nounset # Trigger error when expanding unset variables  'set -u'
-
-  if [ "${BASH_VERSION-}" ]; then
-    # SHELLOPTS exported for BASH so that new shells inherit '-x'
-    export SHELLOPTS
-    # shellcheck disable=SC3040
-    set -o pipefail
-    echo "set +o pipefail" >> "${SETOPTS}"
-    # shellcheck disable=SC3040
-    set -o errtrace  # Exit on error inside any functions or subshells.
-    echo "set +o errtrace" >> "${SETOPTS}"
-    # shellcheck disable=SC3028,SC3054
-    if [ "${BASH_VERSINFO[0]}" -gt 4 ]; then
-      shopt -s inherit_errexit   # command substitution inherits the value of the errexit option
-      echo "shopt -u inherit_errexit" >> "${SETOPTS}"
-    fi
-  fi
-fi
 
 # Sets shell xtrace 'set -x' when 1 (default: 0)
+#
 XTRACE="${XTRACE-0}"
-[ "${XTRACE-0}" -eq 0 ] || set -x
 
 # Sets shell verbose 'set -x' when 1 (default: 0)
+#
 XVERBOSE="${XVERBOSE-0}"
-[ "${XVERBOSE-0}" -eq 0 ] || set -v
 
 #######################################
 # show info message with > symbol in grey bold if DEBUG is set to 1, unless QUIET is set to 1
@@ -398,18 +372,24 @@ psargs() {
 #   based on previous exit code
 #######################################
 show() (
-  rc=$?
+  ret=$?
   export PROMPT_EOL_MARK=''
-  warn='--warning'
-  [ "${1-}" != "${warn}" ] || { rc="${warn}"; shift; }
-  case $rc in
-    "${warn}") rc=0; yellowbold ! ;;
-    0) greenbold ✔ ;;
-    *) redbold ✘ ;;
+  case "${1-}" in
+    --error) redbold "=>"; ret="${1}"; shift ;;
+    --completed) greenbold "=>"; ret="${1}"; shift ;;
+    --notice) magentabold "=>"; ret="${1}"; shift ;;
+    --start) bluebold "=>"; ret="${1}"; shift ;;
+    --warning) yellowbold "!"; ret="${1}"; shift ;;
+  esac
+
+  case $ret in
+    --*) ret=0 ;;
+    0) greenbold "✔" ;;
+    *) redbold "✘" ;;
   esac
 
   [ $# -eq 0 ] || printf '%s\n' " $*"
-  exit $rc
+  exit $ret
 )
 
 #######################################
@@ -425,9 +405,8 @@ _stderr() {
   # set -u err not caught in signal EXIT.
   # if lsof is posix then use: stderr="$(lsof -d2 | grep $$ | awk '{ print $NF }')"
   rc=$?
-  ! echo $- | grep -q -E 'x|v' 2>/dev/null || was_debug=1
   set +xv
-
+  exec 2>&3
   # Quiets any stderr/$XTRACE/$XVERBOSE when 1 (default: 0)
   #
   QQUIET="${QQUIET-0}"
@@ -438,25 +417,16 @@ _stderr() {
       was_debug=1
     fi
 
-    if [ $rc -eq 0 ] && grep -qE ': unbound variable$|: parameter null or not set' "${EXIT_STDERR}"; then
+    if [ $rc -eq 0 ] && grep -q ': unbound variable$|: parameter null or not set' "${EXIT_STDERR}"; then
       rc=1
     fi
 
     if { [ "${was_debug-0}" -eq 1 ] || [ $rc -ne 0 ]; } && [ "${QQUIET-0}" -eq 0 ]; then
       echo
-      cyanbold '## EXIT_STDERR'
-      echo
       # https://unix.stackexchange.com/questions/475548/removing-all-non-ascii-characters-from-a-workflow-file
       LC_ALL=C tr -dc '\0-\177' < "${EXIT_STDERR}" | sed "s/^\(+\)\1\{0,\} /$(magentabold 'debug>  &')/g; \
         /^.*\[.*debug>/!s/^/$(redbold 'stderr>') /g"
     fi
-
-  fi
-  if test -s "${EXIT_XTRACE-}" && [ "${QQUIET-0}" -eq 0 ]; then
-    echo
-    cyanbold  '## EXIT_XTRACE'
-    echo
-    LC_ALL=C tr -dc '\0-\177' < "${EXIT_XTRACE}" | sed "s/^\(+\)\1\{0,\} /$(magentabold 'debug>  &')/g"
   fi
   exit $rc
 }
@@ -478,6 +448,72 @@ stderr() {
     EXIT_STDERR="$(mktemp)"; export EXIT_STDERR
     exec 3>&2 2>"${EXIT_STDERR}"
     trap _stderr EXIT
+  fi
+}
+
+#######################################
+# Bash traceback for strict
+# Globals:
+#   BASH_COMMAND
+#   BASH_LINENO
+#   BASH_SOURCE
+#   FUNCNAME
+#   i
+# Arguments:
+#  None
+#######################################
+# shellcheck disable=SC3043,SC3028,SC3054,SC3005,SC3018,SC3037
+_strict() {
+  local code=$? funcname last
+  #set +x
+  last="$(magentabold "${BASH_COMMAND}")"
+  echo "$(show --error) ${BASH_SOURCE[1]}:${BASH_LINENO[0]} ${last} ($(redbold $code))"
+  if [ ${#FUNCNAME[@]} -gt 2 ]; then
+    echo "   ${BASH_SOURCE[1]} Traceback (most recent call first):"
+    for ((i=0; i < ${#FUNCNAME[@]} - 1; i++)); do
+      funcname="$(green "${FUNCNAME[$i]}")"
+      [ "$i" -ne "0" ] || funcname="${last}"
+      echo -e "   ${BASH_SOURCE[$i + 1]}:${BASH_LINENO[$i]} ${funcname}"
+    done
+  fi
+  exit "${code}"
+}
+
+#######################################
+# sets or unsets strict mode
+# https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html
+# https://www.gnu.org/software/bash/manual/html_node/The-Shopt-Builtin.html
+# Globals:
+#   BASH4
+#   SHELLOPTS                   Bash sh options (exported for BASH so that new shells inherit '-x', etc.)
+#                               exporting SHELLOPTS does not work with brew.
+#   POSIXLY_CORRECT             Bash turns off set -e in subshells unless it's in POSIX mode (set -o posix or
+#                               have POSIXLY_CORRECT in the environment when bash starts
+# Arguments:
+#   [unset]                     unsets strict mode
+# Posix:
+#   set -o errexit              Exit when simple command fails ('set -e').
+#
+#   set -o nounset              Trigger error when expanding unset variables ('set -u').
+# Bash:
+#   set -o errtrace             Any trap on ERR is inherited by shell functions, command substitutions,
+#                               and commands executed in a subshell environment.
+#                               The ERR trap is normally not inherited in such case ('set -E').
+#   set -o pipefail             Exit on Error pipe error.
+#   shopt -u inherit_errexit    Command substitution inherits the value of the errexit option.
+#######################################
+strict() {
+  [ "${1-}" = 'unset' ] || { _set=-o; _opt=-s; }
+  set "${_set:-+o}" errexit nounset
+  if [ "${BASH_VERSION-}" ]; then
+    if [ "${_set- }" ]; then
+      trap _strict "${TRAP_SIGNAL}"
+    fi
+    set "${_set:-+o}" errtrace
+    set "${_set:-+o}" pipefail
+    if [ "${BASH4}" -eq 1 ]; then
+      shopt "${_opt:--u}" inherit_errexit
+    fi
   fi
 }
 
@@ -580,7 +616,7 @@ verbose() {
 }
 
 #######################################
-# trap set by 'xtrace' function to show FD 19 on EXIT for bash
+# trap set by 'xtrace'
 # Globals:
 #   EXIT_XTRACE
 #   QQUIET
@@ -588,14 +624,26 @@ verbose() {
 #   None
 #######################################
 _xtrace() {
+  # set -u err not caught in signal EXIT.
+  # if lsof is posix then use: stderr="$(lsof -d2 | grep $$ | awk '{ print $NF }')"
+  rc=$?
+  #set +xv
+
+  # Quiets any stderr/$XTRACE/$XVERBOSE when 1 (default: 0)
+  #
+  QQUIET="${QQUIET-0}"
+
   if test -s "${EXIT_XTRACE-}" && [ "${QQUIET-0}" -eq 0 ]; then
+    echo
     LC_ALL=C tr -dc '\0-\177' < "${EXIT_XTRACE}" | sed "s/^\(+\)\1\{0,\} /$(magentabold 'debug>  &')/g"
   fi
+  exit $rc
 }
 
 #######################################
 # sets trap with '_xtrace' function on EXIT and redirects 'set -x' to FD 19 for BASH
 # Globals:
+#   BASH4
 #   EXIT_XTRACE
 # Arguments:
 #   None
@@ -605,13 +653,12 @@ _xtrace() {
 #   If shells started with sh will not show the output separated (i.e: sudo)
 #######################################
 xtrace() {
-  . bash4.sh
   if [ "${BASH4}" -eq 1 ] && [ ! "${EXIT_XTRACE-}" ]; then
     EXIT_XTRACE="$(mktemp)"; export EXIT_XTRACE
     # shellcheck disable=SC3023
     exec 19>"${EXIT_XTRACE}"
     export BASH_XTRACEFD=19
-    trap _stderr EXIT
+    trap _xtrace EXIT
   fi
 }
 
@@ -680,7 +727,13 @@ warning() {
   fi
 }
 
+#######################################
+# Strict mode and debugging
+. bash4.sh || return 1 2>/dev/null || exit 1
+[ "${STRICT-1}" -eq 0 ] || [ "${PS1-}" ] || strict
 [ "${STDERR-0}" -eq 0 ] || stderr
+[ "${XTRACE-0}" -eq 0 ] || { set -x; xtrace; export SHELLOPTS; }
+[ "${XVERBOSE-0}" -eq 0 ] || { set -v; export SHELLOPTS; }
 
 ####################################### Executed
 #

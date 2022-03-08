@@ -256,6 +256,7 @@ export VGA
 dist_id() {
   case "${DIST_ID}" in
     alpine)
+      # TODO: check if nix is really alpine !!!
       ALPINE_LIKE=1; DIST_ID_LIKE="${DIST_ID}"
       if [ -r '/etc/nix' ]; then NIXOS=1; PM='nix-env'; else ALPINE=1; PM='apk'; fi
       ;;

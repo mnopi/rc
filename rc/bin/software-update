@@ -23,12 +23,12 @@ labels () {
 #######################################
 main() {
   local i
-  if [ "${MACOS-1}" -eq 1 ]; then
-
+  if [ "${MACOS}" -eq 1 ]; then
     while labels; do
       while read -r i; do
+        show --start Software Update: "${i}"
         >&2 sudo softwareupdate --install "${i}"
-        show Software Update: "${i}"
+        show --completed Software Update: "${i}"
       done <<<"${labels}"
     done
   fi

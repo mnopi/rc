@@ -1,0 +1,42 @@
+#!/bin/bash
+
+STDERR=1 . helper.sh
+
+#######################################
+# install brew and its dependencies
+# Arguments:
+#   None
+# Returns:
+#   1 if dependencies can not be met or brew installer errors
+#######################################
+main () {
+  if ! test -x "${HOMEBREW_PREFIX}/bin/brew"; then
+    local stdout
+    stdout="$(mktemp)"
+    case "${DIST_ID}" in
+      alpine) : ;;
+      arch) : ;;
+      centos) : ;;
+      debian|kali|ubuntu) : ;;
+      fedora) : ;;
+      macOS) install-clt ;;
+    esac
+
+    show --start Brew: Installing
+
+    if NONINTERACTIVE=1 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" \
+      > "${stdout}"; then
+      show --completed Brew: Installed
+    else
+      show Brew: Not Installed
+      if test -s "${stdout}"; then
+        echo
+        cyanbold  '## EXIT_STDOUT'
+        echo
+        cat "${stdout}"
+      fi
+    fi
+  fi
+}
+
+main "$@"

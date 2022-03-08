@@ -1,20 +1,6 @@
 # shellcheck shell=bash
 
 #######################################
-# Exit on Error Inside any Functions or Subshells.
-# https://www.gnu.org/software/bash/manual/html_node/The-Shopt-Builtin.html
-#######################################
-set -o errtrace
-
-if [ "${BASH4}" -eq 1 ]; then
-  #######################################
-  # Inherit 'errexit' Value in Command Substitution
-  # https://www.gnu.org/software/bash/manual/html_node/The-Shopt-Builtin.html
-  #######################################
-  shopt -s inherit_errexit
-fi
-
-#######################################
 # Parallel ENV
 # https://www.gnu.org/software/parallel/env_parallel.html
 #######################################

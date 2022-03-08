@@ -6,7 +6,7 @@
 umask 002
 
 # Check to only run once
-if [ "${RC_COMPLETIONS_D-}" != "${RC?Source it from 'profile' or set \$RC}/completions.d" ] ; then
+if [ "${RC_D-}" != "${RC?Source it from 'profile' or set \$RC to be sourced from 'profile.sh'}/rc.d" ] ; then
   # RC completions: sourced by $RC_PROFILE at the end
   #
   export RC_COMPLETIONS_D="${RC}/completions.d"
@@ -35,7 +35,7 @@ if [ "${RC_COMPLETIONS_D-}" != "${RC?Source it from 'profile' or set \$RC}/compl
   eval "$("${RC}/bin/pathsd")"
 fi
 
-. cmd
+. cmd.sh
 . bash4.sh
 
 for i in "${RC_D}"/*.sh; do

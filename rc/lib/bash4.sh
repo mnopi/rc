@@ -5,9 +5,12 @@
 #
 unset BASH4
 
+# Default trap signal, EXIT for posix or ERR for BASH
+#
+TRAP_SIGNAL=EXIT
 if [ "${BASH_VERSINFO-}" ]; then
   BASH4=0
-
+  TRAP_SIGNAL=ERR
   if [ "${BASH_VERSINFO[0]}" -ge 4 ]; then
     BASH4=1
   fi
