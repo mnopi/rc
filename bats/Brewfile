@@ -1,5 +1,0 @@
-tap "bats-core/bats-core"
-brew "bats-core"
-brew "bats-core/bats-core/bats-assert"
-brew "bats-core/bats-core/bats-file"
-brew "bats-core/bats-core/bats-support"
