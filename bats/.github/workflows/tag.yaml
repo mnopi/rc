@@ -1,0 +1,17 @@
+name: tag
+
+on:
+  push:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+env:
+  GITHUB_TOKEN: ${{ secrets.TOKEN }}
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - id: tag
+        uses: j5pu/actions/tag@main
