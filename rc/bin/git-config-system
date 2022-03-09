@@ -1,35 +1,35 @@
 #!/bin/sh
 # shellcheck disable=SC2016,SC2034
 
+: git config
 #
 # System wide git config
+
+
 cmd git || exit 0
 
 STDERR=1 . helper.sh
 
+script="$(green "${0##*/}")"
+
+OPTIONS_SPEC="$(cat <<EOF
+${script}
+${script} [$(magentabold "--force")]
+
+${script} - Updates git system config and git templates
+--
+h,help    Show help and exit.
+
+ Actions:
+force!  Remove gitconfig and templates before updating.
+EOF
+)"
+
+eval "$(echo "$OPTIONS_SPEC" | git rev-parse --parseopt -- "$@" || echo exit $?)"
+
 branch='main'
 remote='origin'
 template='/etc/git/template'; sudo mkdir -p "${template}"
-
-# TODO: test de los alias.
-aliases () {
-  file='--system'
-  update alias.basename '! : git rev-parse; git super | grep -m 1 "^.*" | xargs basename'
-  update alias.basename-if-file '! if [ -d "${1:-.}" ]; then echo . ; else basename "${1:-.}"; fi #'
-  update alias.dirname-if-file '! if [ -d "${1:-.}" ]; then echo "${1:-.}"; else dirname "${1:-.}"; fi #'
-  update alias.is '! git top >/dev/null 2>&1 #'
-  update alias.name '! : git config; git url | xargs -I {} basename {} .git #'
-  update alias.super '! : git rev-parse; git ${1:+-C "$(git dirname-if-file "$1")"} \
-    rev-parse --show-superproject-working-tree --show-toplevel \
-    "$(git basename-if-file "${1-}")" | grep -m 1 "^.*" #'
-  update alias.superproject '! : git rev-parse; git ${1:+-C "$(git dirname-if-file "$1")"} \
-    rev-parse --show-superproject-working-tree \
-    "$(git basename-if-file "${1-}")" | grep -m 1 "^.*" | xargs realpath | grep -m 1 "^.*" #'
-  update alias.top '! : git rev-parse; git ${1:+-C "$(git dirname-if-file "$1")"} \
-    rev-parse --show-toplevel \
-    "$(git basename-if-file "${1-}")" | grep -m 1 "^.*" #'
-  update alias.url 'config --get remote.origin.url'
-}
 
 credential() {
   # TODO: cask broken (tap "microsoft/git", cask "git-credential-manager-core")
@@ -44,9 +44,10 @@ credential() {
       update credential.helper "${gcm}"
       update credential."https://dev.azure.com".useHttpPath true
     elif [ "$(git config --system credential.helper)" = "${gcm}" ]; then
-      sudo git config --system --unset-all credential.helper && show --warning Git Config Removed: credential.helper
-      sudo git config --system --unset-all credential."https://dev.azure.com".useHttpPath \
-        && show --warning Git Config Removed: credential."https://dev.azure.com".useHttpPath
+      sudo git config --system --unset-all credential.helper && \
+        show --warning GIT Config System: Removed "$(magentabold "=>")" credential.helper
+      sudo git config --system --unset-all credential."https://dev.azure.com".useHttpPath && \
+        show --warning GIT Config System: Removed "$(magentabold "=>")" credential."https://dev.azure.com".useHttpPath
     fi
     if [ "${MACOS}" -eq 1 ]; then
       update credential.credentialStore keychain
@@ -106,6 +107,7 @@ default () {
 }
 
 template () {
+  msg="Template Config"
   file="--file=${template}/config"
   update "branch.${branch}.remote" "${remote}"
   update "branch.${branch}.merge" "refs/heads/${branch}"
@@ -116,14 +118,14 @@ template () {
   update core.precomposeunicode true
   update core.repositoryformatversion 0
   [ -f  "${template}/HEAD" ] || { echo "ref: refs/heads/${branch}" | sudo tee "${template}/HEAD" >/dev/null \
-    && show Updated: "${template}/HEAD"; }
+    && show GIT Template File: "${template}/HEAD"; }
 }
 
 update () {
   command="sudo git config ${file} $1"
   previous="$(${command} || true)"
   if [ "${previous}" != "$2" ]; then
-    ${command} "$2" && show GIT Config: "$1": "${previous}" "=>" "$2"
+    ${command} "$2" && show GIT "${msg:-System Config}": "$1": "${previous}" "$(magentabold "=>")" "$2"
   fi
 }
 
@@ -132,15 +134,15 @@ main() {
     case "${arg}" in
       --force)
         sudo rm -rf /etc/gitconfig "${template}"/*
-        show --warning Git Config Removed: /etc/gitconfig "${template}"/*
+        show --notice GIT Config System: Removed
         ;;
+      --) : ;;
     esac
   done
 
   credential
   default
   template
-  aliases
 }
 
 main "$@"

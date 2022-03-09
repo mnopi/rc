@@ -124,8 +124,7 @@ main() {
         # col -bx because man adds something (col -b) works.
         if man "${cmd}" 2>/dev/null | col -b > "${tmp}" && [ -s "${tmp}" ]; then
           if ! rv="$("${func}")" || [ ! "${rv-}" ]; then
-            # shellcheck source=./helper.sh
-            . "$(dirname "$0")/helper.sh"
+            . helper.sh
             false || die Value Not Found: "${func}", for: "${cmd}"
           elif [ "${rv-}" ]; then
             echo "${rv}"
@@ -133,13 +132,11 @@ main() {
             [ "${SHLVL-1}" -eq 2 ] || return $rc 2>/dev/null || exit $rc
           fi
         else
-          # shellcheck source=./helper.sh
-          . "$(dirname "$0")/helper.sh"
+          . helper.sh
           false || die Man Page Not Found: "${cmd}"
         fi
       else
-        # shellcheck source=./helper.sh
-        . "$(dirname "$0")/helper.sh"
+        . helper.sh
         false || die Command Not Found: man
       fi
     fi

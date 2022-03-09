@@ -1,0 +1,29 @@
+#!/bin/sh
+
+: git rev-parse
+
+set -eu
+
+script="$(green "${0##*/}")"
+
+OPTIONS_SPEC="$(cat <<EOF
+${script}
+${script} [$(magentabold "<path>")]
+
+${script} - Absolute physical path of dirname if $(magentabold "<path>") is a file or for the argument \
+(default: $(magentabold "cwd"))
+--
+h,help    Show help and exit.
+EOF
+)"
+
+eval "$(echo "$OPTIONS_SPEC" | git rev-parse --parseopt -- "$@" || echo exit $?)"
+shift
+
+if [ "${1-}" ] && [ -d "${1:-.}" ]; then
+  cd "${1:-.}"
+elif [ "${1-}" ]; then
+  cd "$(dirname "$1")"
+fi
+
+pwd -P

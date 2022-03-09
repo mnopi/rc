@@ -9,4 +9,5 @@ set -eu
 #######################################
 main() { echo "$1" | tr '[:upper:]' '[:lower:]'; }
 
-main "${1:-"$(cat </dev/stdin)"}"
+[ $# -ne 0 ] || test -t 0 || set -- "$(cat </dev/stdin)"
+main "$@"

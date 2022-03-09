@@ -1,0 +1,145 @@
+#!/bin/sh
+
+# https://github.com/git/git/blob/master/git-sh-setup.sh
+
+# Examples:
+#   https://opensource.apple.com/source/Git/Git-58/src/git/git-am.sh.auto.html
+#   https://github.com/git/git/blob/master/git-bisect.sh
+#   https://github.com/git/git/blob/master/git-instaweb.sh
+#   https://github.com/git/git/blob/master/git-request-pull.sh
+#   https://github.com/git/git/blob/master/git-quiltimport.sh
+#   https://chromium.googlesource.com/external/msysgit/git/+/fb6aa9a54fa455d8e8b9e3971b1738afabab2679/git-rebase.sh
+#   https://github.com/git/git/blob/master/git-request-pull.sh
+#   https://github.com/git/git/blob/master/git-submodule.sh
+#   https://github.com/git/git/blob/master/contrib/git-resurrect.sh
+
+
+
+# Parts (before -- and after --):
+#   Before -- usage
+#   After -- describe the options
+#
+# stuck form when a command-line option takes an argument is the prefered:
+#   git foo -oArg instead of git foo -o Arg, git foo --long-opt=Arg instad of git foo --long-opt Arg
+#   (--stuck-long in 'git rev-parse --parseopts' to be able to unambiguisly parse the optional argument)
+#   or (set $OPTIONS_STUCKLONG before '. git-sh-setup.sh', for rev-parse to be done with --stuck-long)
+#
+# Format for each line of options:
+#   <opt-spec><flags>*<arg-hint>? SP+ help LF
+#
+#   <opt-spec>: before comma is short option char, after comma long option name. One is required. Example: h,help or dry-run or f
+#   <flags>: *, =, ? or !
+#       = takes and argument
+#       ? takes an optional argument
+#         An option that takes optional option-argument must be written in the stuck form.
+#         (--stuck-long in 'git rev-parse --parseopts' to be able to unambiguisly parse the optional argument)
+#         or (set $OPTIONS_STUCKLONG before '. git-sh-setup.sh', for rev-parse to be done with --stuck-long)
+#       * this option should not be listed in the usage generated for the -h argument. It’s shown for --help-all as documented in gitcli(7)
+#       ! to not make the corresponding negated long option available.
+#   <arg-hint>:
+#       if specified, is used as a name of the argument in the help output, for options that take arguments.
+#       <arg-hint> is terminated by the first whitespace. It is customary to use a dash to separate words in a
+#       multi-word argument hint.
+#       The remainder of the line, after stripping the spaces, is used as the help associated to the option.
+#       Blank lines are ignored, and lines that don’t match this specification are used as option group headers
+#       (start the line with a space to create such lines on purpose).
+
+
+OPTIONS_SPEC="\
+git-parse [<options>] <args>...
+
+git-parse does foo and bar!
+--
+h,help    show the help ('git parse --help' only if manual page, git-parse --help will show the message)
+
+foo       some nifty option --foo
+bar=      some cool option --bar with an argument
+baz=arg   another cool option --baz with a named argument
+qux?path  qux may take a path argument but has meaning by itself
+
+ Actions:
+continue!          continue
+abort!             abort and check out the original branch
+skip!              skip current patch and continue
+
+  An option group Header
+C?        option C with an optional argument"
+
+OPTIONS_KEEPDASHDASH=
+OPTIONS_STUCKLONG=
+USAGE="fo foo"; LONG_USAGE="bla bla ..." # if OPTIONS_SPEC not set.
+SUBDIRECTORY_OK=1 . "$(git --exec-path)"/git-sh-setup  # split the command name and does not parse help unless OPTIONS_SPEC is set
+echo "$@"
+
+eval "$(echo "$OPTIONS_SPEC" | git rev-parse --parseopt -- "$@" || echo exit $?)"
+echo "$@"
+
+Examples="
+$ git parse  # if not options
+--
+$ git-parse  # if not options
+--
+
+$ git parse -h
+$ git-parse -h
+
+$ mkdir tmp
+$ git -C tmp parse
+$ git-parse -C tmp
+-C tmp
+
+$ git -C a parse hola -f
+error: unknown switch `f'
+$ git-parse -C a hola -f
+error: unknown switch `f'
+
+$ git-parse -C a hola --foo --bar
+error: option `bar' requires a value
+
+$ git-parse -C a hola --foo --bar a
+-C a hola --foo --bar a
+
+# OPTIONS_STUCKLONG=1
+$ git-parse -C a hola --foo --bar a
+-C --foo --bar=a -- a hola
+
+# OPTIONS_STUCKLONG=1
+$ git-parse -Ca hola --foo --bar=a
+-Ca --foo --bar=a -- hola
+
+# OPTIONS_KEEPDASHDASH=1
+# OPTIONS_STUCKLONG=1
+$ git-parse -C a hola --foo --bar a -- a
+-C --foo --bar=a -- a hola -- a
+
+# OPTIONS_KEEPDASHDASH=1
+# OPTIONS_STUCKLONG=1
+$ git-parse -Ca hola --foo --bar=a -- a
+-Ca --foo --bar=a -- hola -- a
+
+# --stop-at-non-option (not available with variable in . git-sh-setup
+$ git-parse -Ca stop --foo --bar -- a  # stops parsing in 'stop', so --bar error is not shown
+-Ca stop --foo --bar=a -- a
+
+# OPTIONS_STUCKLONG=1
+$ git-parse -Ca hola --foo --bar a --qux=./a --no-foo
+-Ca hola --foo --bar a --qux=./a --no-foo
+
+# change spec of foo not negated: foo!       some nifty option --foo
+$ git-parse -Ca hola --foo --bar a --qux=./a --no-foo
+error: unknown option `no-foo'
+
+# OPTIONS_STUCKLONG=1
+$ git-parse hola --foo --bar a --qux=./a --no-foo -Ca  # stops in -Ca
+--foo --bar a --qux ./a --no-foo -C a -- hola
+
+# OPTIONS_STUCKLONG=1
+$ git-parse hola --foo --bar a --qux=./a --no-foo -Ca a --foo
+--foo --bar a --qux ./a --no-foo -C a --foo -- hola a
+
+# OPTIONS_KEEPDASHDASH=1
+# OPTIONS_STUCKLONG=1
+$ git-parse --foo
+--foo --
+"
+

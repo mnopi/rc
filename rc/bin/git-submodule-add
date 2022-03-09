@@ -1,0 +1,35 @@
+#!/bin/sh
+
+: git submodule
+
+# TODO: Aqui lo dejo sacar la default branch de remote y pasar los aliases y el git all
+#   etc.
+#   y el commands.
+
+set -eu
+
+script="$(green "${0##*/}")"
+
+OPTIONS_SPEC="$(cat <<EOF
+${script} $(magentabold "<submodule name>")
+${script} $(magentabold "<submodule name>") --absolute
+
+${script} - Absolute or relative path of submodule from .gitmodules
+--
+h,help    Show help and exit.
+
+absolute!    Add git path to relative directory.
+EOF
+)"
+
+eval "$(echo "${OPTIONS_SPEC}" | git rev-parse --parseopt -- "$@" || echo exit $?)"
+
+for arg; do
+  case "${arg}" in
+    --absolute) top="$(git super)" ;;
+    --) : ;;
+    *) name="${arg}"
+  esac
+done
+
+path="$(git config -f .gitmodules submodule."${name}".path)" && echo "${top:+${top}/}${path}"

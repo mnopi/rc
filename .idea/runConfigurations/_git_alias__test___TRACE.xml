@@ -1,6 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="limits" type="BashProRunConfiguration" singleton="false">
-    <option name="scriptPath" value="$PROJECT_DIR$/rc/bin/limits" />
+  <configuration default="false" name="[git alias] test | TRACE" type="BashProRunConfiguration" singleton="false">
+    <option name="redirectInput" value="true" />
+    <option name="redirectInputPath" value="$PROJECT_DIR$/_debug/git/input" />
+    <option name="scriptPath" value="$PROJECT_DIR$/_debug/git/test" />
     <EXTENSION ID="net.ashald.envfile">
       <option name="IS_ENABLED" value="true" />
       <option name="IS_SUBST" value="true" />
@@ -9,6 +11,8 @@
       <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
       <ENTRIES>
         <ENTRY IS_ENABLED="true" PARSER="runconfig" />
+        <ENTRY IS_ENABLED="true" PARSER="env" PATH="_debug/git/.env" />
+        <ENTRY IS_ENABLED="true" PARSER="env" PATH="_debug/git/trace.env" />
         <ENTRY IS_ENABLED="true" PARSER="env" PATH=".env" />
       </ENTRIES>
     </EXTENSION>

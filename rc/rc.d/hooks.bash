@@ -1,6 +1,12 @@
 # shellcheck shell=bash
 
 #######################################
+# https://www.digitalocean.com/community/tutorials/how-to-use-bash-history-commands-and-expansions-on-a-linux-vps
+#######################################
+shopt -s histappend
+export PROMPT_COMMAND="history -a; history -c; history -r; ${PROMPT_COMMAND}"
+
+#######################################
 # Parallel ENV
 # https://www.gnu.org/software/parallel/env_parallel.html
 #######################################

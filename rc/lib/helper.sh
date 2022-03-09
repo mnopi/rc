@@ -314,6 +314,7 @@ error() {
 # Output:
 #   Message to stderr.
 # Arguments:
+#   [first]            Parse only the first argument.
 #   --desc             Show description and exit.
 #   --help             Show help from man page and exit.
 #   --manrepo          Show repository from man page and exit.
@@ -330,12 +331,24 @@ error() {
 #   1-255 for error, 0 for success.
 #######################################
 parse() {
-  case "${1-}" in
+  arg() {
+    case "${1}" in
     --no-quiet) eval 'QUIET=0' ;;
     --debug|--dry-run|--qquiet|--quiet|--verbose|--warning|--white)
-      eval "$(echo "${arg#--}" | tr '[:lower:]' '[:upper:]' | sed 's/-/_/')=1" ;;
+      eval "$(to-upper "${1#--}" | sed 's/-/_/')=1" ;;
     --*) fromman parse "$@" || exit 0 ;;
-  esac
+    esac
+  }
+
+  if [ "${1-}" = "first" ]; then
+    shift
+    arg "${1}"
+  else
+    for arg; do
+      arg "${arg}"
+    done
+  fi
+  unset -f arg
 }
 
 #######################################

@@ -1,0 +1,42 @@
+#!/bin/sh
+
+STDERR=1 . helper.sh
+
+#######################################
+# updates inputrc
+# Arguments:
+#   None
+#######################################
+main() {
+  file=/etc/inputrc
+  tmp="$(mktemp)"
+  cat > "${tmp}" <<EOT
+# shellcheck shell=sh
+# info readline
+set bell-style Off  # default (audible)
+set blink-matching-paren On  # default (Off)
+set colored-completion-prefix On  # default (Off)
+set colored-stats On  # default (On)
+set completion-ignore-case On  # default (Off)
+set completion-query-items -1  # default (100)
+set expand-tilde On  # default (Off)
+set history-size 999999  # default (unset)
+set input-meta On  # default (Off)
+set mark-symlinked-directories On  # default (Off)
+set menu-complete-display-prefix On  # default (Off)
+set output-meta On  # default (Off)
+set show-all-if-ambiguous On  # default (Off)
+set show-all-if-unmodified On  # default (Off)
+set visible-stats On  # default (Off)
+
+TAB: menu-complete  # Cycle completions one at a time instead of listing them all.
+"\e[Z": "\e-1\C-i"  # Cycle completions one at a time reverse.
+EOT
+  if ! compare "${tmp}" "${file}" 2>/dev/null ; then
+    show --start Inputrc: Installing
+    sudo mv "${tmp}" "${file}" || show Inputrc: Not Installed || exit 1
+    show --completed Inputrc: Installed
+  fi
+}
+
+main "$@"

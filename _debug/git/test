@@ -1,0 +1,7 @@
+#!/bin/sh
+
+bats_bash="${HOME}/bats.bash"
+set -e
+git -C "${bats_bash}" submodule-path
+C="${REPO}"
+git -C "${REPO}" submodule-add-test

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+#######################################
+# compare two files with cat
+# Arguments:
+#   file1
+#   file2
+# Returns:
+#  1 contents are different or not files
+#######################################
+main() { [ "$(sudo cat "$1")" = "$(sudo cat "$2")" ]; }
+
+main "$@"

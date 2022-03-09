@@ -1,0 +1,32 @@
+#!/bin/sh
+
+. helper.sh
+
+#######################################
+# show first line of pipe or file from arguments if it is empty
+# Arguments:
+#   [--quiet]
+#   [file]      file from arguments or pipe
+# Examples:
+#   [ok] { printf '%s\n' foo boo; false; } | filefirst
+#   [ok (no newline)] printf '%s' foo | filefirst
+#   [fail ()] false | filefirst --quiet
+#   [fail (Empty)] false | filefirst
+#   [fail (Empty)] false | filefirst --quiet
+#   [fail (Empty)] true | filefirst
+#   [fail (Empty)] echo | filefirst
+#   [fail] filefirst
+#   [fail] echo >/tmp/a; filefirst --quiet /tmp/a
+#   [fail] echo >/tmp/a; filefirst /tmp/a --quiet
+#   [fail] echo >/tmp/a; filefirst /tmp/a
+#   [fail] echo foo >/tmp/a; filefirst --quiet /tmp/a
+#   [fail] echo foo >/tmp/a; filefirst /tmp/a --quiet
+#   [fail] echo foo >/tmp/a; filefirst /tmp/a
+#   [fail] printf '%s' foo >/tmp/a; filefirst /tmp/a
+#######################################
+fromman filefirst "$@"
+parse "$@"
+
+tmp="$(mktemp)"
+filenull "$@" > "${tmp}" || die "${0##*/}: '$*'"
+head -1 "${tmp}"
