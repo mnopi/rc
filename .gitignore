@@ -1,4 +1,3 @@
-_debug/git/repo/*
 node_modules/
 tests/output/
 tests/release/
