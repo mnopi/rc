@@ -2,35 +2,54 @@
 # shellcheck disable=SC2016,SC2034
 
 : git config
-#
-# System wide git config
-
 
 cmd git || exit 0
 
 STDERR=1 . helper.sh
 
-script="$(green "${0##*/}")"
-
-OPTIONS_SPEC="$(cat <<EOF
-${script}
-${script} [$(magentabold "--force")]
-
-${script} - Updates git system config and git templates
---
-h,help    Show help and exit.
-
- Actions:
-force!  Remove gitconfig and templates before updating.
-EOF
-)"
-
-eval "$(echo "$OPTIONS_SPEC" | git rev-parse --parseopt -- "$@" || echo exit $?)"
-
 branch='main'
 remote='origin'
 template='/etc/git/template'; sudo mkdir -p "${template}"
 
+#######################################
+# main config values
+# Globals:
+#   branch
+#   file
+#   template
+# Arguments:
+#  None
+#######################################
+aliases () {
+  return
+  file='--system'
+  update alias.basename '! : git rev-parse; git super | grep -m 1 "^.*" | xargs basename'
+  update alias.basename-if-file '! if [ -d "${1:-.}" ]; then echo . ; else basename "${1:-.}"; fi #'
+  update alias.dirname-if-file '! if [ -d "${1:-.}" ]; then echo "${1:-.}"; else dirname "${1:-.}"; fi #'
+  update alias.is '! git top >/dev/null 2>&1 #'
+  update alias.name '! : git config; git url | xargs -I {} basename {} .git | filefirst #'
+  update alias.submodule-path '! f() { : git config; git config -f .gitmodules "submodule.$1.path"; }; f'
+  update alias.super '! : git rev-parse; git ${1:+-C "$(git dirname-if-file "$1")"} \
+    rev-parse --show-superproject-working-tree --show-toplevel \
+    "$(git basename-if-file "${1-}")" | filefirst #'
+  update alias.superproject '! : git rev-parse; git ${1:+-C "$(git dirname-if-file "$1")"} \
+    rev-parse --show-superproject-working-tree \
+    "$(git basename-if-file "${1-}")" | filefirst | xargs realpath | filefirst #'
+  update alias.top '! : git rev-parse; git ${1:+-C "$(git dirname-if-file "$1")"} \
+    rev-parse --show-toplevel \
+    "$(git basename-if-file "${1-}")" | filefirst #'
+  update alias.url 'config --get remote.origin.url'
+}
+
+#######################################
+# main config values
+# Globals:
+#   branch
+#   file
+#   template
+# Arguments:
+#  None
+#######################################
 config () {
   file='--system'
   update advice.addIgnoredFile false
@@ -79,13 +98,24 @@ config () {
   update user.username root
 }
 
+#######################################
+# credential config values
+# Globals:
+#   GITHUB_RUN_ID
+#   MACOS
+#   VGA
+#   file
+#   gcm
+# Arguments:
+#  None
+#######################################
 credential() {
   # TODO: cask broken (tap "microsoft/git", cask "git-credential-manager-core")
   file='--system'
   gcm=/usr/local/share/gcm-core/git-credential-manager-core
 
   if [ ! "${GITHUB_RUN_ID-}" ]; then
-    if test -f /etc/ssh/id_rsa || test -f ~/.ssh/id_rsa; then
+    if git ping; then
       update url.ssh://git@github.com/.insteadOf https://github.com/
     fi
     if test -x "${gcm}"; then
@@ -107,7 +137,38 @@ credential() {
   fi
 }
 
+#######################################
+# git spec
+# Globals:
+#   SCRIPT
+# Arguments:
+#  None
+#######################################
+spec() {
+  cat <<EOF
+${SCRIPT}
+${SCRIPT} [$(magentabold "--force")]
 
+${SCRIPT} - updates git system config and git templates
+--
+h,help    Show help and exit.
+
+ Actions:
+force!  Remove gitconfig and templates before updating.
+EOF
+}
+
+#######################################
+# template directory
+# Globals:
+#   branch
+#   file
+#   msg
+#   remote
+#   template
+# Arguments:
+#  None
+#######################################
 template () {
   msg="Template Config"
   file="--file=${template}/config"
@@ -123,6 +184,17 @@ template () {
     && show GIT Template File: "${template}/HEAD"; }
 }
 
+#######################################
+# updates the config
+# Globals:
+#   command
+#   file
+#   msg
+#   previous
+# Arguments:
+#   1
+#   2
+#######################################
 update () {
   command="sudo git config ${file} $1"
   previous="$(${command} || true)"
@@ -131,6 +203,14 @@ update () {
   fi
 }
 
+#######################################
+# git system config and template
+# Globals:
+#   arg
+#   template
+# Arguments:
+#  None
+#######################################
 main() {
   for arg; do
     case "${arg}" in
@@ -147,4 +227,5 @@ main() {
   template
 }
 
+. git-parse.sh
 main "$@"

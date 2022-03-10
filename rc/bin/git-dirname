@@ -2,28 +2,39 @@
 
 : git rev-parse
 
-set -eu
+#######################################
+# git spec
+# Globals:
+#   SCRIPT
+# Arguments:
+#  None
+#######################################
+spec() {
+  cat <<EOF
+${SCRIPT}
+${SCRIPT} [$(magentabold "<path>")]
 
-script="$(green "${0##*/}")"
-
-OPTIONS_SPEC="$(cat <<EOF
-${script}
-${script} [$(magentabold "<path>")]
-
-${script} - Absolute physical path of dirname if $(magentabold "<path>") is a file or for the argument \
+${SCRIPT} - absolute physical path of dirname if $(magentabold "<path>") is a file or for the argument \
 (default: $(magentabold "cwd"))
 --
 h,help    Show help and exit.
 EOF
-)"
+}
 
-eval "$(echo "$OPTIONS_SPEC" | git rev-parse --parseopt -- "$@" || echo exit $?)"
-shift
+#######################################
+# git dirname
+# Arguments:
+#  [<path>]     path (default: cwd)
+#######################################
+main() {
+  set -e
+  if [ "${1-}" ] && [ -d "${1:-.}" ]; then
+    cd "${1:-.}"
+  elif [ "${1-}" ]; then
+    cd "$(dirname "$1")"
+  fi
+  pwd -P
+}
 
-if [ "${1-}" ] && [ -d "${1:-.}" ]; then
-  cd "${1:-.}"
-elif [ "${1-}" ]; then
-  cd "$(dirname "$1")"
-fi
-
-pwd -P
+. git-parse.sh; shift
+main "$@"

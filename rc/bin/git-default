@@ -2,23 +2,36 @@
 
 : git ls-remote
 
-script="$(green "${0##*/}")"
+#######################################
+# git spec
+# Globals:
+#   SCRIPT
+# Arguments:
+#  None
+#######################################
+spec() {
+  cat <<EOF
+${SCRIPT}
+${SCRIPT} [$(magentabold "<remote>")|$(magentabold "<url>")]
 
-OPTIONS_SPEC="$(cat <<EOF
-${script}
-${script} [$(magentabold "<remote>")|$(magentabold "<url>")]
-
-${script} - Remote default branch from $(magentabold "<url>") or $(magentabold "<remote>") \
+${SCRIPT} - remote default branch from $(magentabold "<url>") or $(magentabold "<remote>") \
 name (default: $(magentabold "origin"))
 --
 h,help    Show help and exit.
 EOF
-)"
+}
 
-eval "$(echo "${OPTIONS_SPEC}" | git rev-parse --parseopt -- "$@" || echo exit $?)"
-shift
+#######################################
+# git basename
+# Arguments:
+#  [<remote>|<url>]  remote name or url
+#######################################
+main() {
+  tmp="$(mktemp)"
+  git ls-remote --quiet --exit-code "${1:-origin}" >"${tmp}"
+  ref="$(awk '/\tHEAD$/ { print $1 }' "${tmp}")"
+  awk -F '/' "/^${ref}\t/ && !/\tHEAD$/ { print \$3 }" "${tmp}"
+}
 
-tmp="$(mktemp)"
-git ls-remote --quiet --exit-code "${1:-origin}" > "${tmp}"
-ref="$(awk '/\tHEAD$/ { print $1 }' "${tmp}")"
-awk -F '/' "/^${ref}\t/ && !/\tHEAD$/ { print \$3 }" "${tmp}"
+. git-parse.sh; shift
+main "$@"

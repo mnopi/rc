@@ -10,15 +10,32 @@ STDERR=1 . helper.sh
 main() {
   file=/etc/inputrc
   tmp="$(mktemp)"
-  cat > "${tmp}" <<EOT
+  cat >"${tmp}" <<EOT
 # shellcheck shell=sh
-# info readline
+
+# See 'info readline'.
+# See readline(3readline) and 'info rluserman' for more information.
+# See /usr/share/doc/bash/inputrc.arrows for other codes of arrow keys
+
+# do not bell on tab-completion
 set bell-style Off  # default (audible)
+set bell-style visible
+
 set blink-matching-paren On  # default (Off)
 set colored-completion-prefix On  # default (Off)
 set colored-stats On  # default (On)
 set completion-ignore-case On  # default (Off)
 set completion-query-items -1  # default (100)
+
+# To allow the use of 8bit-characters like the german umlauts, uncomment
+# the line below. However, this makes the meta key not work as a meta key,
+# which is annoying to those which don't need to type in 8-bit characters.
+# set convert-meta off
+
+# try to enable the application keypad when it is called.  Some systems
+# need this to enable the arrow keys.
+set enable-keypad on
+
 set expand-tilde On  # default (Off)
 set history-size 999999  # default (unset)
 set input-meta On  # default (Off)
@@ -29,8 +46,54 @@ set show-all-if-ambiguous On  # default (Off)
 set show-all-if-unmodified On  # default (Off)
 set visible-stats On  # default (Off)
 
-TAB: menu-complete  # Cycle completions one at a time instead of listing them all.
-"\e[Z": "\e-1\C-i"  # Cycle completions one at a time reverse.
+# TAB: menu-complete  # Cycle completions one at a time instead of listing them all.
+
+## Some defaults / modifications for the emacs mode
+\$if mode=emacs
+
+# allow the use of the Home/End keys
+"\e[1~": beginning-of-line
+"\e[4~": end-of-line
+
+# allow the use of the Delete/Insert keys
+"\e[3~": delete-char
+"\e[2~": quoted-insert
+
+# Cycle completions one at a time reverse.
+"\e[Z": "\e-1\C-i"
+
+# mappings for "page up" and "page down" to step to the beginning/end
+# of the history
+# "\e[5~": beginning-of-history
+# "\e[6~": end-of-history
+
+# alternate mappings for "page up" and "page down" to search the history
+# "\e[5~": history-search-backward
+# "\e[6~": history-search-forward
+
+# mappings for Ctrl-left-arrow and Ctrl-right-arrow for word moving
+"\e[1;5C": forward-word
+"\e[1;5D": backward-word
+"\e[5C": forward-word
+"\e[5D": backward-word
+"\e\e[C": forward-word
+"\e\e[D": backward-word
+
+\$if term=rxvt
+"\e[7~": beginning-of-line
+"\e[8~": end-of-line
+"\eOc": forward-word
+"\eOd": backward-word
+\$endif
+
+# for non RH/Debian xterm, can't hurt for RH/Debian xterm
+# "\eOH": beginning-of-line
+# "\eOF": end-of-line
+
+# for freebsd console
+# "\e[H": beginning-of-line
+# "\e[F": end-of-line
+\$endif
 EOT
   if ! compare "${tmp}" "${file}" 2>/dev/null ; then
     show --start Inputrc: Installing

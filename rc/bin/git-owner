@@ -3,11 +3,11 @@
 : git config
 
 #######################################
-# basename
+# dirname removing before ':' in case of ssh
 # Arguments:
 #  path
 #######################################
-base() { basename "$1" .git; exit; }
+dir() { basename "$(dirname "${1##*:}")"; exit; }
 
 #######################################
 # git spec
@@ -22,22 +22,22 @@ ${SCRIPT}
 ${SCRIPT} [$(magentabold "<remote>")|$(magentabold "<url>")]
 ${SCRIPT} $(magentabold "<remote>")
 ${SCRIPT} $(magentabold "<url>")
-${SCRIPT} - repository name from config remote url or url (default: $(magentabold "origin"))
+${SCRIPT} - repository owner from config remote url or url (default: $(magentabold "origin"))
 --
 h,help    Show help and exit.
 EOF
 }
 
 #######################################
-# git repository name
+# git owner name
 # Arguments:
 #  [<remote>|<url>]     remote name or url (default: cwd)
 #######################################
 main() {
   if [ "${1-}" ] && echo "${1-}" | grep -q '/'; then
-    base "$(echo "$1" | sed 's|https://raw.githubusercontent.com/||g')"
+    dir "$(echo "$1" | sed 's|https://raw.githubusercontent.com/||g')"
   else
-    url="$(git url "${1-}")" && base "${url}"
+    url="$(git url "${1-}")" && dir "${url}"
   fi
 }
 

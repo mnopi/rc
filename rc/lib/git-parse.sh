@@ -1,10 +1,12 @@
 #!/bin/sh
+# shellcheck disable=SC2034
 
 #
 # https://git-scm.com/docs/git-sh-setup
 # https://github.com/git/git/blob/master/git-sh-setup.sh
 
-set -eu
+. helper.sh
+. cmd.sh
 
 # git-sh-setup: keep the `--` is an arg when is written as an argument: git-example -- argument (will have -- and --)
 # Everything in the
@@ -12,7 +14,7 @@ OPTIONS_KEEPDASHDASH="${OPTIONS_KEEPDASHDASH-}"
 
 # Stop parsing after the first non-option argument, so errors after that are not caught.
 # git-parse -Ca stop --foo --bar -- a  -> --bar would not give error if not in spec.
-OPTIONS_STOPATNONOPTION="${OPTIONS_STOPATNONOPTION:---stop-at-non-option}"
+OPTIONS_STOPATNONOPTION="${OPTIONS_STOPATNONOPTION-}"
 
 # git-sh-setup: Output in stuck long form:
 # If not set (long converted to short if both in the spec):
@@ -63,9 +65,21 @@ COMMAND="$(greenbold "${SCRIPT#git-}")"
 #
 GIT_COMMAND="$(greenbold "git ${COMMAND}")"
 
+#######################################
+# help if required and exit
+# Arguments:
+#  [<name>]       name to prepend to help, i.e: "<submodule name>'
+#######################################
+required() {
+  redbold "${1-}"
+  echo "${1:+ is required}"
+  "$0" -h
+}
+
 case "${0##*/}" in
   *parse*)
-  OPTIONS_SPEC="$(cat <<EOF
+    OPTIONS_SPEC="$(
+      cat <<EOF
 ${GIT_COMMAND} $(redbold "-h")
 ${SCRIPT} $(redbold "--help")
 . ${SCRIPT}
@@ -82,10 +96,10 @@ and $(magentabold spec\(\)) are not defined.
 --
 h,help    Show help and exit.
 EOF
-)"
-  eval "$(echo "${OPTIONS_SPEC}" | git rev-parse --parseopt -- "$@" || echo exit $?)"
-  exit
-  ;;
+    )"
+    eval "$(echo "${OPTIONS_SPEC}" | git rev-parse --parseopt -- "$@" || echo exit $?)"
+    exit
+    ;;
 esac
 
 if [ "${OPTIONS_SPEC-}" ] || cmd spec; then
@@ -94,8 +108,10 @@ if [ "${OPTIONS_SPEC-}" ] || cmd spec; then
   [ ! "${OPTIONS_STOPATNONOPTION-}" ] || parseopt_extra="${parseopt_extra} --stop-at-non-option"
   [ ! "${OPTIONS_STUCKLONG-}" ] || parseopt_extra="${parseopt_extra} --stuck-long"
   # shellcheck disable=SC2086
-  eval "$(echo "${OPTIONS_SPEC-$(spec)}" | git rev-parse --parseopt ${parseopt_extra} -- "$@" || echo exit $?)"
+  eval "$(echo "${OPTIONS_SPEC:-$(spec)}" | git rev-parse --parseopt ${parseopt_extra} -- "$@" || echo exit $?)"
 fi
 
+git_quiet="${GIT_QUIET-}"
 # shellcheck disable=SC2240
 GIT_TEXTDOMAINDIR="" NONGIT_OK=${NONGIT_OK} SUBDIRECTORY_OK=${SUBDIRECTORY_OK} . "$(git --exec-path)"/git-sh-setup ""
+GIT_QUIET="${git_quiet}"

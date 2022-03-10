@@ -2,22 +2,30 @@
 
 : git rev-parse
 
-script="$(green "${0##*/}")"
+#######################################
+# git spec
+# Globals:
+#   SCRIPT
+# Arguments:
+#  None
+#######################################
+spec() {
+  cat <<EOF
+${SCRIPT}
+${SCRIPT} $(magentabold "<path>")
 
-OPTIONS_SPEC="$(cat <<EOF
-${script}
-${script} [$(magentabold "<path>")]
-
-${script} - Is file or directory $(magentabold "<path>") \
-in repository (default: $(magentabold "cwd"))
-                   Error would be given if file/dir is in the submodule index but is not cloned:
-                      .../git-dirname: line ..: cd: <path>: No such file or directory
+${SCRIPT} - is git repository $(magentabold "<path>") \
 --
 h,help    Show help and exit.
 EOF
-)"
+}
 
-eval "$(echo "$OPTIONS_SPEC" | git rev-parse --parseopt -- "$@" || echo exit $?)"
-shift
+#######################################
+# is git repository
+# Arguments:
+#  [<path>]     path (default: cwd)
+#######################################
+main() { git ${1:+-C "$(git dirname "$1")"} top  >/dev/null 2>&1; }
 
-git ${1:+-C "$(git dirname "$1")"} top  >/dev/null 2>&1
+. git-parse.sh; shift
+main "$@"

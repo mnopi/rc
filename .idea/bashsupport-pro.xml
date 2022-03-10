@@ -2,29 +2,16 @@
 <project version="4">
   <component name="bashsupport-pro.project">
     <scriptLibraries>
-      <library name="bats.bash">
+      <library name="bats.bash" />
+      <library name="git">
         <sources>
-          <source path="bats.bash/bats-assert/src" recursive="true" external="true" />
-          <source path="bats.bash/bats-file/src" recursive="true" external="true" />
-          <source path="bats.bash/bin" recursive="true" external="true" />
-          <source path="bats.bash/lib" recursive="true" external="true" />
+          <source path="/Library/Developer/CommandLineTools/usr/share/git-core/git-completion.bash" external="true" />
         </sources>
         <targets>
-          <target path="tests" recursive="true" />
+          <target recursive="true" />
         </targets>
       </library>
-      <library name="rc">
-        <sources>
-          <source path="rc/lib" recursive="true" />
-          <source path="rc/profile.d" recursive="true" />
-          <source path="rc/rc.d" recursive="true" />
-        </sources>
-        <targets>
-          <target path="rc/bin" recursive="true" />
-          <target path="rc/color" recursive="true" />
-          <target path="rc/lib" recursive="true" />
-        </targets>
-      </library>
+      <library name="rc" />
     </scriptLibraries>
   </component>
 </project>

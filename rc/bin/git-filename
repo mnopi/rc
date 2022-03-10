@@ -2,23 +2,30 @@
 
 : git rev-parse
 
-set -eu
+#######################################
+# git spec
+# Globals:
+#   SCRIPT
+# Arguments:
+#  None
+#######################################
+spec() {
+  cat <<EOF
+${SCRIPT}
+${SCRIPT} $(magentabold "<path>")
 
-script="$(green "${0##*/}")"
-
-OPTIONS_SPEC="$(cat <<EOF
-${script}
-${script} [$(magentabold "<path>")]
-
-${script} - Basename if $(magentabold "<path>") is not a directory (default: $(magentabold "cwd"))
+${SCRIPT} - filename if $(magentabold "<path>") is not a directory (default: $(magentabold "cwd"))
 --
 h,help    Show help and exit.
 EOF
-)"
+}
 
-eval "$(echo "$OPTIONS_SPEC" | git rev-parse --parseopt -- "$@" || echo exit $?)"
-shift
+#######################################
+# git filename
+# Arguments:
+#  [<path>]     path (default: cwd)
+#######################################
+main() { [ "${1-}" ] && [ ! -d "${1:-.}" ] && basename "$1"; }
 
-if [ "${1-}" ] && [ ! -d "${1:-.}" ]; then
-  basename "$1"
-fi
+. git-parse.sh; shift
+main "$@"

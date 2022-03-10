@@ -2,40 +2,109 @@
 
 : git config
 
-set -eu
+#######################################
+# git spec
+# Globals:
+#   SCRIPT
+# Arguments:
+#  None
+#######################################
+spec() {
+  cat <<EOF
+${SCRIPT} [$(bluebold "ARGUMENT")] [$(bluebold "FORMAT")]
+${SCRIPT} [$(redbold "<remote>")|$(redbold "<owner/repo>")|$(redbold "<url>")] \
+[$(redbold "--file")|$(redbold "--git")|$(redbold "--https")|$(redbold "--pip")|$(redbold "--raw")|\
+$(redbold "--ssh")|$(redbold "--web")]
+${SCRIPT} $(redbold "<remote>")
+${SCRIPT} $(redbold "<owner/repo>")
+${SCRIPT} $(redbold "<url>")
+${SCRIPT} $(redbold "<remote>") $(redbold "--ssh")
+${SCRIPT} $(redbold "<url>") $(redbold "--raw")
+${SCRIPT} $(redbold "--web") $(redbold "<owner/repo>")
+${SCRIPT} $(redbold "--pip")
+${SCRIPT} $(redbold "--ssh")
 
-script="$(greenbold "${0##*/}")"
-
-OPTIONS_SPEC="$(cat <<EOF
-${script}
-${script} [$(redbold "<remote>")] [$(redbold "--insteadOf")]
-${script} $(redbold "<remote>")
-${script} $(redbold "--insteadOf")
-${script} $(redbold "--insteadOf")
-${script} $(redbold "<remote>") $(redbold "--insteadOf")
-
-${script} - Remote url from config (default: $(redbold "origin"))
+${SCRIPT} - remote from config $(redbold "<remote>"), $(redbold "<url>") or \
+$(redbold "<owner/repo>") (default: $(redbold "origin"))
+          Valid $(bluebold "ARGUMENTS"): $(redbold "<remote>"), $(redbold "<url>") or \
+$(redbold "<owner/repo>").
+          Only one $(bluebold "ARGUMENT") and/or one $(bluebold "FORMAT") can be provided.
+          Any $(bluebold "FORMAT") can be used for $(redbold "<url>") as $(bluebold "ARGUMENT").
+          Default branch is used for $(redbold "--raw").
+          Use ${SCRIPT} instead of ${GIT_COMMAND} when running outside a git repository \
+with an $(bluebold "ARGUMENT") of type $(redbold "<owner/repo>") or $(redbold "<url>").
 --
 h,help      Show help and exit.
+b,ping      Check reachability of url.
 
-insteadOf!  Expand the URL of the given remote repository taking into account any "url.<base>.insteadOf" config setting.
+ $(bluebold "FORMATS"):
+file!        Local url: i.e.: $(magentabold "git+file://<user>/<repo>")
+git!         $(redbold "Default") url, i.e.: $(magentabold "https://github.com/<user>/<repo>.git")
+https!       HTTPS url, i.e.: $(magentabold "git+https://github.com/<user>/<repo>.git")
+pip!         PIP url, i.e: $(magentabold "git+ssh://git@github.com/<user>/<repo>.git")
+raw!         GitHub raw url, i.e: $(magentabold "https://raw.githubusercontent.com/<user>/<repo>/<branch>")
+ssh!         SSH url, i.e: $(magentabold "git@github.com:<user>/<repo>.git")
+web!         GitHub web url, i.e.: $(magentabold "https://github.com/<user>/<repo>")
 EOF
-)"
+}
 
-eval "$(echo "${OPTIONS_SPEC}" | git rev-parse --parseopt -- "$@" || echo exit $?)"
-
-while test $# != 0; do
-  case "$1" in
-    --insteadOf) insteadOf=1  ;;
-    --) shift; break ;;
+#######################################
+# format url
+# Globals:
+#   opt
+# Arguments:
+#  [<remote>|<owner/repo>|<url>]     remote name, owner/repo or path (default: origin)
+#######################################
+format() {
+  name="$(git-name "$1")"; [ "${name-}" ] || die url repo: "$@"
+  owner="$(git-owner "$1")"; [ "${owner-}" ] || die url name: "$@"
+  prefix="https://github.com/"
+  suffix=".git"
+  case "${opt:-git}" in
+    --file) prefix="git+file://"; suffix="" ;;
+    --git) : ;;
+    --https) prefix="git+https://github.com/" ;;
+    --pip) prefix="git+ssh://git@github.com/" ;;
+    --raw) prefix="https://raw.githubusercontent.com/"; suffix="/$(git-default "$1")" ;;
+    --ssh)  prefix="git@github.com:" ;;
+    --web) suffix="" ;;
   esac
-  shift
-done
+  echo "${prefix}${owner}/${name}${suffix}"
+}
 
-remote="${1:-origin}"
+#######################################
+# remote url from config
+# Arguments:
+#  <remote>    remote name (default: origin)
+#######################################
+url() { git config remote."$1".url || die Invalid Remote: "$1"; }
 
-if [ "${insteadOf-0}" -eq 1 ]; then
-  git ls-remote --get-url "${remote}"
-else
-  git config remote."${remote}".url
-fi
+# TODO: aqui lo dejo probar esto, habría que hacer un checkout default,
+#  probar url y seguir con submodule que necesita los git all y clone...
+#   copiar de semver el como calcula el tag actual
+#   Algo de si valid url, añadir un --ping aqui??? y cambiar el ping a ssh access algo mas genérico
+#######################################
+# git url
+# Globals:
+#   opt
+#######################################
+main() {
+  while test $# != 0; do
+    case "$1" in
+      --) shift; break ;;
+      --*) opt="$1"  ;;
+    esac
+    shift
+  done
+
+  argument="${1:-origin}"
+
+  if echo "${argument}" | grep -q '/'; then
+    format "${argument}"
+  else
+    git config remote."${argument}".url || die Invalid Remote: "${argument}"
+  fi
+}
+
+. git-parse.sh
+main "$@"

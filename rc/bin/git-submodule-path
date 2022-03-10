@@ -2,30 +2,47 @@
 
 : git submodule
 
-set -eu
+#######################################
+# git spec
+# Globals:
+#   SCRIPT
+# Arguments:
+#  None
+#######################################
+spec() {
+  cat <<EOF
+${SCRIPT} $(magentabold "<submodule name>")
+${SCRIPT} $(magentabold "<submodule name>") [--absolute]
+${SCRIPT} $(magentabold "<submodule name>") --absolute
 
-script="$(green "${0##*/}")"
-
-OPTIONS_SPEC="$(cat <<EOF
-${script} $(magentabold "<submodule name>")
-${script} $(magentabold "<submodule name>") --absolute
-
-${script} - Absolute or relative path of submodule from .gitmodules
+${SCRIPT} - relative of absolute physical path of submodule from .gitmodules
 --
 h,help    Show help and exit.
 
 absolute!    Add git path to relative directory.
 EOF
-)"
+}
 
-eval "$(echo "${OPTIONS_SPEC}" | git rev-parse --parseopt -- "$@" || echo exit $?)"
+#######################################
+# git submodule path
+# Arguments:
+#  <submodule name>       path (default: cwd)
+#  [--absolute]           absolute path
+#######################################
+main() {
+  while test $# != 0; do
+    case "$1" in
+      --absolute) top="$(git super)" ;;
+      --) shift; break ;;
+    esac
+    shift
+  done
 
-for arg; do
-  case "${arg}" in
-    --absolute) top="$(git super)" ;;
-    --) : ;;
-    *) name="${arg}"
-  esac
-done
+  name="${1?"$(required "<submodule name>")"}"
 
-path="$(git config -f .gitmodules submodule."${name}".path)" && echo "${top:+${top}/}${path}"
+  path="$(git config -f .gitmodules submodule."${name}".path)" && echo "${top:+${top}/}${path}"
+}
+
+. git-parse.sh
+main "$@"
+

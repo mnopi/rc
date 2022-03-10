@@ -1,7 +1,5 @@
 #!/bin/sh
 
-: git rev-parse
-
 #######################################
 # git spec
 # Globals:
@@ -12,21 +10,22 @@
 spec() {
   cat <<EOF
 ${SCRIPT}
-${SCRIPT} [$(redbold "<path>")]
+${SCRIPT} $(magentabold "<user>")
 
-${SCRIPT} - super project repository basename from file or directory $(redbold "<path>") \
-in super project or submodule (default: $(redbold "cwd"))
+${SCRIPT} - Check SSH access to GitHub (default: $(magentabold "\$USER"))
 --
 h,help    Show help and exit.
 EOF
 }
 
 #######################################
-# git basename
+# git ssh access
 # Arguments:
-#  [<path>]     path (default: cwd)
+#  [<user>|<url>]  remote name or url (default: $USER).
 #######################################
-main() { path="$(git ${1:+-C "$(git dirname "$1")"} super)" && basename "${path}"; }
+main() { ssh -T git@github.com 2>&1 | grep -q "Hi ${1:-${USER}}\!"; }
 
 . git-parse.sh; shift
 main "$@"
+
+
