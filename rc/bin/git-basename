@@ -4,20 +4,22 @@
 
 set -eu
 
-script="$(green "${0##*/}")"
-
-OPTIONS_SPEC="$(cat <<EOF
+spec() {
+  script="$(greenbold "${0##*/}")"
+  cat <<EOF
 ${script}
-${script} [$(magentabold "<path>")]
+${script} [$(redbold "<path>")]
 
-${script} - Super project repository basename from file or directory $(magentabold "<path>") \
-in super project or submodule (default: $(magentabold "cwd"))
+${script} - Super project repository basename from file or directory $(redbold "<path>") \
+in super project or submodule (default: $(redbold "cwd"))
 --
 h,help    Show help and exit.
 EOF
-)"
+}
 
-eval "$(echo "$OPTIONS_SPEC" | git rev-parse --parseopt -- "$@" || echo exit $?)"
-shift
+main() { path="$(git ${1:+-C "$(git dirname "$1")"} super)" && basename "${path}"; }
 
-path="$(git ${1:+-C "$(git dirname "$1")"} super)" && basename "${path}"
+eval "$(spec | git rev-parse --parseopt -- "$@" || echo exit $?)"; shift
+main "$@"
+
+

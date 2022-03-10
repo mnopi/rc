@@ -2,19 +2,40 @@
 
 : git config
 
-script="$(green "${0##*/}")"
+set -eu
+
+script="$(greenbold "${0##*/}")"
 
 OPTIONS_SPEC="$(cat <<EOF
 ${script}
-${script} [$(magentabold "<remote>")]
+${script} [$(redbold "<remote>")] [$(redbold "--insteadOf")]
+${script} $(redbold "<remote>")
+${script} $(redbold "--insteadOf")
+${script} $(redbold "--insteadOf")
+${script} $(redbold "<remote>") $(redbold "--insteadOf")
 
-${script} - Remote url from config (default: $(magentabold "origin"))
+${script} - Remote url from config (default: $(redbold "origin"))
 --
-h,help    Show help and exit.
+h,help      Show help and exit.
+
+insteadOf!  Expand the URL of the given remote repository taking into account any "url.<base>.insteadOf" config setting.
 EOF
 )"
 
-eval "$(echo "$OPTIONS_SPEC" | git rev-parse --parseopt -- "$@" || echo exit $?)"
-shift
+eval "$(echo "${OPTIONS_SPEC}" | git rev-parse --parseopt -- "$@" || echo exit $?)"
 
-git config remote."${1:-origin}".url
+while test $# != 0; do
+  case "$1" in
+    --insteadOf) insteadOf=1  ;;
+    --) shift; break ;;
+  esac
+  shift
+done
+
+remote="${1:-origin}"
+
+if [ "${insteadOf-0}" -eq 1 ]; then
+  git ls-remote --get-url "${remote}"
+else
+  git config remote."${remote}".url
+fi

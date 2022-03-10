@@ -8,28 +8,33 @@
 
 set -eu
 
-script="$(green "${0##*/}")"
+script="$(greenbold "${0##*/}")"
 
 OPTIONS_SPEC="$(cat <<EOF
-${script} $(magentabold "<submodule name>")
-${script} $(magentabold "<submodule name>") --absolute
+${script} $(redbold "<url>") [$(redbold "<path>")]
+${script} $(redbold "<url>")
 
-${script} - Absolute or relative path of submodule from .gitmodules
+${script} - Add submodule with name from $(redbold "<url>") basename \
+(default: $(redbold "<name>")).
+                    With default remote $(redbold "branch") and $(redbold "merge") update strategy.
+
+                    Examples:
+                      $ ${script} https://github.com/bats-core/bats-core $(greenbold '=>') $(redbold "bats-core")
+                      $ ${script} https://github.com/bats-core/bats-core \
+$(redbold "share/bats-core") $(greenbold '=>') $(redbold "share/bats-core")
 --
 h,help    Show help and exit.
-
-absolute!    Add git path to relative directory.
 EOF
 )"
 
 eval "$(echo "${OPTIONS_SPEC}" | git rev-parse --parseopt -- "$@" || echo exit $?)"
+shift
 
-for arg; do
-  case "${arg}" in
-    --absolute) top="$(git super)" ;;
-    --) : ;;
-    *) name="${arg}"
-  esac
-done
+name="$(basename "$1" .git)"
+path="${2:-${name}}"
 
-path="$(git config -f .gitmodules submodule."${name}".path)" && echo "${top:+${top}/}${path}"
+
+git submodule status "${name}" >/dev/null 2>&/dev/null || {
+    git submodule add --quiet --name "${name}" --branch "$(git default "$1")" "$1" "${path}"
+
+}

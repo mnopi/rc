@@ -31,6 +31,54 @@ branch='main'
 remote='origin'
 template='/etc/git/template'; sudo mkdir -p "${template}"
 
+config () {
+  file='--system'
+  update advice.addIgnoredFile false
+
+  update color.branch auto
+  update color.branch.remote yellow
+  update color.decorate auto
+  update color.diff auto
+  update color.grep auto
+  update color.interactive auto
+  update color.pager true
+  update color.showbranch auto
+  update color.status auto
+  update color.status.added green
+  update color.status.changed 'red bold'
+  update color.status.untracked 'magenta bold'
+  update color.ui true
+
+  update core.autocrlf input
+  update core.editor vi
+  update core.filemode true
+  update core.sshCommand /usr/bin/ssh
+
+  update diff.colorMoved zebra
+
+  update fetch.prune true
+
+  update git-extras.default-branch "${branch}"
+
+  update help.autocorrect 0
+
+  update http.postBuffer 157286400
+
+  update init.defaultBranch "${branch}"
+  update init.templateDir "${template}"
+
+  update pull.rebase false
+
+  update receive.denyNonFastForwards true
+  update receive.fsckObjects true
+
+  update tag.sort creatordate
+
+  update user.name root
+  update user.email root@example.com
+  update user.username root
+}
+
 credential() {
   # TODO: cask broken (tap "microsoft/git", cask "git-credential-manager-core")
   file='--system'
@@ -59,52 +107,6 @@ credential() {
   fi
 }
 
-default () {
-  file='--system'
-  update advice.addIgnoredFile false
-
-  update color.branch auto
-  update color.branch.remote yellow
-  update color.decorate auto
-  update color.diff auto
-  update color.grep auto
-  update color.interactive auto
-  update color.pager true
-  update color.showbranch auto
-  update color.status auto
-  update color.status.added green
-  update color.status.changed 'red bold'
-  update color.status.untracked 'magenta bold'
-  update color.ui true
-
-  update core.autocrlf input
-  update core.editor vi
-  update core.filemode true
-  update core.sshCommand /usr/bin/ssh
-
-  update fetch.prune true
-
-  update git-extras.default-branch "${branch}"
-
-  update help.autocorrect 0
-
-  update http.postBuffer 157286400
-
-  update init.defaultBranch "${branch}"
-  update init.templateDir "${template}"
-
-  update pull.rebase false
-
-  update receive.denyNonFastForwards true
-  update receive.fsckObjects true
-
-  update tag.sort creatordate
-
-  update user.name root
-  update user.email root@example.com
-  update user.username root
-
-}
 
 template () {
   msg="Template Config"
@@ -140,8 +142,8 @@ main() {
     esac
   done
 
+  config
   credential
-  default
   template
 }
 
