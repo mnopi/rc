@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# <html><h2>yellowlight - Show arguments in YellowLight</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments in YellowLight:</dt>
+# <dd>
+# <pre><code class="language-bash">yellowlight Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+[ $# -eq 0 ] || printf '%b' "${YellowLight}"; printf '%b' "$*"; printf '%b' "${Reset}"

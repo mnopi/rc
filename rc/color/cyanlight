@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# <html><h2>cyanlight - Show arguments in CyanLight</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments in CyanLight:</dt>
+# <dd>
+# <pre><code class="language-bash">cyanlight Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+[ $# -eq 0 ] || printf '%b' "${CyanLight}"; printf '%b' "$*"; printf '%b' "${Reset}"

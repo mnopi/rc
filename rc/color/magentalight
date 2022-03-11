@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# <html><h2>magentalight - Show arguments in MagentaLight</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments in MagentaLight:</dt>
+# <dd>
+# <pre><code class="language-bash">magentalight Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+[ $# -eq 0 ] || printf '%b' "${MagentaLight}"; printf '%b' "$*"; printf '%b' "${Reset}"

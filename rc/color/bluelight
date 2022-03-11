@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# <html><h2>bluelight - Show arguments in BlueLight</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments in BlueLight:</dt>
+# <dd>
+# <pre><code class="language-bash">bluelight Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+[ $# -eq 0 ] || printf '%b' "${BlueLight}"; printf '%b' "$*"; printf '%b' "${Reset}"
