@@ -10,4 +10,4 @@
 # </dd>
 # </dl>
 # </html>
-[ $# -eq 0 ] || printf '%b' "${RedUnder}"; printf '%b' "$@"; printf '%b' "${Reset}"
+[ $# -eq 0 ] || printf '%b' "${RedUnder}"; printf '%b' "$*"; printf '%b' "${Reset}"
