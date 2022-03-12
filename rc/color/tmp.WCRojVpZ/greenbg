@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# <html><h2>greenbg</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments with space in GreenBg:</dt>
+# <dd>
+# <pre><code class="language-bash">greenbg Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+[ $# -eq 0 ] || printf '%b' "\e[1;42m"; printf '%b' "$*"; printf '%b' "\e[0m"
