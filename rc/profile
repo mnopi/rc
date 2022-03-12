@@ -5,7 +5,7 @@
 
 # RC path
 #
-export RC="${RC_PREFIX-}/rc"
+export RC="${RC_PREFIX:-/etc}/rc"
 
 # RC profile.sh
 #

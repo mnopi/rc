@@ -12,10 +12,10 @@
 spec() {
   cat <<EOF
 ${SCRIPT}
-${SCRIPT} [$(magentabold "<remote>")|$(magentabold "<url>")]
+${SCRIPT} [$(magenta "<remote>")|$(magenta "<url>")]
 
-${SCRIPT} - remote default branch from $(magentabold "<url>") or $(magentabold "<remote>") \
-name (default: $(magentabold "origin"))
+${SCRIPT} - remote default branch from $(magenta "<url>") or $(magenta "<remote>") \
+name (default: $(magenta "origin"))
 --
 h,help    Show help and exit.
 EOF

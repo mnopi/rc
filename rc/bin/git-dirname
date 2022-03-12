@@ -12,10 +12,10 @@
 spec() {
   cat <<EOF
 ${SCRIPT}
-${SCRIPT} [$(magentabold "<path>")]
+${SCRIPT} [$(magenta "<path>")]
 
-${SCRIPT} - absolute physical path of dirname if $(magentabold "<path>") is a file or for the argument \
-(default: $(magentabold "cwd"))
+${SCRIPT} - absolute physical path of dirname if $(magenta "<path>") is a file or for the argument \
+(default: $(magenta "cwd"))
 --
 h,help    Show help and exit.
 EOF

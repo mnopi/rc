@@ -17,4 +17,5 @@ _prompt() {
   eval "${HISTAPPEND}"
   return $_rc
 }
-PROMPT_COMMAND="_prompt${PROMPT_COMMAND:+; ${PROMPT_COMMAND}}"
+
+export PROMPT_COMMAND="_prompt${PROMPT_COMMAND:+; ${PROMPT_COMMAND}}"

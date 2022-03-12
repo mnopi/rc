@@ -20,6 +20,7 @@
 #     -C c => -Cc
 #     -Ee => -Ee
 
+set -e
 . helper.sh
 . cmd.sh
 

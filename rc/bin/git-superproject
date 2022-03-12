@@ -12,10 +12,10 @@
 spec() {
   cat <<EOF
 ${SCRIPT}
-${SCRIPT} [$(magentabold "<path>")]
+${SCRIPT} [$(magenta "<path>")]
 
-${SCRIPT} - super project repository path from file or directory in a submodule (default: $(magentabold "cwd"))
-                   Empty if $(magentabold "<path>") in git repository but not on a submodule.
+${SCRIPT} - super project repository path from file or directory in a submodule (default: $(magenta "cwd"))
+                   Empty if $(magenta "<path>") in git repository but not on a submodule.
 
                    Error would be given if file/dir is in the submodule index but is not cloned:
                       .../git-dirname: line ..: cd: <path>: No such file or directory

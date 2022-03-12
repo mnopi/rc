@@ -6,35 +6,43 @@
 #   etc.
 #   y el commands.
 
-set -eu
+#######################################
+# git spec
+# Globals:
+#   SCRIPT
+# Arguments:
+#  None
+#######################################
+spec() {
+  cat <<EOF
+${SCRIPT} $(red "<url>") [$(red "<path>")]
+${SCRIPT} $(red "<url>")
 
-script="$(greenbold "${0##*/}")"
-
-OPTIONS_SPEC="$(cat <<EOF
-${script} $(redbold "<url>") [$(redbold "<path>")]
-${script} $(redbold "<url>")
-
-${script} - Add submodule with name from $(redbold "<url>") basename \
-(default: $(redbold "<name>")).
-                    With default remote $(redbold "branch") and $(redbold "merge") update strategy.
+${SCRIPT} - Add submodule with name from $(red "<url>") basename \
+(default: $(red "<name>")).
+                    With default remote $(red "branch") and $(red "merge") update strategy.
 
                     Examples:
-                      $ ${script} https://github.com/bats-core/bats-core $(greenbold '=>') $(redbold "bats-core")
-                      $ ${script} https://github.com/bats-core/bats-core \
-$(redbold "share/bats-core") $(greenbold '=>') $(redbold "share/bats-core")
+                      $ ${SCRIPT} https://github.com/bats-core/bats-core $(green '=>') $(red "bats-core")
+                      $ ${SCRIPT} https://github.com/bats-core/bats-core \
+$(red "share/bats-core") $(green '=>') $(red "share/bats-core")
 --
 h,help    Show help and exit.
 EOF
-)"
-
-eval "$(echo "${OPTIONS_SPEC}" | git rev-parse --parseopt -- "$@" || echo exit $?)"
-shift
-
-name="$(basename "$1" .git)"
-path="${2:-${name}}"
-
-
-git submodule status "${name}" >/dev/null 2>&/dev/null || {
-    git submodule add --quiet --name "${name}" --branch "$(git default "$1")" "$1" "${path}"
-
 }
+
+#######################################
+# git submodule add
+# Arguments:
+#  <url>        remote url
+# [<path>]      relative directory including repository name (default: url basename).
+#######################################
+main() {
+  name="$(basename "$1" .git)"
+  path="${2:-${name}}"
+
+  git submodule status "${name}" >/dev/null 2>&/dev/null || \
+    git submodule add --quiet --name "${name}" --branch "$(git default "$1")" "$1" "${path}"
+}
+. git-parse.sh; shift
+main "$@"

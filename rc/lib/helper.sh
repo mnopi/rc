@@ -69,11 +69,11 @@ debug() {
     set +o nounset  # set +u
     add=""; content=""; suffix=""
     if command -v caller >/dev/null; then
-      i=0
+      index=0
       while c="$(caller "${i}")"; do
         if [ "$(echo "${c}" | awk '{ print $2 }')" = 'die' ] \
           || [ "$(basename "$(echo "${c}" | awk '{ print $3 }')")" = 'helper.sh' ]; then
-          i="$((i+1))"
+          index="$((index+1))"
         else
           break
         fi
@@ -213,8 +213,8 @@ has() {
 
   if [ "${rv-}" ] && $all; then
     tmp="$(mktemp)"
-    for i in ${rv}; do
-      r="$(real --resolved "${i}")"
+    for index in ${rv}; do
+      r="$(real --resolved "${index}")"
       grep -q "^${r}$" "${tmp}" || echo "${r}" >> "${tmp}"
     done
     cat "${tmp}"
@@ -224,7 +224,7 @@ has() {
     unset rv; unset -f doc
     return 1 2>/dev/null || exit 1
   fi
-  unset all executable i path rv value; unset -f doc
+  unset all executable path rv value; unset -f doc
 }
 
 #######################################
@@ -276,11 +276,11 @@ error() {
   if [ "${QUIET-0}" -ne 1 ]; then
     add=''; line=''; sep=' '
     if command -v caller >/dev/null; then
-      i=0
+      index=0
       while c="$(caller "${i}")"; do
         if [ "$(echo "${c}" | awk '{ print $2 }')" = 'die' ] \
           || [ "$(basename "$(echo "${c}" | awk '{ print $3 }')")" = 'helper.sh' ]; then
-          i="$((i+1))"
+          index="$((index+1))"
         else
           break
         fi
@@ -713,11 +713,11 @@ warning() {
   if [ "${QUIET-0}" -ne 1 ] && [ "${WARNING}" -eq 1 ]; then
     add=''; line=''; sep=' '
     if command -v caller >/dev/null; then
-      i=0
+      index=0
       while c="$(caller "${i}")"; do
         if [ "$(echo "${c}" | awk '{ print $2 }')" = 'die' ] \
           || [ "$(basename "$(echo "${c}" | awk '{ print $3 }')")" = 'helper.sh' ]; then
-          i="$((i+1))"
+          index="$((index+1))"
         else
           break
         fi

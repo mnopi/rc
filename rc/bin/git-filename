@@ -12,9 +12,9 @@
 spec() {
   cat <<EOF
 ${SCRIPT}
-${SCRIPT} $(magentabold "<path>")
+${SCRIPT} $(magenta "<path>")
 
-${SCRIPT} - filename if $(magentabold "<path>") is not a directory (default: $(magentabold "cwd"))
+${SCRIPT} - filename if $(magenta "<path>") is not a directory (default: $(magenta "cwd"))
 --
 h,help    Show help and exit.
 EOF

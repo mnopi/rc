@@ -1,8 +1,10 @@
 #!/bin/sh
 
-RC_PREFIX=/rc . /rc/rc/profile || exit
+[ "${RC_D-}" ] || . "${RC_PREFIX:-/rc}/rc/profile" || exit
 
 set -eu
+
+[ "$(cat /etc/profile 2>/dev/null || true)" = "${RC}/profile" ] || cp "${RC}/profile" /etc/profile
 
 if [ "$#" -eq 0 ] || [ "${1#-}" != "$1" ] || \
   type "$1" 2>/dev/null | grep -q -E "is a function|is aliased to|is a shell keyword"; then

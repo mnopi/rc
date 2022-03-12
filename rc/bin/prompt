@@ -1,5 +1,14 @@
 #!/bin/sh
 
+blue='\[\e[34m\]'
+cyan='\[\e[36m\]'
+green='\[\e[32m\]'
+grey='\[\e[37m\]'
+magenta='\[\e[35m\]'
+red='\[\e[31m\]'
+yellow='\[\e[33m\]'
+reset='\[\e[0m\]'
+
 main() {
   if [ "${1-}" ]; then
     if [ "$1" = "0" ]; then
@@ -20,4 +29,27 @@ main() {
   fi
 }
 
-main "$@"
+escape() {
+  if [ "${1-}" ]; then
+    if [ "$1" = "0" ]; then
+      printf -- "%s" "${blue}"
+      printf -- "%s" "✔ "
+      printf -- "%s" "${reset}"
+
+    else
+      printf -- "%s" "${red}"
+      printf -- "%s" "$1"
+      printf -- "%s" "${reset}"
+    fi
+  fi
+}
+
+simple() {
+  printf -- "%s" "\u \[\e[32m\]main${reset}"
+  echo
+}
+git() {
+  printf -- "%s" "\u@\h:\w (\[\e[32m\]main\[\e[0m\] \[\e[31m\]*\[\e[0m\]=)\$"
+  echo
+}
+git "$@"

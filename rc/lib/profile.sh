@@ -6,7 +6,8 @@
 umask 002
 
 # Check to only run once
-if [ "${RC_D-}" != "${RC?Source it from 'profile' or set \$RC to be sourced from 'profile.sh'}/rc.d" ] ; then
+if [ ! "${RC_D-}" ] || \
+  [ "${RC_D-}" != "${RC?Source it from 'profile' or set \$RC to be sourced from 'profile.sh'}/rc.d" ] ; then
   # RC completions: sourced by $RC_PROFILE at the end
   #
   export RC_COMPLETIONS_D="${RC}/completions.d"
@@ -42,11 +43,11 @@ for i in "${RC_D}"/*.sh; do
   . "${i}"
 done
 
-if [ "${BASH_VERSINFO-}" ]; then
-  for i in "${RC_D}"/*.bash; do
-    . "${i}"
-  done
-fi
+#if [ "${BASH_VERSINFO-}" ]; then
+#  for i in "${RC_D}"/*.bash; do
+#    . "${i}"
+#  done
+#fi
 
 #if [ "${SOURCED_BASH}" -eq 0 ]; then
 #  unset -f _direnv_hook starship_precmd

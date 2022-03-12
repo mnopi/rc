@@ -11,40 +11,40 @@
 #######################################
 spec() {
   cat <<EOF
-${SCRIPT} [$(bluebold "ARGUMENT")] [$(bluebold "FORMAT")]
-${SCRIPT} [$(redbold "<remote>")|$(redbold "<owner/repo>")|$(redbold "<url>")] \
-[$(redbold "--file")|$(redbold "--git")|$(redbold "--https")|$(redbold "--pip")|$(redbold "--raw")|\
-$(redbold "--ssh")|$(redbold "--web")]
-${SCRIPT} $(redbold "<remote>")
-${SCRIPT} $(redbold "<owner/repo>")
-${SCRIPT} $(redbold "<url>")
-${SCRIPT} $(redbold "<remote>") $(redbold "--ssh")
-${SCRIPT} $(redbold "<url>") $(redbold "--raw")
-${SCRIPT} $(redbold "--web") $(redbold "<owner/repo>")
-${SCRIPT} $(redbold "--pip")
-${SCRIPT} $(redbold "--ssh")
+${SCRIPT} [$(blue "ARGUMENT")] [$(blue "FORMAT")]
+${SCRIPT} [$(red "<remote>")|$(red "<owner/repo>")|$(red "<url>")] \
+[$(red "--file")|$(red "--git")|$(red "--https")|$(red "--pip")|$(red "--raw")|\
+$(red "--ssh")|$(red "--web")]
+${SCRIPT} $(red "<remote>")
+${SCRIPT} $(red "<owner/repo>")
+${SCRIPT} $(red "<url>")
+${SCRIPT} $(red "<remote>") $(red "--ssh")
+${SCRIPT} $(red "<url>") $(red "--raw")
+${SCRIPT} $(red "--web") $(red "<owner/repo>")
+${SCRIPT} $(red "--pip")
+${SCRIPT} $(red "--ssh")
 
-${SCRIPT} - remote from config $(redbold "<remote>"), $(redbold "<url>") or \
-$(redbold "<owner/repo>") (default: $(redbold "origin"))
-          Valid $(bluebold "ARGUMENTS"): $(redbold "<remote>"), $(redbold "<url>") or \
-$(redbold "<owner/repo>").
-          Only one $(bluebold "ARGUMENT") and/or one $(bluebold "FORMAT") can be provided.
-          Any $(bluebold "FORMAT") can be used for $(redbold "<url>") as $(bluebold "ARGUMENT").
-          Default branch is used for $(redbold "--raw").
+${SCRIPT} - remote from config $(red "<remote>"), $(red "<url>") or \
+$(red "<owner/repo>") (default: $(red "origin"))
+          Valid $(blue "ARGUMENTS"): $(red "<remote>"), $(red "<url>") or \
+$(red "<owner/repo>").
+          Only one $(blue "ARGUMENT") and/or one $(blue "FORMAT") can be provided.
+          Any $(blue "FORMAT") can be used for $(red "<url>") as $(blue "ARGUMENT").
+          Default branch is used for $(red "--raw").
           Use ${SCRIPT} instead of ${GIT_COMMAND} when running outside a git repository \
-with an $(bluebold "ARGUMENT") of type $(redbold "<owner/repo>") or $(redbold "<url>").
+with an $(blue "ARGUMENT") of type $(red "<owner/repo>") or $(red "<url>").
 --
 h,help      Show help and exit.
 b,ping      Check reachability of url.
 
- $(bluebold "FORMATS"):
-file!        Local url: i.e.: $(magentabold "git+file://<user>/<repo>")
-git!         $(redbold "Default") url, i.e.: $(magentabold "https://github.com/<user>/<repo>.git")
-https!       HTTPS url, i.e.: $(magentabold "git+https://github.com/<user>/<repo>.git")
-pip!         PIP url, i.e: $(magentabold "git+ssh://git@github.com/<user>/<repo>.git")
-raw!         GitHub raw url, i.e: $(magentabold "https://raw.githubusercontent.com/<user>/<repo>/<branch>")
-ssh!         SSH url, i.e: $(magentabold "git@github.com:<user>/<repo>.git")
-web!         GitHub web url, i.e.: $(magentabold "https://github.com/<user>/<repo>")
+ $(blue "FORMATS"):
+file!        Local url: i.e.: $(magenta "git+file://<user>/<repo>")
+git!         $(red "Default") url, i.e.: $(magenta "https://github.com/<user>/<repo>.git")
+https!       HTTPS url, i.e.: $(magenta "git+https://github.com/<user>/<repo>.git")
+pip!         PIP url, i.e: $(magenta "git+ssh://git@github.com/<user>/<repo>.git")
+raw!         GitHub raw url, i.e: $(magenta "https://raw.githubusercontent.com/<user>/<repo>/<branch>")
+ssh!         SSH url, i.e: $(magenta "git@github.com:<user>/<repo>.git")
+web!         GitHub web url, i.e.: $(magenta "https://github.com/<user>/<repo>")
 EOF
 }
 

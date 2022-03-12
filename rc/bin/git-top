@@ -12,9 +12,9 @@
 spec() {
   cat <<EOF
 ${SCRIPT}
-${SCRIPT} [$(magentabold "<path>")]
+${SCRIPT} [$(magenta "<path>")]
 
-${SCRIPT} - Top repository path from file or directory (default: $(magentabold "cwd"))
+${SCRIPT} - Top repository path from file or directory (default: $(magenta "cwd"))
 --
 h,help    Show help and exit.
 

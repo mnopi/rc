@@ -12,9 +12,9 @@
 spec() {
   cat <<EOF
 ${SCRIPT}
-${SCRIPT} $(magentabold "<path>")
+${SCRIPT} $(magenta "<path>")
 
-${SCRIPT} - is git repository $(magentabold "<path>") \
+${SCRIPT} - is git repository $(magenta "<path>") \
 --
 h,help    Show help and exit.
 EOF

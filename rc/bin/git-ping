@@ -10,9 +10,9 @@
 spec() {
   cat <<EOF
 ${SCRIPT}
-${SCRIPT} $(magentabold "<user>")
+${SCRIPT} $(magenta "<user>")
 
-${SCRIPT} - Check SSH access to GitHub (default: $(magentabold "\$USER"))
+${SCRIPT} - Check SSH access to GitHub (default: $(magenta "\$USER"))
 --
 h,help    Show help and exit.
 EOF

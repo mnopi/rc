@@ -11,9 +11,9 @@
 #######################################
 spec() {
   cat <<EOF
-${SCRIPT} $(magentabold "<submodule name>")
-${SCRIPT} $(magentabold "<submodule name>") [--absolute]
-${SCRIPT} $(magentabold "<submodule name>") --absolute
+${SCRIPT} $(magenta "<submodule name>")
+${SCRIPT} $(magenta "<submodule name>") [--absolute]
+${SCRIPT} $(magenta "<submodule name>") --absolute
 
 ${SCRIPT} - relative of absolute physical path of submodule from .gitmodules
 --

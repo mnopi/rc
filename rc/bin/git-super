@@ -12,11 +12,11 @@
 spec() {
   cat <<EOF
 ${SCRIPT}
-${SCRIPT} [$(magentabold "<path>")]
+${SCRIPT} [$(magenta "<path>")]
 
-${SCRIPT} - super project repository path from file or directory $(magentabold "<path>") in super project or submodule \
-(default: $(magentabold "cwd"))
-            Always show super project if $(magentabold "<path>") in git repository but not on a submodule.
+${SCRIPT} - super project repository path from file or directory $(magenta "<path>") in super project or submodule \
+(default: $(magenta "cwd"))
+            Always show super project if $(magenta "<path>") in git repository but not on a submodule.
 --
 h,help    Show help and exit.
 EOF

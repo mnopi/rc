@@ -123,9 +123,9 @@ credential() {
       update credential."https://dev.azure.com".useHttpPath true
     elif [ "$(git config --system credential.helper)" = "${gcm}" ]; then
       sudo git config --system --unset-all credential.helper && \
-        show --warning GIT Config System: Removed "$(magentabold "=>")" credential.helper
+        show --warning GIT Config System: Removed "$(magenta "=>")" credential.helper
       sudo git config --system --unset-all credential."https://dev.azure.com".useHttpPath && \
-        show --warning GIT Config System: Removed "$(magentabold "=>")" credential."https://dev.azure.com".useHttpPath
+        show --warning GIT Config System: Removed "$(magenta "=>")" credential."https://dev.azure.com".useHttpPath
     fi
     if [ "${MACOS}" -eq 1 ]; then
       update credential.credentialStore keychain
@@ -147,7 +147,7 @@ credential() {
 spec() {
   cat <<EOF
 ${SCRIPT}
-${SCRIPT} [$(magentabold "--force")]
+${SCRIPT} [$(magenta "--force")]
 
 ${SCRIPT} - updates git system config and git templates
 --
@@ -199,7 +199,7 @@ update () {
   command="sudo git config ${file} $1"
   previous="$(${command} || true)"
   if [ "${previous}" != "$2" ]; then
-    ${command} "$2" && show GIT "${msg:-System Config}": "$1": "${previous}" "$(magentabold "=>")" "$2"
+    ${command} "$2" && show GIT "${msg:-System Config}": "$1": "${previous}" "$(magenta "=>")" "$2"
   fi
 }
 

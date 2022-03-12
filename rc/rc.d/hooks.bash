@@ -33,12 +33,15 @@ if [ "${PS1-}" ]; then
   # TODO: en terminal funcional las teclas españolas y en pycharm no.
   # TODO: recordar que estaba con lo del --forc de la url o no se que e hice lo del parser de git y me despiste.
   # TODO: sacar el prompt de aqui. y si l prompt_command no funciona en dash o busybox???
-  case ps1 in
+  ps1=stupid
+  case "${ps1}" in
     git) . git-prompt.sh ;;
+    orig) . git-prompt-orig.sh ;;
     prompt) . prompt.sh ;;
     ps1) . ps1.sh ;;
     starship) . starship.sh ;;
+    stupid) . /rc/_debug/ps1/profile
   esac
 
-  PS2="\$(if [ \"\$(id -u)\" -eq 0 ]; then magenta \"> \"; else green \"> \"; fi)"
+  export PS2="\$(if [ \"\$(id -u)\" -eq 0 ]; then magenta \"> \"; else green \"> \"; fi)"
 fi

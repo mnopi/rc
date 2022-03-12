@@ -19,10 +19,10 @@ base() { basename -- "$1" .git; exit; }
 spec() {
   cat <<EOF
 ${SCRIPT}
-${SCRIPT} [$(magentabold "<remote>")|$(magentabold "<url>")]
-${SCRIPT} $(magentabold "<remote>")
-${SCRIPT} $(magentabold "<url>")
-${SCRIPT} - repository name from config remote url or url (default: $(magentabold "origin"))
+${SCRIPT} [$(magenta "<remote>")|$(magenta "<url>")]
+${SCRIPT} $(magenta "<remote>")
+${SCRIPT} $(magenta "<url>")
+${SCRIPT} - repository name from config remote url or url (default: $(magenta "origin"))
 --
 h,help    Show help and exit.
 EOF

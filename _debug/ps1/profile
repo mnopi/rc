@@ -1,0 +1,18 @@
+# shellcheck shell=sh
+
+
+[ "${PS1-}" ] || return
+
+Cyan="\[\e[36m\]"
+Reset='\[\e[0m\]'
+
+_ps1() { printf -- '\001%s\002%s\001%s\002' "${Cyan}" "${0##*/} 〉" "${Reset}"; }
+
+_prompt() { PS1="$(_ps1)"; }
+
+if [ "${BASH_VERSION-}" ]; then
+  export PS1=""
+  export PROMPT_COMMAND="_prompt${PROMPT_COMMAND:+; ${PROMPT_COMMAND}}"
+else
+  export PS1="\$(_ps1)"
+fi
