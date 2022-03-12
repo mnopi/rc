@@ -98,8 +98,8 @@ main() {
   done
 
   argument="${1:-origin}"
-
-  if echo "${argument}" | grep -q '/'; then
+  >&2 echo "opt: $opt, argument: $argument"
+  if echo "${argument}" | grep -q '/' || [ "${opt-}" ]; then
     format "${argument}"
   else
     git config remote."${argument}".url || die Invalid Remote: "${argument}"
@@ -107,4 +107,5 @@ main() {
 }
 
 . git-parse.sh
+echo "$@"
 main "$@"

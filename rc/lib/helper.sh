@@ -29,7 +29,7 @@ XTRACE="${XTRACE-0}"
 XVERBOSE="${XVERBOSE-0}"
 
 #######################################
-# show info message with > symbol in grey bold if DEBUG is set to 1, unless QUIET is set to 1
+# show info message with > symbol in grey  if DEBUG is set to 1, unless QUIET is set to 1
 # Globals:
 #   DEBUG              Show if DEBUG set to 1, unless QUIET is set to 1 (default: 0).
 #   QUIET              Do not show message if set to 1, takes precedence over VERBOSE/DRY_RUN (default: 0).
@@ -96,7 +96,7 @@ debug() {
       sep=''
     fi
 
-    >&2 printf '%b\n' "$(greybold '+')${sep}${add}$(greydim "${content}")" >&2
+    >&2 printf '%b\n' "$(grey '+')${sep}${add}$(greydim "${content}")" >&2
     eval "${sets}"  # set -u, if it was set before
     unset add arg c content sep sets suffix
   fi
@@ -299,10 +299,10 @@ error() {
     fi
 
     if [ "${WHITE-}" ]; then
-       [ ! "${add}" ] || >&2 printf '%b\n' "$(redbold "✘${sep}${add}")"
+       [ ! "${add}" ] || >&2 printf '%b\n' "$(red "✘${sep}${add}")"
       [ "$#" -eq 0 ] || echo "$@" >&2
     else
-       >&2 printf '%b\n' "$(redbold 'x')${sep}${add}$(redbold "$*")"
+       >&2 printf '%b\n' "$(red 'x')${sep}${add}$(red "$*")"
     fi
 
     unset add c file line sep
@@ -388,17 +388,17 @@ show() (
   ret=$?
   export PROMPT_EOL_MARK=''
   case "${1-}" in
-    --error) redbold "=>"; ret="${1}"; shift ;;
-    --completed) greenbold "=>"; ret="${1}"; shift ;;
-    --notice) magentabold "=>"; ret="${1}"; shift ;;
-    --start) bluebold "=>"; ret="${1}"; shift ;;
-    --warning) yellowbold "!"; ret="${1}"; shift ;;
+    --error) red "=>"; ret="${1}"; shift ;;
+    --completed) green "=>"; ret="${1}"; shift ;;
+    --notice) magenta "=>"; ret="${1}"; shift ;;
+    --start) blue "=>"; ret="${1}"; shift ;;
+    --warning) yellow "!"; ret="${1}"; shift ;;
   esac
 
   case $ret in
     --*) ret=0 ;;
-    0) greenbold "✔" ;;
-    *) redbold "✘" ;;
+    0) green "✔" ;;
+    *) red "✘" ;;
   esac
 
   [ $# -eq 0 ] || printf '%s\n' " $*"
@@ -437,8 +437,8 @@ _stderr() {
     if { [ "${was_debug-0}" -eq 1 ] || [ $rc -ne 0 ]; } && [ "${QQUIET-0}" -eq 0 ]; then
       echo
       # https://unix.stackexchange.com/questions/475548/removing-all-non-ascii-characters-from-a-workflow-file
-      LC_ALL=C tr -dc '\0-\177' < "${EXIT_STDERR}" | sed "s/^\(+\)\1\{0,\} /$(magentabold 'debug>  &')/g; \
-        /^.*\[.*debug>/!s/^/$(redbold 'stderr>') /g"
+      LC_ALL=C tr -dc '\0-\177' < "${EXIT_STDERR}" | sed "s/^\(+\)\1\{0,\} /$(magenta 'debug>  &')/g; \
+        /^.*\[.*debug>/!s/^/$(red 'stderr>') /g"
     fi
   fi
   exit $rc
@@ -478,9 +478,9 @@ stderr() {
 # shellcheck disable=SC3043,SC3028,SC3054,SC3005,SC3018,SC3037
 _strict() {
   local code=$? funcname last
-  #set +x
-  last="$(magentabold "${BASH_COMMAND}")"
-  echo "$(show --error) ${BASH_SOURCE[1]}:${BASH_LINENO[0]} ${last} ($(redbold $code))"
+  set +x
+  last="$(magenta "${BASH_COMMAND}")"
+  echo "$(show --error) ${BASH_SOURCE[1]}:${BASH_LINENO[0]} ${last} ($(red $code))"
   if [ ${#FUNCNAME[@]} -gt 2 ]; then
     echo "   ${BASH_SOURCE[1]} Traceback (most recent call first):"
     for ((i=0; i < ${#FUNCNAME[@]} - 1; i++)); do
@@ -556,7 +556,7 @@ success() {
   if [ "${QUIET-0}" -ne 1 ]; then
     sep=''
     [ "$#" -eq 0 ] || sep=' '
-    >&2 printf '%b\n' "$(greenbold ✔)${sep}$*"
+    >&2 printf '%b\n' "$(green ✔)${sep}$*"
     unset sep
   fi
 }
@@ -623,7 +623,7 @@ verbose() {
   if [ "${QUIET-0}" -ne 1 ] && { [ "${VERBOSE}" -eq 1 ] || [ "${DRY_RUN-}" -eq 1 ]; }; then
     sep=''
     [ "$#" -eq 0 ] || sep=' '
-    >&2 printf '%b\n' "$(cyanbold '>')${sep}$(cyandim "$*")"
+    >&2 printf '%b\n' "$(cyan '>')${sep}$(cyandim "$*")"
     unset sep
   fi
 }
@@ -648,7 +648,7 @@ _xtrace() {
 
   if test -s "${EXIT_XTRACE-}" && [ "${QQUIET-0}" -eq 0 ]; then
     echo
-    LC_ALL=C tr -dc '\0-\177' < "${EXIT_XTRACE}" | sed "s/^\(+\)\1\{0,\} /$(magentabold 'debug>  &')/g"
+    LC_ALL=C tr -dc '\0-\177' < "${EXIT_XTRACE}" | sed "s/^\(+\)\1\{0,\} /$(magenta 'debug>  &')/g"
   fi
   exit $rc
 }
@@ -735,14 +735,14 @@ warning() {
       sep=''
     fi
 
-    >&2 printf '%b\n' "$(yellowbold ！)${sep}${add}$(yellowbold "$*")" >&2
+    >&2 printf '%b\n' "$(yellow ！)${sep}${add}$(yellow "$*")" >&2
     unset add c file line sep
   fi
 }
 
 #######################################
 # Strict mode and debugging
-. bash4.sh || return 1 2>/dev/null || exit 1
+. shell.sh || return 1 2>/dev/null || exit 1
 [ "${STRICT-1}" -eq 0 ] || [ "${PS1-}" ] || strict
 [ "${STDERR-0}" -eq 0 ] || stderr
 [ "${XTRACE-0}" -eq 0 ] || { set -x; xtrace; export SHELLOPTS; }

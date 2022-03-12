@@ -13,19 +13,19 @@ main() {
   cat >"${tmp}" <<EOT
 # shellcheck shell=sh
 
-# See 'info readline'.
-# See readline(3readline) and 'info rluserman' for more information.
+# See https://tiswww.case.edu/php/chet/readline/readline.html
 # See /usr/share/doc/bash/inputrc.arrows for other codes of arrow keys
 
 # do not bell on tab-completion
-set bell-style Off  # default (audible)
+set bell-style Off
 set bell-style visible
 
-set blink-matching-paren On  # default (Off)
-set colored-completion-prefix On  # default (Off)
-set colored-stats On  # default (On)
-set completion-ignore-case On  # default (Off)
-set completion-query-items -1  # default (100)
+set blink-matching-paren On
+set colored-completion-prefix On
+# set completion-prefix-display-length 3
+set colored-stats On
+set completion-ignore-case On
+set completion-query-items -1
 
 # To allow the use of 8bit-characters like the german umlauts, uncomment
 # the line below. However, this makes the meta key not work as a meta key,
@@ -36,15 +36,15 @@ set completion-query-items -1  # default (100)
 # need this to enable the arrow keys.
 set enable-keypad on
 
-set expand-tilde On  # default (Off)
-set history-size 999999  # default (unset)
-set input-meta On  # default (Off)
-set mark-symlinked-directories On  # default (Off)
-set menu-complete-display-prefix On  # default (Off)
-set output-meta On  # default (Off)
-set show-all-if-ambiguous On  # default (Off)
-set show-all-if-unmodified On  # default (Off)
-set visible-stats On  # default (Off)
+set expand-tilde On
+set history-size 999999
+set input-meta On
+set mark-symlinked-directories On
+set menu-complete-display-prefix On
+set output-meta On
+set show-all-if-ambiguous On
+set show-all-if-unmodified On
+set visible-stats On
 
 # TAB: menu-complete  # Cycle completions one at a time instead of listing them all.
 

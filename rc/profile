@@ -10,4 +10,8 @@ export RC="${RC_PREFIX-}/rc"
 # RC profile.sh
 #
 export RC_PROFILE_SH="${RC}/lib/profile.sh"
+
+# ENV: when sh is running interactive
+# https://www.gnu.org/software/bash/manual/bash.html#Invoked-non_002dinteractively
+export ENV="${RC_PROFILE_SH}"
 . "${RC_PROFILE_SH}"

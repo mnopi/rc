@@ -36,7 +36,7 @@ if [ "${RC_D-}" != "${RC?Source it from 'profile' or set \$RC to be sourced from
 fi
 
 . cmd.sh
-. bash4.sh
+. shell.sh
 
 for i in "${RC_D}"/*.sh; do
   . "${i}"
@@ -47,6 +47,14 @@ if [ "${BASH_VERSINFO-}" ]; then
     . "${i}"
   done
 fi
+
+#if [ "${SOURCED_BASH}" -eq 0 ]; then
+#  unset -f _direnv_hook starship_precmd
+#elif [ "${BASH_VERSINFO-}" ]; then
+#  for i in "${RC_D}"/*.bash; do
+#    . "${i}"
+#  done
+#fi
 
 
 # TODO: Meter lo de history append, lo de comprobar que ya esta la variable para todo menos para el PS1

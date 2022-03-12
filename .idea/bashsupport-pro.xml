@@ -3,15 +3,18 @@
   <component name="bashsupport-pro.project">
     <scriptLibraries>
       <library name="bats.bash" />
-      <library name="git">
+      <library name="git" />
+      <library name="rc">
         <sources>
-          <source path="/Library/Developer/CommandLineTools/usr/share/git-core/git-completion.bash" external="true" />
+          <source path="rc/lib" recursive="true" />
+          <source path="rc/profile.d" recursive="true" />
+          <source path="rc/rc.d" recursive="true" />
         </sources>
         <targets>
-          <target recursive="true" />
+          <target path="tests" recursive="true" />
+          <target path="rc" recursive="true" />
         </targets>
       </library>
-      <library name="rc" />
     </scriptLibraries>
   </component>
 </project>

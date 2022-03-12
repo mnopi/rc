@@ -31,7 +31,7 @@ main () {
       show Brew: Not Installed
       if test -s "${stdout}"; then
         echo
-        cyanbold  '## EXIT_STDOUT'
+        cyan  '## EXIT_STDOUT'
         echo
         cat "${stdout}"
       fi

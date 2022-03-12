@@ -75,7 +75,7 @@ check() { [ "${2-}" ] || die "$1"; }
 #######################################
 desc() {
   local color stderr="$3" stdout="$2" symbol="$1"; shift 3
-  color="[$(magentabold "${IMAGES[${alias}]}")][$(greenbold "${*:-"$(cat </dev/stdin)"}")]"
+  color="[$(magenta "${IMAGES[${alias}]}")][$(green "${*:-"$(cat </dev/stdin)"}")]"
   if fd3; then
     >&3 echo "      ${symbol} ${color}"
   else

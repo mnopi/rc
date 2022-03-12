@@ -7,7 +7,7 @@
 # Arguments:
 #  path
 #######################################
-base() { basename "$1" .git; exit; }
+base() { basename -- "$1" .git; exit; }
 
 #######################################
 # git spec

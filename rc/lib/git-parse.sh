@@ -4,19 +4,7 @@
 #
 # https://git-scm.com/docs/git-sh-setup
 # https://github.com/git/git/blob/master/git-sh-setup.sh
-
-. helper.sh
-. cmd.sh
-
-# git-sh-setup: keep the `--` is an arg when is written as an argument: git-example -- argument (will have -- and --)
-# Everything in the
-OPTIONS_KEEPDASHDASH="${OPTIONS_KEEPDASHDASH-}"
-
-# Stop parsing after the first non-option argument, so errors after that are not caught.
-# git-parse -Ca stop --foo --bar -- a  -> --bar would not give error if not in spec.
-OPTIONS_STOPATNONOPTION="${OPTIONS_STOPATNONOPTION-}"
-
-# git-sh-setup: Output in stuck long form:
+# Stuck long form:
 # If not set (long converted to short if both in the spec):
 #     --foo => -f (if f,foo otherwise or --foo)
 #     -f => -f
@@ -31,87 +19,156 @@ OPTIONS_STOPATNONOPTION="${OPTIONS_STOPATNONOPTION-}"
 #     --qux --qux=qux => --qux --qux=qux
 #     -C c => -Cc
 #     -Ee => -Ee
-OPTIONS_STUCKLONG="${OPTIONS_STUCKLONG-}"
 
-# git-sh-setup: Git Parse Options Specification
-#
-OPTIONS_SPEC="${OPTIONS_SPEC-}"
+. helper.sh
+. cmd.sh
 
-# git-sh-setup: Long Usage if $OPTIONS_SPEC is not set. It is added to $USAGE in usage()
-#
-LONG_USAGE="${LONG_USAGE-}"
+_parseopt="git rev-parse --parseopt --stuck-long"
+_script="${0##*/}"
 
-# git-sh-setup: If it is not set, it will exit if we are not on a git dir.
-# The below sets the variable to 1 if undefined, otherwise keeps the value.
-: "${NONGIT_OK=1}"
+# git-sh-setup: keep the `--` is an arg when is written as an argument: git-example -- argument (will have -- and --)
+# (Default: 0)
+: "${OPTIONS_KEEPDASHDASH=0}"; [ "${OPTIONS_KEEPDASHDASH}" -eq 0 ] || _parseopt="${_parseopt} --keep-dashdash"
 
-# git-sh-setup: Can be set if the script can run from a subdirectory of the working tree (some commands do not)
-#
-SUBDIRECTORY_OK="${SUBDIRECTORY_OK:-1}"
-
-# git-sh-setup: Usage if $OPTIONS_SPEC is not set. It is shown with usage().
-#
-USAGE="${USAGE-}"
+# Stop parsing after the first non-option argument, so errors after that are not caught.
+# git-parse -Ca stop --foo --bar -- a  -> --bar would not give error if not in spec.
+# (Default: 0)
+: "${OPTIONS_STOPATNONOPTION=0}";[ "${OPTIONS_STOPATNONOPTION}" -eq 0 ] || _parseopt="${_parseopt} --stop-at-non-option"
 
 # Color Command from $0: 'git-example'
 #
-SCRIPT="$(greenbold "${0##*/}")"
+SCRIPT="$(green "${_script}")"
 
 # Color Command from $0 Removing 'git-': 'example'
 #
-COMMAND="$(greenbold "${SCRIPT#git-}")"
+COMMAND="$(green "${_script##*git-}")"
 
 # Color Git Command from $0 Splitting  git': 'git example'
 #
-GIT_COMMAND="$(greenbold "git ${COMMAND}")"
+GIT_COMMAND="$(green "git ${COMMAND}")"; [ "git-${_script##*git-}" = "${_script}" ] || GIT_COMMAND="${SCRIPT}"
 
 #######################################
-# help if required and exit
+# private spec for git-parse.sh/git-parse when not sourced
 # Arguments:
-#  [<name>]       name to prepend to help, i.e: "<submodule name>'
+#  None
+#######################################
+_spec() {
+  cat <<EOF
+${GIT_COMMAND} $(red "-h")
+${SCRIPT} $(red "--help")
+. ${SCRIPT}
+. ${SCRIPT}$(green ".sh")
+OPTIONS_KEEPDASHDASH=1 . ${SCRIPT}
+OPTIONS_STOPATNONOPTION=1 . ${SCRIPT}
+
+. ${SCRIPT} - Parsing using stuck long option if $(magenta spec\(\)) defined.
+              Parsing $(magenta '-C <path') if defined in the options spec $(magenta '^C=path'), \
+and change to $(magenta '<path>')
+
+            Globals:
+              $(magenta SCRIPT)       =>  $(green git-foo)
+              $(magenta COMMAND)      =>  $(green foo)
+              $(magenta GIT_COMMAND)  =>  $(green 'git foo')
+
+            Defaults:
+              $(magenta OPTIONS_KEEPDASHDASH)     =>  $(blue 0)
+              $(magenta OPTIONS_STOPATNONOPTION)  =>  $(blue 0)
+
+            Stuck Long \$OPTIONS_SPEC:
+              f,foo       $(magenta '-f --foo --no-foo')             =>  $(blue '-f --foo --no-foo')
+              m,moo!      $(magenta '-m --moo')                      =>  $(blue '--moo --moo')
+              b,bar=      $(magenta '-bbar1 --bar bar2 --bar=bar3')  =>  \
+$(blue '--bar=bar1 --bar=bar2 --bar=bar3')
+              q,qux?path  $(magenta '--qux -qquix1 --qux=qux2')      =>  $(blue '--qux --qux=quix1 --qux=qux2')
+              continue!   $(magenta '--continue')                    =>  $(blue '--continue')
+              a,abort!    $(magenta '-a --abort')                    =>  $(blue '--abort --abort')
+              A!path      $(magenta '-A')                            =>  $(blue '-A')
+              C=path      $(magenta '-C c')                          =>  $(blue '-Cc')
+              E?path      $(magenta '-E -Ee')                        =>  $(blue '-E -Ee')
+
+            Stuck Long Parser:
+              $(magenta 'while') $(magenta '[') $(red "\$#") -ne 0 $(magenta ']'); $(magenta "do")
+                $(magenta case) $(blue "\"")$(yellow "\$1")$(blue "\"") $(magenta in)
+                  --foo) $(red "foo")=$(blue "\"\$((")foo+$(blue "1))\"") $(magenta ";;")
+                  --no-foo) $(red "foo_no")=1 $(magenta ";;")
+                  --moo) $(red "moo")=1 $(magenta ";;")
+                  --bar=*) $(red "bar")=$(blue "\"\${")bar:+$(green "\${")bar$(green "}") \
+$(blue "}\${")$(yellow 1)#$(yellow "--bar=")$(blue "}\"") $(magenta ";;")
+                  --qux) $(red "qux")=true $(magenta ";;")
+                  --qux=*) $(red "qux_values")=$(blue "\"\${")qux_values:+$(green "\${")\
+qux_values$(green "}") $(blue "}\${")$(yellow 1)#$(yellow "--qux=")$(blue "}\"") \
+$(magenta ";;")
+                  --continue) $(red "continue")=1 $(magenta ";;")
+                  --abort) $(red "abort")=1 $(magenta ";;")
+                  -A) $(red "A")=1 $(magenta ";;")
+                  -C*) $(red "C")="${1#-C}" $(magenta ";;")
+                  -C*) $(red "C")=$(blue "\"\${")$(yellow 1)#$(yellow "-E")$(blue "}\"") \
+      $(magenta ";;")
+                  -E) $(red "E")=true $(magenta ";;")
+                  -E*) $(red "E_value")=$(blue "\"\${")E_value:+$(green "\${")E_value$(green "}") \
+$(blue "}\${")$(yellow 1)#$(yellow "-E")$(blue "}\"") $(magenta ";;")
+                  --) $(cyan 'shift'); $(cyan 'break') $(magenta ";;")
+                $(magenta 'esac')
+                $(cyan 'shift')
+              $(magenta 'done')
+
+              $(green "\$") git-parse @1 -f --foo --no-foo --moo @2 -bbar1 --bar bar2 --bar=bar3 @3 \
+--qux -qquix1 --qux=qux2 @4 -A -C c -E -Ee @5 --continue @6 -a --abort -- DASH
+              $(blue "A=1 C=c E=true E_value=e abort=1 bar='bar1 bar2 bar3' continue=1 foo=2 foo_no=1 moo=1 \
+qux=true qux_values='quix1 qux2'")
+              $(blue "\$@=@1 @2 @3 @4 @5 @6 DASH")
+
+            Helper Functions:
+              $(magenta 'invalid()')   =>  $(blue 'show invalid argument/option value message and exit')
+              $(magenta 'required()')  =>  $(blue 'show argument required message and exit')
+--
+h,help    Show help and exit.
+EOF
+}
+
+#######################################
+# show invalid argument/option value message and exit
+# Arguments:
+#  [<value>]       invalid argument value, i.e: 'foo'
+#  [<argument>]    argument name, i.e: "<remote>"
+#######################################
+invalid() {
+  red "$1"
+  echo "invalid argument/option value for ${2}"
+  "$0" -h
+}
+
+#######################################
+# show argument required message and exit
+# Arguments:
+#  [<name>]       argument name, i.e: "<submodule name>'
 #######################################
 required() {
-  redbold "${1-}"
-  echo "${1:+ is required}"
+  red "$1"
+  echo "argument requires a value"
   "$0" -h
 }
 
 case "${0##*/}" in
-  *parse*)
-    OPTIONS_SPEC="$(
-      cat <<EOF
-${GIT_COMMAND} $(redbold "-h")
-${SCRIPT} $(redbold "--help")
-. ${SCRIPT}
-OPTIONS_KEEPDASHDASH=1 . ${SCRIPT}
-OPTIONS_STOPATNONOPTION=1 . ${SCRIPT}
-OPTIONS_STUCKLONG=1 . ${SCRIPT}
-
-${SCRIPT} - Parses arguments when sourced if $(magentabold \$OPTIONS_SPEC) or $(magentabold spec\(\)) defined.
-            Use $(magentabold usage\(\)) after sourcing to parse $(redbold "-h") if $(magentabold \$OPTIONS_SPEC) \
-and $(magentabold spec\(\)) are not defined.
-
-            Globals: $(magentabold SCRIPT), $(magentabold COMMAND) and $(magentabold GIT_COMMAND).
-            Provides helper functions from: $(git --exec-path)/git-sh-setup
---
-h,help    Show help and exit.
-EOF
-    )"
-    eval "$(echo "${OPTIONS_SPEC}" | git rev-parse --parseopt -- "$@" || echo exit $?)"
-    exit
-    ;;
+  git-parse*) _spec=_spec ;;
+  *) ! cmd spec || _spec=spec ;;
 esac
 
-if [ "${OPTIONS_SPEC-}" ] || cmd spec; then
-  parseopt_extra=
-  [ ! "${OPTIONS_KEEPDASHDASH-}" ] || parseopt_extra="--keep-dashdash"
-  [ ! "${OPTIONS_STOPATNONOPTION-}" ] || parseopt_extra="${parseopt_extra} --stop-at-non-option"
-  [ ! "${OPTIONS_STUCKLONG-}" ] || parseopt_extra="${parseopt_extra} --stuck-long"
-  # shellcheck disable=SC2086
-  eval "$(echo "${OPTIONS_SPEC:-$(spec)}" | git rev-parse --parseopt ${parseopt_extra} -- "$@" || echo exit $?)"
-fi
+if [ "${_spec-}" ]; then
+  eval "$($_spec | ${_parseopt} -- "$@" || echo exit $?)"
 
-git_quiet="${GIT_QUIET-}"
-# shellcheck disable=SC2240
-GIT_TEXTDOMAINDIR="" NONGIT_OK=${NONGIT_OK} SUBDIRECTORY_OK=${SUBDIRECTORY_OK} . "$(git --exec-path)"/git-sh-setup ""
-GIT_QUIET="${git_quiet}"
+  #######################################
+  # change to directory in -C option if specified on the spec (C=path) and removes from parsed arguments.
+  # Arguments:
+  #  None
+  #######################################
+  if $_spec | grep -q "^C=path"; then
+    for arg; do
+      shift
+      case "${arg}" in
+        -C*) cd "${arg#-C}" ;;
+        *) set -- "$@" "${arg}" ;;
+      esac
+    done
+  fi
+fi
