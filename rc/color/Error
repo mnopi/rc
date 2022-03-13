@@ -17,7 +17,7 @@ ret=$?
 if { [ "${QUIET-0}" -ne 1 ] && [ "${QQUIET-0}" -ne 1 ]; }; then
   printf '%b' "\e[1;31m✘\e[0m"
   [ $# -ne 0 ] || exit $ret
-  [ $# -eq 1 ] || italic " $1"
+  [ $# -eq 1 ] || { italic " $1"; shift; }
   printf '%s\n' " $*"
 fi
 
