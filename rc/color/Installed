@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# <html><h2>Installed</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>
+# Show first argument in Italic and second Installed, prefixed with Finish symbol:
+# </dt>
+# <dd>
+# <pre><code class="language-bash">Installed Brew
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+ret=$?
+Finish "${1}:" "Installed"
+exit $ret

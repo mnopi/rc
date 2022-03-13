@@ -4,7 +4,7 @@
 # <h3>Examples</h3>
 # <dl>
 # <dt>
-# Show arguments separated with space and prefixed with Plus. If more than one arguments then first in Italic:
+# Show arguments separated with space, prefixed with Plus symbol. If more than one arguments then first in Italic:
 # </dt>
 # <dd>
 # <pre><code class="language-bash">Plus Show Text
@@ -14,7 +14,7 @@
 # </html>
 ret=$?
 
-if { [ "${QUIET-0}" -ne 1 ] && [ "${QQUIET-0}" -ne 1 ];}; then
+if { [ "${QUIET-0}" -ne 1 ] && [ "${QQUIET-0}" -ne 1 ]; }; then
   printf '%b' "\e[1;32m+\e[0m"
   [ $# -ne 0 ] || exit $ret
   [ $# -eq 1 ] || italic " $1"
