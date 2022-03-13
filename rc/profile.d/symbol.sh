@@ -18,3 +18,12 @@ export RedX="\e[1;32m✘\e[0m"
 # Red "✘" Escaped
 #
 export RedXEsc="\[\e[1;32m\]✘\e[0m"
+
+
+# YellowMark "!"
+#
+export YellowMark="\e[1;33m!\e[0m"
+
+# YellowMark "✘" Escaped
+#
+export YellowMarkEsc="\[\e[1;33m\]!\e[0m"
