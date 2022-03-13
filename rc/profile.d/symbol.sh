@@ -7,53 +7,21 @@
 #
 export Critical="\e[7;31m✘\e[0m"
 
+# Debug Magenta "+"
+#
+export Debug="\e[1;35m+\e[0m"
+
 # Error Red "✘"
 #
 export Error="\e[1;31m✘\e[0m"
 
 # Error Red "✘" Escaped
 #
-export ErrorEsc="\[\e[1;31m\]✘\e[0m"
+export ErrorEsc="\[\e[1;31m\]✘\[\e[0m\]"
 
-# Notice Cyan "‼"
+# Finish Green "=>"
 #
-export Ok="\e[1;36m‼\e[0m"
-
-# Notice Cyan "‼" Escaped
-#
-export OkEsc="\[\e[1;36m\]‼\e[0m"
-
-# Ok Green "✔"
-#
-export Ok="\e[1;32m✔\e[0m"
-
-# Ok Green "✔" Escaped
-#
-export OkEsc="\[\e[1;32m\]✔\e[0m"
-
-# Success Blue "◉"
-#
-export Success="\e[1;34m◉\e[0m"
-
-# Success Blue "◉" Escaped
-#
-export SuccessEsc="\[\e[1;34m\]◉\e[0m"
-
-# Verbose Magenta "＋"
-#
-export Verbose="\e[1;35m＋\e[0m"
-
-# Verbose Magenta "＋" Escaped
-#
-export VerboseEsc="\[\e[1;35m\]＋\e[0m"
-
-# Warning Yellow "！"
-#
-export Warning="\e[1;33m！\e[0m"
-
-# Warning Yellow "！" Escaped
-#
-export WarningEsc="\[\e[1;33m\]！\e[0m"
+export Finish="\e[1;32m=>\e[0m"
 
 # Minus Red "－"
 #
@@ -61,7 +29,7 @@ export Minus="\e[1;31m－\e[0m"
 
 # Minus Red "－" Escaped
 #
-export MinusEsc="\[\e[1;31m\]－\e[0m"
+export MinusEsc="\[\e[1;31m\]－\[\e[0m\]"
 
 # More Magenta ">"
 #
@@ -69,7 +37,7 @@ export More="\e[1;35m>\e[0m"
 
 # More Magenta ">" Escaped
 #
-export MoreEsc="\[\e[1;35m\]>\e[0m"
+export MoreEsc="\[\e[1;35m\]>\[\e[0m\]"
 
 # Multiply Blue "×"
 #
@@ -77,7 +45,23 @@ export Multiply="\e[1;34m×\e[0m"
 
 # Multiply Blue "×" Escaped
 #
-export MultiplyEsc="\[\e[1;34m\]×\e[0m"
+export MultiplyEsc="\[\e[1;34m\]×\[\e[0m\]"
+
+# Notice Cyan "‼"
+#
+export Notice="\e[1;36m‼\e[0m"
+
+# Notice Cyan "‼" Escaped
+#
+export NoticeEsc="\[\e[1;36m\]‼\[\e[0m\]"
+
+# Ok Green "✔" (other: ✔)
+#
+export Ok="\e[1;32m✔\e[0m"
+
+# Ok Green "✔" (other: ✔) Escaped
+#
+export OkEsc="\[\e[1;32m\]✔\[\e[0m\]"
 
 # Plus Green "+"
 #
@@ -85,7 +69,31 @@ export Plus="\e[1;32m+\e[0m"
 
 # Plus Green "+" Escaped
 #
-export PlusEsc="\[\e[1;32m\]+\e[0m"
+export PlusEsc="\[\e[1;32m\]+\[\e[0m\]"
+
+# Start Cyan "=>"
+#
+export Start="\e[1;36m=>\e[0m"
+
+# Success Blue "◉" Escaped
+#
+export SuccessEsc="\[\e[1;34m\]◉\[\e[0m\]"
+
+# Success Blue "◉"
+#
+export Success="\e[1;34m◉\e[0m"
+
+# Success Blue "◉" Escaped
+#
+export SuccessEsc="\[\e[1;34m\]◉\[\e[0m\]"
+
+# Verbose Magenta "＋"
+#
+export Verbose="\e[1;35m＋\e[0m"
+
+# Verbose Magenta "＋" Escaped
+#
+export VerboseEsc="\[\e[1;35m\]＋\[\e[0m\]"
 
 # Wait Yellow "…"
 #
@@ -93,4 +101,12 @@ export Wait="\e[1;33m…\e[0m"
 
 # Wait Yellow "…" Escaped
 #
-export WaitEsc="\[\e[1;33m\]…\e[0m"
+export WaitEsc="\[\e[1;33m\]…\[\e[0m\]"
+
+# Warning Yellow "！"
+#
+export Warning="\e[1;33m！\e[0m"
+
+# Warning Yellow "！" Escaped
+#
+export WarningEsc="\[\e[1;33m\]！\[\e[0m\]"
