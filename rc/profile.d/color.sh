@@ -613,3 +613,7 @@ export GreyNormalBg="\e[0;47m"
 # </html>
 export GreyNormalEsc="\[\e[0;37m\]"
 
+# PS2
+#
+export PS2="\$(if [ \$(id -u) -eq 0 ]; then printf -- '%s' '${MagentaEsc}' '> ' '${ResetEsc}'; \
+else printf -- '%s' '${GreenEsc}' '> ' '${ResetEsc}'; fi)"
