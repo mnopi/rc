@@ -15,4 +15,3 @@
 ret=$?
 Finish "${1}:" "Installed"
 exit $ret
-
