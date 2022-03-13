@@ -75,9 +75,9 @@ export Plus="\e[1;32m+\e[0m"
 #
 export PlusEsc="\[\e[1;32m\]+\[\e[0m\]"
 
-# Start Cyan "═＞"
+# Start Green "═＞"
 #
-export Start="═\e[1;36m＞\e[0m"
+export Start="=\e[1;32m＞\e[0m"
 
 # Success Blue "◉" Escaped
 #
