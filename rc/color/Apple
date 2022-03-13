@@ -15,7 +15,7 @@
 ret=$?
 
 if { [ "${QUIET-0}" -ne 1 ] && [ "${QQUIET-0}" -ne 1 ];}; then
-  printf '%b' ""
+  printf '%b' "\e[1;37m\e[0m"
   [ $# -ne 0 ] || exit $ret
   [ $# -eq 1 ] || italic "$1 "
   printf '%s\n' "$*"
