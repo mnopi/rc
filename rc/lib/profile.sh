@@ -1,13 +1,22 @@
-# shellcheck shell=sh
+# shellcheck shell=sh disable=SC3040
 
 #
 # Appended to /etc/profile during installation of rc
 
 umask 002
 
+# profile.sh has been sourced (only at login shell and only once
+#
+export PROFILE_SOURCED="${PROFILE_SH_SOURCED:-0}"
+
+# rc.d has been sourced
+#
+: "${RC_SOURCED=0}"
+
 # Check to only run once
-if [ ! "${RC_D-}" ] || \
-  [ "${RC_D-}" != "${RC?Source it from 'profile' or set \$RC to be sourced from 'profile.sh'}/rc.d" ] ; then
+if [ "${PROFILE_SH_SOURCED-0}" -eq 0 ]; then
+  PROFILE_SH_SOURCED=1
+
   # RC completions: sourced by $RC_PROFILE at the end
   #
   export RC_COMPLETIONS_D="${RC}/completions.d"
@@ -29,36 +38,13 @@ if [ ! "${RC_D-}" ] || \
   #
   export RC_SHARE="${RC}/share"
 
-  for i in "${RC_PROFILE_D}"/*; do
-    . "${i}"
-  done
+  for _rc_profile in "${RC_PROFILE_D}"/*; do
+    . "${_rc_profile}"
+  done; unset _rc_profile
 
   eval "$("${RC}/bin/pathsd")"
 fi
 
-. cmd.sh
-. shell.sh
-
-for i in "${RC_D}"/*.sh; do
-  . "${i}"
-done
-
-#if [ "${BASH_VERSINFO-}" ]; then
-#  for i in "${RC_D}"/*.bash; do
-#    . "${i}"
-#  done
-#fi
-
-#if [ "${SOURCED_BASH}" -eq 0 ]; then
-#  unset -f _direnv_hook starship_precmd
-#elif [ "${BASH_VERSINFO-}" ]; then
-#  for i in "${RC_D}"/*.bash; do
-#    . "${i}"
-#  done
-#fi
-
-
-# TODO: Meter lo de history append, lo de comprobar que ya esta la variable para todo menos para el PS1
-#   Meter el PS1 ya de una puta vez, terminar el container. Aglutinar las variables en un fichero para que solo
-#   se pregunte una vez y preguntar solo por UNAME en todas menos en las que se tienen que cargar en RC.
-#   Habrá que hacer lo de .profile y .bashrc de cada usuario.
+for _rc_d in "${RC_D}"/*.sh; do
+  . "${_rc_d}"
+done; unset _rc_d

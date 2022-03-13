@@ -1,5 +1,7 @@
 # shellcheck shell=sh
 
+umask 002
+
 # '1' if 'DIST_ID' is 'alpine' and not: nix or busybox
 #
 export ALPINE
@@ -375,10 +377,10 @@ system() {
 
   if [ "${SSH_CLIENT-}" ] || [ "${SSH_CONNECTION-}" ] || [ "${SSH_TTY-}" ]; then
     SSH=1
-    HOST_PROMPT="⌁ ${HOST}"
+    HOST_PROMPT="⇌ ${HOST}"
   elif [ -f '/.dockerenv' ]; then
     CONTAINER=1
-    HOST_PROMPT="ꜿ ${HOST}"
+    HOST_PROMPT="❒ ${DIST_ID} ${HOST}"
     [ ! "${DEBIAN_LIKE-}" ] || DEBIAN_FRONTEND='noninteractive'
     if [ "${NO_CACHE-}" ]; then
       PM_INSTALL="${PM_INSTALL} ${NO_CACHE}"

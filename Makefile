@@ -20,10 +20,10 @@ debug:
 # TODO: aqui lo dejo - si hago bash entonces va a el .bashrc y no sale el icono o sea o set -o posix ? o ..
 # TODO: en el terminal de aqui s iban las lineas. comprobar en bash en docker y en terminal para ver si es mio o de quien coño
 # TODO: y si eso con el iTerm. ! se jode en bash tambié
-n en Docker!!!!!
+#    n en Docker!!!!!
 rc:
 	# make image=bash docker
-	@docker build --build-arg image=$(image) --target rc --tag $(NAME) . && docker run -it --rm $(NAME)
+	@docker build --build-arg image=$(image) --target rc --tag $(NAME) . && docker run -it --name $(NAME) --rm $(NAME)
 
 brew:
 	@brew bundle --quiet --cleanup --no-lock

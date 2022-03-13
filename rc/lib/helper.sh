@@ -29,6 +29,42 @@ XTRACE="${XTRACE-0}"
 XVERBOSE="${XVERBOSE-0}"
 
 #######################################
+# helper function for functions that use caller.
+# Globals:
+#   CALLER             Valid caller output
+# Arguments:
+#   1       Symbol
+#   2       Color value
+#######################################
+call() {
+  if [ "${BASH_VERSION-}" ]; then
+    a
+  else
+    file="$(basename "$(psargs '' | awk '{ print $1 }')" 2>/dev/null || true)"
+  fi
+}
+#######################################
+# helper function for functions that use caller.
+# Globals:
+#   CALLER             Valid caller output
+# Arguments:
+#   1       Symbol
+#   2       Color value
+#######################################
+_fileline() {
+  printf '%b' "$1"; shift
+  color="$1"; shift
+  if [ "${CALLER-}" ]; then
+    file="$(basename "$(echo "${CALLER}" | awk '{ print $3 }')")"
+    line="$(echo "${CALLER}" | awk '{ print $1 }')"
+  else
+    file="$(basename "$(psargs '' | awk '{ print $1 }')" 2>/dev/null || true)"
+  fi
+  [ ! "${file-}" ] || printf '%b' " ${color}${file}${Reset}${line:+[${color}${line}${Reset}]}"
+  printf '%b\n' " $*"
+}
+
+#######################################
 # show info message with > symbol in grey  if DEBUG is set to 1, unless QUIET is set to 1
 # Globals:
 #   DEBUG              Show if DEBUG set to 1, unless QUIET is set to 1 (default: 0).
@@ -70,7 +106,7 @@ debug() {
     add=""; content=""; suffix=""
     if command -v caller >/dev/null; then
       index=0
-      while c="$(caller "${i}")"; do
+      while c="$(caller "${index}")"; do
         if [ "$(echo "${c}" | awk '{ print $2 }')" = 'die' ] \
           || [ "$(basename "$(echo "${c}" | awk '{ print $3 }')")" = 'helper.sh' ]; then
           index="$((index+1))"
@@ -230,6 +266,7 @@ has() {
 #######################################
 # show error message with x symbol in red, unless QUIET is set to 1
 # Globals:
+#   CALLER             Valid caller output
 #   QUIET              Do not show message if set to 1, takes precedence over VERBOSE/DRY_RUN (default: 0).
 # Arguments:
 #   message            Message to show.
@@ -274,38 +311,22 @@ error() {
   QUIET="${QUIET:-0}"
 
   if [ "${QUIET-0}" -ne 1 ]; then
-    add=''; line=''; sep=' '
     if command -v caller >/dev/null; then
       index=0
-      while c="$(caller "${i}")"; do
-        if [ "$(echo "${c}" | awk '{ print $2 }')" = 'die' ] \
-          || [ "$(basename "$(echo "${c}" | awk '{ print $3 }')")" = 'helper.sh' ]; then
-          index="$((index+1))"
-        else
-          break
+      while CALLER="$(caller "${index}")"; do
+        if [ "$(basename "$(echo "${CALLER}" | awk '{ print $3 }')")" != 'helper.sh' ]; then
+          [ "$(basename "$(echo "${CALLER}" | awk '{ print $3 }')")" = 'helper.sh' ]
+          case "$(echo "${CALLER}" | awk '{ print $2 }')" in
+            debug|die|error|warning) index="$((index+1))" ;;
+            *)
+              [ "$(basename "$(echo "${CALLER}" | awk '{ print $3 }')")" = 'helper.sh' ] || break
+              index="$((index+1))"
+              ;;
+          esac
         fi
       done
-      file="$(basename "$(echo "${c}" | awk '{ print $3 }')")"
-      line="$(echo "${c}" | awk '{ print $1 }')"
     fi
-
-    [ "${file-}" ] || file="$(basename "$(psargs '' | awk '{ print $1 }')" 2>/dev/null || true)"
-    [ ! "${file-}" ] || add="$(redbg "${file}${line:+[${line}]}"): "
-
-    if [ "$#" -eq 0 ] && [ "${add-}" ]; then
-      add="${add%??}" # if no args, remove trailing ": "
-    elif [ "$#" -eq 0 ]; then
-      sep=''
-    fi
-
-    if [ "${WHITE-}" ]; then
-       [ ! "${add}" ] || >&2 printf '%b\n' "$(red "✘${sep}${add}")"
-      [ "$#" -eq 0 ] || echo "$@" >&2
-    else
-       >&2 printf '%b\n' "$(red 'x')${sep}${add}$(red "$*")"
-    fi
-
-    unset add c file line sep
+    _fileline "${Error}" "${Red}" "$@"
   fi
 }
 
@@ -384,26 +405,36 @@ psargs() {
 # Returns:
 #   based on previous exit code
 #######################################
-show() (
+show() {
   ret=$?
   export PROMPT_EOL_MARK=''
   case "${1-}" in
-    --error) red "=>"; ret="${1}"; shift ;;
-    --completed) green "=>"; ret="${1}"; shift ;;
-    --notice) magenta "=>"; ret="${1}"; shift ;;
+    Critical) printf '%b' "${Critical}"; ret="${1}"; shift ;;
+    Error) printf '%b' "${Error}"; ret="${1}"; shift ;;
+    --finish) green "=>"; ret="${1}"; shift ;;
+    Notice) printf '%b' "${Notice}"; ret="${1}"; shift ;;
+    --ok) printf '%b' "${Ok}"; ret="${1}"; shift ;;
+    --options) echo "critical" ;;
     --start) blue "=>"; ret="${1}"; shift ;;
-    --warning) yellow "!"; ret="${1}"; shift ;;
+    Success) printf '%b' "${Success}"; ret="${1}"; shift ;;
+    Verbose) printf '%b' "${Verbose}"; ret="${1}"; shift ;;
+    Warning) printf '%b' "${Warning}"; ret="${1}"; shift ;;
   esac
 
   case $ret in
     --*) ret=0 ;;
-    0) green "✔" ;;
-    *) red "✘" ;;
+    0) printf '%b' "${Ok}" ;;
+    *) printf '%b' "${Error}" ;;
   esac
 
-  [ $# -eq 0 ] || printf '%s\n' " $*"
-  exit $ret
-)
+  if [ $# -eq 0 ]; then
+    return $ret
+  elif [ $# -gt 1 ]; then
+    italic "$1 "
+  fi
+  printf '%s\n' " $*"
+  return $ret
+}
 
 #######################################
 # trap set by 'stderr' function to show stderr on EXIT and format output based on stderr and/or 'set -x' for posix
@@ -443,6 +474,7 @@ _stderr() {
   fi
   exit $rc
 }
+
 
 #######################################
 # sets trap with '_stderr' function on EXIT and redirects stderr to FD 3
@@ -524,7 +556,7 @@ strict() {
     fi
     set "${_set:-+o}" errtrace
     set "${_set:-+o}" pipefail
-    if [ "${BASH4}" -eq 1 ]; then
+    if [ "${BASH4-0}" -eq 1 ]; then
       shopt "${_opt:--u}" inherit_errexit
     fi
   fi
@@ -714,7 +746,7 @@ warning() {
     add=''; line=''; sep=' '
     if command -v caller >/dev/null; then
       index=0
-      while c="$(caller "${i}")"; do
+      while c="$(caller "${index}")"; do
         if [ "$(echo "${c}" | awk '{ print $2 }')" = 'die' ] \
           || [ "$(basename "$(echo "${c}" | awk '{ print $3 }')")" = 'helper.sh' ]; then
           index="$((index+1))"
@@ -735,7 +767,7 @@ warning() {
       sep=''
     fi
 
-    >&2 printf '%b\n' "$(yellow ！)${sep}${add}$(yellow "$*")" >&2
+    >&2 printf '%b\n' "${YellowMark}${sep}${add}$(yellow "$*")" >&2
     unset add c file line sep
   fi
 }

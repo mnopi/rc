@@ -1,55 +1,26 @@
 #!/bin/sh
 
-blue='\[\e[34m\]'
-cyan='\[\e[36m\]'
-green='\[\e[32m\]'
-grey='\[\e[37m\]'
-magenta='\[\e[35m\]'
-red='\[\e[31m\]'
-yellow='\[\e[33m\]'
-reset='\[\e[0m\]'
-
 main() {
-  if [ "${1-}" ]; then
-    if [ "$1" = "0" ]; then
-      green "✔ "
-    else
-      red "$1 "
-    fi
-
-    [ ! "${HOST_PROMPT-}" ] || blue "${HOST_PROMPT} "
-
-    # TODO: /Library/Developer/CommandLineTools/usr/share/git-core
-    #   substituir por ... o directamente quitarle el /
-    cyan "$(pwd | sed "s|${HOME}|~|" | tr '/' '\n' | tail -3 | sed -n "H;\${x;s|\n|/|g;s|^//|/|;s|^/~|~|;s|^~/||;p;}") "
-    func=magenta
-    [ "$(id -u)" -eq 0 ] || func=green
-    ${func} "〉"
-    exit "$1"
+  rc=$1
+  printf -- "%s" "\[\e]0;\h@\u: \w\a\]"
+  if [ "${rc}" -eq 0 ]; then
+    greenesc "✔ "
+  else
+    redesc "$1 "
   fi
+
+  # TODO: /Library/Developer/CommandLineTools/usr/share/git-core
+  #   substituir por ... o directamente quitarle el /
+  cyanesc "$(pwd | sed "s|${HOME}|~|" | tr '/' '\n' | tail -3 | \
+    sed -n "H;\${x;s|\n|/|g;s|^//|/|;s|^/~|~|;s|^~/||;p;}") "
+
+  [ ! "${HOST_PROMPT-}" ] || blueesc "${HOST_PROMPT} "
+  [ ! "${PROMPT_SH-}" ] || greyesc "${PROMPT_SH} "
+
+  func=magentaesc
+  [ "$(id -u)" -eq 0 ] || func=greenesc
+  ${func} "〉"
+  exit "$1"
 }
 
-escape() {
-  if [ "${1-}" ]; then
-    if [ "$1" = "0" ]; then
-      printf -- "%s" "${blue}"
-      printf -- "%s" "✔ "
-      printf -- "%s" "${reset}"
-
-    else
-      printf -- "%s" "${red}"
-      printf -- "%s" "$1"
-      printf -- "%s" "${reset}"
-    fi
-  fi
-}
-
-simple() {
-  printf -- "%s" "\u \[\e[32m\]main${reset}"
-  echo
-}
-git() {
-  printf -- "%s" "\u@\h:\w (\[\e[32m\]main\[\e[0m\] \[\e[31m\]*\[\e[0m\]=)\$"
-  echo
-}
-git "$@"
+main "$@"

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2016
 
 #
 # show colors and helper functions output, or generate color lib
@@ -13,6 +14,47 @@ export VAR1=1
 export VAR2=2
 
 #######################################
+# actions
+# Globals:
+#   ACTIONS
+#   BIN_TMP_DIR
+#   file
+#   header
+#   if
+#   symbol
+# Arguments:
+#  None
+#######################################
+action() {
+  local file script
+
+  for action in "${!ACTIONS[@]}"; do
+      script="${ACTIONS[${action}]}"
+      file="${BIN_TMP_DIR}/${action}"
+    cat >"${file}" <<EOF
+#!/bin/sh
+
+# <html><h2>${action}</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>
+# Show first argument in Italic and second ${action}, prefixed with ${script} symbol:
+# </dt>
+# <dd>
+# <pre><code class="language-bash">${action} Brew
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+ret=\$?
+${script} "\${1}:" "${action}"
+exit \$ret
+EOF
+    chmod +x "${file}"
+  done
+}
+
+#######################################
 # generate lib escaped for PS1 and normal
 # Globals:
 #   BIN_DIR
@@ -21,6 +63,8 @@ export VAR2=2
 #   LIB_PATH
 #   LIB_TMP_PATH
 #   SCRIPT
+#   SYM_PATH
+#   SYM_TMP_PATH
 # Arguments:
 #   0
 # Escaped:
@@ -49,7 +93,7 @@ build() {
   BUILD=true
   BIN_TMP_DIR="$(mktemp -d)"
   LIB_TMP_PATH="$(mktemp)"
-
+  SYM_TMP_PATH="$(mktemp)"
   set -eu
   cd "${super}"
   realpath "$0" | grep -q "^${super}" || die Can Only Run from RC Repo
@@ -64,8 +108,12 @@ build() {
 EOF
 
   colors
-  cmp "${BIN_TMP_DIR}" "${BIN_DIR}"
-  cmp "${LIB_TMP_PATH}" "${LIB_PATH}"
+  ps2
+  symbol
+  action
+  cmp Bin "${BIN_TMP_DIR}" "${BIN_DIR}"
+  cmp Lib "${LIB_TMP_PATH}" "${LIB_PATH}"
+  cmp Symbol "${SYM_TMP_PATH}" "${SYM_PATH}"
 }
 
 #######################################
@@ -77,23 +125,24 @@ EOF
 #   2     dest
 #######################################
 cmp() {
-  if ! diff -s "$1" "$2" > /dev/null; then
-    show --start Color: Installing
-    if test -f "$1"; then
-      cp "$1" "$2"
+  if ! [ -e "$3" ] || ! diff -s "$2" "$3" > /dev/null; then
+    show --start "Color $1:" Installing
+    if test -f "$3"; then
+      cp "$2" "$3"
     else
-      rsync -av --delete "$1"/ "$2" >/dev/null
+      rsync -av --delete "$2"/ "$3" >/dev/null
     fi
-    git add "$2"
-    git commit --quiet -m "${SCRIPT}" "$2"
+    git add "$3"
+    git commit --quiet -m "${SCRIPT}" "$3"
     git push --quiet
-    show --completed Color: Installed
+    show --finish "Color $1:" Installed
   fi
 }
 
 #######################################
 # generate colors array global with escaped for PS1 and normal
 # Globals:
+#   ACTIONS
 #   COLORS
 #   ESCAPE
 #   RESET
@@ -121,12 +170,20 @@ cmp() {
 #######################################
 colors() {
   local e="\e[" i=0 key suffix="" value
-  declare -A formats=(["Normal"]=0 ["Bold"]=1 ["Dim"]=2 ["Italic"]=3 ["Under"]=4 ["Invert"]=7)
+  declare -A formats=(["Normal"]=0 ["Bold"]=1 ["BoldItalic"]="3m${e}1" ["Dim"]=2 ["Italic"]=3 ["Under"]=4 \
+                      ["Invert"]=7 ["Strike"]=9)
   ESCAPE="Esc"; RESET="${e}0m"
+  declare -Ag ACTIONS=( ["Installing"]="Start" ["Installed"]="Finish")
   declare -Ag COLORS=()
 
   save Reset "${e}0m"
   save "Reset${ESCAPE}" "\[${COLORS["Reset"]}\]"
+  for format in "${!formats[@]}"; do
+    # \e[0m
+    value="${e}${formats[${format}]}m"
+    save "${format}" "${value}"
+    ! [[ "${format}" =~ Bold|BoldItalic|Italic|Normal ]] || save "${format}${ESCAPE}" "\[${value}\]"
+  done
   for color in Black Red Green Yellow Blue Magenta Cyan Grey; do
     for format in "${!formats[@]}"; do
       suffix=""; [ "${format}" = "Bold" ] || suffix="${format}"
@@ -134,7 +191,7 @@ colors() {
       value="${e}${formats[${format}]};3${i}m"
       save "${key}" "${value}"
       save "${key}Bg" "${e}${formats[${format}]};4${i}m"
-      ! [[ "${format}" =~ Bold|Italic|Normal ]] || save "${key}${ESCAPE}" "\[${value}\]"
+      ! [[ "${format}" =~ Bold|BoldItalic|Italic|Normal ]] || save "${key}${ESCAPE}" "\[${value}\]"
     done
     ((i+=1))
   done
@@ -145,13 +202,17 @@ colors() {
 # Globals:
 #   COLORS
 #   ESCAPE
+#   LIB_PATH
 #   RESET
+#   SYM_PATH
 # Arguments:
 #   None
 #######################################
 demo() {
-  local color current normal previous
+  local action color current normal previous symbol
   colors
+  . "${LIB_PATH}"
+  . "${SYM_PATH}"
   while read -r color; do
     current="${color:0:3}"; [ "${color:0:5}" != "Green" ] || current="${current}-"
     [ "${current}" = "${previous-}" ] || { [ ! "${previous-}" ] || echo;previous="${current}"; }
@@ -161,6 +222,23 @@ demo() {
     ${normal,,} "${color}" # from bin
     echo
   done < <(printf "%s\n" "${!COLORS[@]}" | sort | grep -v Reset)
+
+  echo
+
+  while read -r symbol; do
+    printf -- "$(eval echo \$"${symbol}")%s${Reset} " " ${symbol}"
+    printf -- "$(eval echo \$"${symbol}")%s${Reset} " " ${symbol}${ESCAPE}"
+    ${symbol} "${symbol}"
+    ${symbol} "${symbol}:" Argument
+    echo
+  done < <(awk -F '[= ]' "/export / && ! /${ESCAPE}/{ print \$2 }" "${SYM_PATH}")
+
+  echo
+
+  while read -r action; do
+    ${action} Color
+    echo
+  done < <(printf "%s\n" "${!ACTIONS[@]}" | sort)
 
   echo
 
@@ -242,7 +320,7 @@ EOF
 # </dd>
 # </dl>
 # </html>
-[ \$# -eq 0 ] || printf -- '\001%s\002%s\001%s\002' "$2" "\$*" "${COLORS["Reset${ESCAPE}"]}"
+[ \$# -eq 0 ] || printf -- '%s' "$2" "\$*" "${COLORS["Reset${ESCAPE}"]}"
 EOF
     else
       cat > "${file}" <<EOF
@@ -266,6 +344,212 @@ EOF
 }
 
 #######################################
+# save PS2 to profile lib
+# Arguments:
+#  None
+#######################################
+ps2() {
+  tee -a "${LIB_TMP_PATH}" > /dev/null <<'EOF'
+# PS2
+#
+export PS2="\$(if [ \$(id -u) -eq 0 ]; then printf -- '%s' '${MagentaEsc}' '> ' '${ResetEsc}'; \
+else printf -- '%s' '${GreenEsc}' '> ' '${ResetEsc}'; fi)"
+EOF
+}
+
+#######################################
+# add color symbols variables and executables
+# Globals:
+#   SYM_TMP_PATH
+# Arguments:
+#   None
+#######################################
+symbol() {
+  local file header="" if="" symbol
+  tee -a "${SYM_TMP_PATH}" > /dev/null <<EOF
+# shellcheck shell=sh
+
+#
+# Color Symbols library (generated by: ${SCRIPT})
+
+# Critical Red Invert "✘"
+#
+export Critical="${COLORS["RedInvert"]}✘${Reset}"
+
+# Debug Magenta "+"
+#
+export Debug="${COLORS["Magenta"]}+${Reset}"
+
+# Error Red "✘"
+#
+export Error="${COLORS["Red"]}✘${Reset}"
+
+# Error Red "✘" Escaped
+#
+export Error${ESCAPE}="${COLORS["Red${ESCAPE}"]}✘${ResetEsc}"
+
+# Finish Green "=＞"
+#
+export Finish="=${COLORS["Green"]}＞${Reset}"
+
+# Minus Red "－"
+#
+export Minus="${COLORS["Red"]}－${Reset}"
+
+# Minus Red "－" Escaped
+#
+export Minus${ESCAPE}="${COLORS["Red${ESCAPE}"]}－${ResetEsc}"
+
+# More Magenta "＞"
+#
+export More="${COLORS["Magenta"]}＞${Reset}"
+
+# More Magenta ">" Escaped
+#
+export More${ESCAPE}="${COLORS["Magenta${ESCAPE}"]}>${ResetEsc}"
+
+# Multiply Blue "×"
+#
+export Multiply="${COLORS["Blue"]}×${Reset}"
+
+# Multiply Blue "×" Escaped
+#
+export Multiply${ESCAPE}="${COLORS["Blue${ESCAPE}"]}×${ResetEsc}"
+
+# Notice Cyan "‼"
+#
+export Notice="${COLORS["Cyan"]}‼${Reset}"
+
+# Notice Cyan "‼" Escaped
+#
+export Notice${ESCAPE}="${COLORS["Cyan${ESCAPE}"]}‼${ResetEsc}"
+
+# Ok Green "✔"
+#
+export Ok="${COLORS["Green"]}✔${Reset}"
+
+# Ok Green "✔" Escaped
+#
+export Ok${ESCAPE}="${COLORS["Green${ESCAPE}"]}✔${ResetEsc}"
+
+# Plus Green "+"
+#
+export Plus="${COLORS["Green"]}+${Reset}"
+
+# Plus Green "+" Escaped
+#
+export Plus${ESCAPE}="${COLORS["Green${ESCAPE}"]}+${ResetEsc}"
+
+# Start Blue "=＞"
+#
+export Start="=${COLORS["Blue"]}＞${Reset}"
+
+# Success Blue "◉" Escaped
+#
+export Success${ESCAPE}="${COLORS["Blue${ESCAPE}"]}◉${ResetEsc}"
+
+# Success Blue "◉"
+#
+export Success="${COLORS["Blue"]}◉${Reset}"
+
+# Success Blue "◉" Escaped
+#
+export Success${ESCAPE}="${COLORS["Blue${ESCAPE}"]}◉${ResetEsc}"
+
+# Tilde Blue "～"
+#
+export Tilde="${COLORS["Blue"]}～${Reset}"
+
+# Tilde Blue "～" Escaped
+#
+export Tilde${ESCAPE}="${COLORS["Blue${ESCAPE}"]}～${ResetEsc}"
+
+# Verbose Magenta "＋"
+#
+export Verbose="${COLORS["Magenta"]}＋${Reset}"
+
+# Verbose Magenta "＋" Escaped
+#
+export Verbose${ESCAPE}="${COLORS["Magenta${ESCAPE}"]}＋${ResetEsc}"
+
+# Wait Yellow "…"
+#
+export Wait="${COLORS["Yellow"]}…${Reset}"
+
+# Wait Yellow "…" Escaped
+#
+export Wait${ESCAPE}="${COLORS["Yellow${ESCAPE}"]}…${ResetEsc}"
+
+# Warning Yellow "！"
+#
+export Warning="${COLORS["Yellow"]}！${Reset}"
+
+# Warning Yellow "！" Escaped
+#
+export Warning${ESCAPE}="${COLORS["Yellow${ESCAPE}"]}！${ResetEsc}"
+EOF
+
+  . "${SYM_TMP_PATH}"
+  while read -r symbol; do
+    if [ "${symbol}" = 'Verbose' ]; then
+      header="$(cat <<'EOF'
+# <html><h2>Dry Run</h2>
+# <p><strong><code>$DRY_RUN</code></strong> (Default: 0).</p>
+# <p>Activate with either of:</p>
+# <ul>
+# <li><code>DRY_RUN=1</code></li>
+# <li><code>--dryrun</code></li>
+# </ul>
+# </html>
+DRY_RUN="${DRY_RUN:-0}"
+
+# <html><h2>Show Verbose Messages</h2>
+# <p><strong><code>$VERBOSE</code></strong>  (Default: 0).</p>
+# <p><strong><code>Verbose messages are shown if set to 1.</code></strong></p>
+# <p>Activate with either of:</p>
+# <ul>
+# <li><code>VERBOSE=1</code></li>
+# <li><code>--verbose</code></li>
+# </ul>
+# </html>
+VERBOSE="${VERBOSE:-0}"
+EOF
+)"
+      if=' && { [ "${VERBOSE}" -eq 1 ] || [ "${DRY_RUN-}" -eq 1 ]; }'
+    fi
+    file="${BIN_TMP_DIR}/${symbol}"
+    cat > "${file}" <<EOF
+#!/bin/sh
+${header}
+# <html><h2>${symbol}</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>
+# Show arguments separated with space, prefixed with ${symbol} symbol. If more than one arguments then first in Italic:
+# </dt>
+# <dd>
+# <pre><code class="language-bash">${symbol} Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+ret=\$?
+
+if { [ "\${QUIET-0}" -ne 1 ] && [ "\${QQUIET-0}" -ne 1 ]; }${if}; then
+  printf '%b' "$(eval echo \$"${symbol}")"
+  [ \$# -ne 0 ] || exit \$ret
+  [ \$# -eq 1 ] || { italic " \$1"; shift; }
+  printf '%s\n' " \$*"
+fi
+
+exit \$ret
+EOF
+    chmod +x "${file}"
+  done < <(awk -F '[= ]' "/export / && ! /${ESCAPE}/{ print \$2 }" "${SYM_TMP_PATH}")
+
+}
+
+#######################################
 # show colors and helper functions output, or generate color lib
 # Globals:
 #   BIN_DIR
@@ -274,6 +558,7 @@ EOF
 #   RC
 #   RC_PROFILE_D
 #   SCRIPT
+#   SYM_PATH
 # Arguments:
 #  None
 #######################################
@@ -283,6 +568,7 @@ main() {
   BUILD=false
   SCRIPT="${0##*/}"
   LIB_PATH="${RC_PROFILE_D}/${SCRIPT}.sh"
+  SYM_PATH="${RC_PROFILE_D}/symbol.sh"
   for arg do
     case "${arg}" in
       build) func="${arg}" ;;
