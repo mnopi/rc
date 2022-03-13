@@ -13,6 +13,51 @@ export Reset="\e[0m"
 # </html>
 export ResetEsc="\[\e[0m\]"
 
+# <html><h2>Dim</h2>
+# <p><strong><code>$Dim</code></strong> Color Dim.</p>
+# </html>
+export Dim="\e[[2m"
+
+# <html><h2>Bold</h2>
+# <p><strong><code>$Bold</code></strong> Color Bold.</p>
+# </html>
+export Bold="\e[[1m"
+
+# <html><h2>BoldEsc</h2>
+# <p><strong><code>$BoldEsc</code></strong> Color BoldEsc.</p>
+# </html>
+export BoldEsc="\[\e[[1m\]"
+
+# <html><h2>Invert</h2>
+# <p><strong><code>$Invert</code></strong> Color Invert.</p>
+# </html>
+export Invert="\e[[7m"
+
+# <html><h2>Under</h2>
+# <p><strong><code>$Under</code></strong> Color Under.</p>
+# </html>
+export Under="\e[[4m"
+
+# <html><h2>Italic</h2>
+# <p><strong><code>$Italic</code></strong> Color Italic.</p>
+# </html>
+export Italic="\e[[3m"
+
+# <html><h2>ItalicEsc</h2>
+# <p><strong><code>$ItalicEsc</code></strong> Color ItalicEsc.</p>
+# </html>
+export ItalicEsc="\[\e[[3m\]"
+
+# <html><h2>Normal</h2>
+# <p><strong><code>$Normal</code></strong> Color Normal.</p>
+# </html>
+export Normal="\e[[0m"
+
+# <html><h2>NormalEsc</h2>
+# <p><strong><code>$NormalEsc</code></strong> Color NormalEsc.</p>
+# </html>
+export NormalEsc="\[\e[[0m\]"
+
 # <html><h2>BlackDim</h2>
 # <p><strong><code>$BlackDim</code></strong> Color BlackDim.</p>
 # </html>
