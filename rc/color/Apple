@@ -1,13 +1,13 @@
 #!/bin/sh
 
-# <html><h2>More</h2>
+# <html><h2>Apple</h2>
 # <h3>Examples</h3>
 # <dl>
 # <dt>
-# Show arguments separated with space and prefixed with More. If more than one arguments then first in Italic:
+# Show arguments separated with space and prefixed with Apple. If more than one arguments then first in Italic:
 # </dt>
 # <dd>
-# <pre><code class="language-bash">More Show Text
+# <pre><code class="language-bash">Apple Show Text
 # </code></pre>
 # </dd>
 # </dl>
@@ -15,7 +15,7 @@
 ret=$?
 
 if { [ "${QUIET-0}" -ne 1 ] && [ "${QQUIET-0}" -ne 1 ];}; then
-  printf '%b' "\e[1;35m＞\e[0m"
+  printf '%b' ""
   [ $# -ne 0 ] || exit $ret
   [ $# -eq 1 ] || italic "$1 "
   printf '%s\n' "$*"
