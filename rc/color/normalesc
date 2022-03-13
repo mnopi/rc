@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# <html><h2>normalesc</h2>
+# https://mywiki.wooledge.org/BashFAQ/053
+# <a href="https://mywiki.wooledge.org/BashFAQ/053">Dynamic prompt or read -p</a>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments in NormalEsc escaped for $PS1,dynamic prompt or read -p:</dt>
+# <dd>
+# <pre><code class="language-bash">normalesc Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+[ $# -eq 0 ] || printf -- '%s' "\[\e[[0m\]" "$*" "\[\e[0m\]"
