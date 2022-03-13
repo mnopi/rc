@@ -1,0 +1,43 @@
+#!/bin/sh
+# <html><h2>Dry Run</h2>
+# <p><strong><code>$DRY_RUN</code></strong> (Default: 0).</p>
+# <p>Activate with either of:</p>
+# <ul>
+# <li><code>DRY_RUN=1</code></li>
+# <li><code>--dryrun</code></li>
+# </ul>
+# </html>
+DRY_RUN="${DRY_RUN:-0}"
+
+# <html><h2>Show Verbose Messages</h2>
+# <p><strong><code>$VERBOSE</code></strong>  (Default: 0).</p>
+# <p><strong><code>Verbose messages are shown if set to 1.</code></strong></p>
+# <p>Activate with either of:</p>
+# <ul>
+# <li><code>VERBOSE=1</code></li>
+# <li><code>--verbose</code></li>
+# </ul>
+# </html>
+VERBOSE="${VERBOSE:-0}"
+# <html><h2>Wait</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>
+# Show arguments separated with space and prefixed with Wait. If more than one arguments then first in Italic:
+# </dt>
+# <dd>
+# <pre><code class="language-bash">Wait Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+ret=$?
+
+if { [ "${QUIET-0}" -ne 1 ] && [ "${QQUIET-0}" -ne 1 ];} && { [ "${VERBOSE}" -eq 1 ] || [ "${DRY_RUN-}" -eq 1 ]; }; then
+  [ $# -ne 0 ] || exit $ret
+  printf '%b' "\e[1;33m…\e[0m"
+  [ $# -eq 1 ] || italic "$1 "
+  printf '%s\n' "$*"
+fi
+
+exit $ret

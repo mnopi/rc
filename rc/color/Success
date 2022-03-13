@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# <html><h2>Success</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>
+# Show arguments separated with space and prefixed with Success. If more than one arguments then first in Italic:
+# </dt>
+# <dd>
+# <pre><code class="language-bash">Success Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+ret=$?
+
+if { [ "${QUIET-0}" -ne 1 ] && [ "${QQUIET-0}" -ne 1 ];}; then
+  [ $# -ne 0 ] || exit $ret
+  printf '%b' "\e[1;34m◉\e[0m"
+  [ $# -eq 1 ] || italic "$1 "
+  printf '%s\n' "$*"
+fi
+
+exit $ret
