@@ -19,9 +19,9 @@ export Error="\e[1;31m✘\e[0m"
 #
 export ErrorEsc="\[\e[1;31m\]✘\[\e[0m\]"
 
-# Finish Green "=>"
+# Finish Green "═＞"
 #
-export Finish="\e[1;32m=>\e[0m"
+export Finish="═\e[1;32m＞\e[0m"
 
 # Minus Red "－"
 #
@@ -71,9 +71,9 @@ export Plus="\e[1;32m+\e[0m"
 #
 export PlusEsc="\[\e[1;32m\]+\[\e[0m\]"
 
-# Start Cyan "=>"
+# Start Cyan "═＞"
 #
-export Start="\e[1;36m=>\e[0m"
+export Start="═\e[1;36m＞\e[0m"
 
 # Success Blue "◉" Escaped
 #
