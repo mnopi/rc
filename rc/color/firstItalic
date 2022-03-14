@@ -14,6 +14,6 @@
 # </html>
 
 [ $# -ne 0 ] || exit
-[ "${1}" != "space" ] || space=" "
-[ $# -eq 1 ] || { italic "${space-}$1"; shift; }
-printf '%s\n' " $*"
+[ "${1}" != "space" ] || { space=" "; shift; }
+[ $# -eq 1 ] || { italic "${space-}$1 "; shift; }
+printf '%s\n' "$*"
