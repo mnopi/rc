@@ -14,6 +14,6 @@
 # </html>
 
 [ $# -ne 0 ] || exit
-first="$1"
-[ $# -eq 1 ] || { sep=" "; shift; }
+first="$1"; shift
+[ $# -eq 1 ] || sep=" "
 printf "$(italic "${first}")%s\n" "${sep-}$*"

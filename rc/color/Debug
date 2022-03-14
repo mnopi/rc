@@ -14,5 +14,6 @@
 # </html>
 
 if { [ "${QUIET-0}" -ne 1 ] && [ "${QQUIET-0}" -ne 1 ]; }; then
-  printf '%s' "[1;35m+[0m" "$(FirstArg "$@")"
+  first="$(FirstArg "$@")"
+  printf '%s' "[1;35m+[0m" "${first:+ "${first}"}"
 fi
