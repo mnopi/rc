@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# <html><h2>firstitalic</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>
+# If more than one arguments then first in Italic:
+# </dt>
+# <dd>
+# <pre><code class="language-bash">firstItalic Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+
+[ $# -ne 0 ] || exit
+[ "${1}" != "space" ] || space=" "
+[ $# -eq 1 ] || { italic "${space-}$1"; shift; }
+printf '%s\n' " $*"
