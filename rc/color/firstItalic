@@ -4,7 +4,7 @@
 # <h3>Examples</h3>
 # <dl>
 # <dt>
-# If more than one arguments then first in Italic:
+# First in Italic and rest normal:
 # </dt>
 # <dd>
 # <pre><code class="language-bash">firstItalic Show Text
@@ -16,6 +16,6 @@
 [ $# -ne 0 ] || exit
 [ "$1" != "space" ] || { space=" "; shift; }
 italic "${space-}$1"
-shift
 [ $# -ne 0 ] || exit
+shift
 printf '%s\n' " $*"
