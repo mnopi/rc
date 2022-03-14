@@ -15,5 +15,7 @@
 
 [ $# -ne 0 ] || exit
 [ "${1}" != "space" ] || { space=" "; shift; }
-[ $# -eq 1 ] || { italic "${space-}$1 "; shift; }
-printf '%s\n' "$*"
+italic "${space-}$1"
+shift
+[ $# -ne 0 ] || exit
+printf '%s\n' " $*"
