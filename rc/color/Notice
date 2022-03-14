@@ -15,5 +15,5 @@
 
 if { [ "${QUIET-0}" -ne 1 ] && [ "${QQUIET-0}" -ne 1 ]; }; then
   first="$(FirstArg "$@")"
-  printf '%s' "[1;36m‼[0m" "${first:+ "${first}\n"}"
+  printf '%s' "[1;36m‼[0m" "${first:+ "${first}"}" '\n'
 fi

@@ -34,5 +34,5 @@ VERBOSE="${VERBOSE:-0}"
 
 if { [ "${QUIET-0}" -ne 1 ] && [ "${QQUIET-0}" -ne 1 ]; } && { [ "${VERBOSE}" -eq 1 ] || [ "${DRY_RUN-}" -eq 1 ]; }; then
   first="$(FirstArg "$@")"
-  printf '%s' "[1;36m…[0m" "${first:+ "${first}\n"}"
+  printf '%s' "[1;36m…[0m" "${first:+ "${first}"}" '\n'
 fi
