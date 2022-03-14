@@ -1,0 +1,46 @@
+#!/bin/sh
+
+set -eu
+
+rc=0
+
+#######################################
+# show to stderr and mark exit code
+# Arguments:
+#   1    directory
+#######################################
+std() { >&2 echo "$1"; rc=1; }
+
+#######################################
+# directory or directories exist and have files, including hidden files and folders or does not exist
+# Arguments:
+#   1   path/s to directory (default: cwd)
+# Returns:
+#   1 if at least one of directories passed is empty or does not exist
+# Output:
+#   Shows empty directories or missing directories to stderr.
+# Examples:
+#   dirhas
+#   dirhas ~
+#   dirhas foo
+#   find . -type d | dirhas
+#   mkdir -p /tmp/has{1,2} && touch /tmp/has{1,2}/f; dirhas /tmp/has{1,2}
+#   rm /tmp/has1/*; dirhas /tmp/has{1,2}
+#######################################
+main () {
+  test -d "$1" || { std "$1"; return 0; }
+  [ -n "$(find "$1" -mindepth 1 -maxdepth 1)" ] || std "$1"
+}
+
+if [ -t 0 ]; then
+  [ $# -ne 0 ] || main .
+  for arg; do
+    main "${arg}"
+  done
+else
+  while read -r arg; do
+    main "${arg}"
+  done < /dev/stdin
+fi
+
+exit $rc

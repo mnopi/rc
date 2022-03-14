@@ -3,45 +3,34 @@
 . helper.sh
 
 #######################################
-# fail if previous pipe /dev/stdin is empty or file in args is empty, respecting if no new line on stdin
+# Piped /dev/stdin or file in args does not have at least one character (is null or empty)
 # Arguments:
-#   [--quiet]
-#   [file]      file from arguments or pipe input
+#   [file]      file from arguments or /dev/stdin
+# Returns:
+#   1 if it has at least one character
+# Output:
+#   Shows content to stderr after error message.
 # Examples:
-#   [ok] { echo foo; false; } | filenull
-#   [ok (no newline)] printf '%s' foo | filenull
-#   [fail ()] false | filenull --quiet
-#   [fail (Empty)] false | filenull
-#   [fail (Empty)] true | filenull
-#   [fail (Empty)] echo | filenull
-#   [fail] filenull
-#   [fail] echo >/tmp/a; filenull --quiet /tmp/a
-#   [fail] echo >/tmp/a; filenull /tmp/a --quiet
-#   [fail] echo >/tmp/a; filenull /tmp/a
-#   [fail] echo foo >/tmp/a; filenull --quiet /tmp/a
-#   [fail] echo foo >/tmp/a; filenull /tmp/a --quiet
-#   [fail] echo foo >/tmp/a; filenull /tmp/a
-#   [fail] printf '%s' foo >/tmp/a; filenull /tmp/a
-# Notice:
-#   /dev/stdin is not accesible in main and should not be tty otherwise hangs
-#   'test -s file' will not fail with an empty line that is why content is checked, i.e: echo > /tmp/file
+#   [0] echo | filenull
+#   [0] true | filenull
+#   [0] touch /tmp/empty; filenull /tmp/empty
+#   [0] echo > /tmp/empty; filenull /tmp/empty
+#   [0] printf "\0" | filenull
+#   [0] printf "\0" >/tmp/null; filenull /tmp/null
+#   [1] { echo foo; false; } | filenull
+#   [1] echo foo >/tmp/empty; filenull /tmp/empty
+# Reason for Script:
+#   /dev/stdin is closed first time it is accessed
+#   'test -s file' only fails for 'touch file' not for 'echo > file'
 #######################################
 main() {
-  test -n "$(cat "${file}")" || die "${0##*/}: Empty: '$*'"
-  cat "${file}"
-  exit
+  content="${1:-$(cat </dev/stdin)}"
+  test -z "${content}" || { >&2 echo Not Null/Empty /dev/stdin:; >&2 echo "${content}"; }
 }
 
-fromman filenull "$@"
-parse "$@"
-
 if [ -t 0 ]; then
-  for arg; do
-    [ ! -f "${arg}" ] || { file="${arg}"; main "$@"; }
-  done
-  false || die "${0##*/}: File must be provided or be piped from stdin: '$*'"
+  : "${1?}"
+  test -z "$(cat "$1")" || echo Not Null/Empty: "$1"
 else
-  file="$(mktemp)"
-  cp /dev/stdin "${file}"
-  main
+  main "$@"
 fi

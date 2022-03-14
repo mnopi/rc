@@ -1,0 +1,39 @@
+#!/bin/sh
+
+. helper.sh
+
+#######################################
+# Piped /dev/stdin or file in args has at least one character (is not null or empty)
+# Arguments:
+#   [file]      file from arguments or pipe input
+# Returns:
+#   1 if it does not have at least one character
+# Output:
+#   File content or /dev/stdin if success
+# Examples:
+#   [1] echo | filehas
+#   [1] true | filehas
+#   [1] touch /tmp/empty; filehas /tmp/empty
+#   [1] echo > /tmp/empty; filehas /tmp/empty
+#   [1] printf "\0" | filehas
+#   [1] printf "\0" >/tmp/null; filehas /tmp/null
+#   [0] { echo foo; false; } | filehas
+#   [0] echo foo >/tmp/empty; filehas /tmp/empty
+# Reason for Script:
+#   /dev/stdin is closed first time it is accessed
+#   'test -s file' only fails for 'touch file' not for 'echo > file'
+#######################################
+
+main() {
+  content="${1:-$(cat </dev/stdin)}"
+  test -n "${content}" || : "${stdin?}"
+  echo "${content}"
+}
+
+if [ -t 0 ]; then
+  : "${1?}"
+  test -n "$(cat "$1")" || echo Empty: "$1"
+  cat "$1"
+else
+  main "$@"
+fi

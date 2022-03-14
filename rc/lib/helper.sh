@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC3043,SC3030,SC3006,SC3024,SC3018,SC3010,SC3028
 
 #
 # helper shell library (sets bash strict mode by default).
@@ -28,6 +29,14 @@ XTRACE="${XTRACE-0}"
 #
 XVERBOSE="${XVERBOSE-0}"
 
+# caller stack, except 0 for stack() function
+#
+export STACK
+
+# functions to exclude from stack when asking for the first useful
+#
+STACK_EXCLUDE="debug|die|error|verbose"
+
 #######################################
 # helper function for functions that use caller.
 # Globals:
@@ -43,6 +52,7 @@ call() {
     file="$(basename "$(psargs '' | awk '{ print $1 }')" 2>/dev/null || true)"
   fi
 }
+
 #######################################
 # helper function for functions that use caller.
 # Globals:
@@ -310,24 +320,7 @@ error() {
   # </html>
   QUIET="${QUIET:-0}"
 
-  if [ "${QUIET-0}" -ne 1 ]; then
-    if command -v caller >/dev/null; then
-      index=0
-      while CALLER="$(caller "${index}")"; do
-        if [ "$(basename "$(echo "${CALLER}" | awk '{ print $3 }')")" != 'helper.sh' ]; then
-          [ "$(basename "$(echo "${CALLER}" | awk '{ print $3 }')")" = 'helper.sh' ]
-          case "$(echo "${CALLER}" | awk '{ print $2 }')" in
-            debug|die|error|warning) index="$((index+1))" ;;
-            *)
-              [ "$(basename "$(echo "${CALLER}" | awk '{ print $3 }')")" = 'helper.sh' ] || break
-              index="$((index+1))"
-              ;;
-          esac
-        fi
-      done
-    fi
-    _fileline "${Error}" "${Red}" "$@"
-  fi
+  [ "${QUIET-0}" -eq 0 ] || stack "${Error}" "${Red}" 1 1 "$@"
 }
 
 #######################################
@@ -437,6 +430,62 @@ show() {
 }
 
 #######################################
+# caller stack, except 0 for this function or return first which does not have func or file.
+# returns ps file if no BASH
+# Globals:
+#   STACK
+# Arguments:
+#   1       Symbol
+#   2       Color value
+#   3       Regex exclude filename, 1 to use default exclusion.
+#   4       Regex exclude functions, 1 to use default exclusion.
+#   @       Arguments to print.
+#######################################
+# shellcheck disable=SC2120
+stack() {
+  filter=false
+  if [ "${1-}" ]; then
+    filter=true
+    symbol="$(printf '%b' "$1")"
+    color="$2"
+    if [ "${BASH_VERSION-}" ]; then
+      files="${BASH_SOURCE[0]##*/}"
+      [ "$3" -eq 1 ] || files="${1}|${files}"
+      [ "$4" -eq 1 ] || funcs="${2}|${STACK_EXCLUDE}"
+    else
+      file="$(basename "$(psargs '' | awk '{ print $1 }')" 2>/dev/null || true)"
+      [ ! "${file-}" ] || sep=" "
+      file=" $(printf '%b' "${color}${file}${Normal}")${sep}"
+    fi
+    shift 4
+  fi
+
+  if [ "${BASH_VERSION-}" ]; then
+    declare -i i=1
+    [ "${STACK-}" ] || export STACK=()
+    local frame line func file value
+    while frame="$(caller "$i")"; do
+      if $filter; then
+        line="$(echo "${frame}" | awk '{ print $1 }')"
+        func="$(echo "${frame}" | awk '{ print $2 }')"
+        file="$(basename "$(echo "${frame}" | cut -d ' ' -f3-)")"
+        if [[ "${file}" =~ ${files} ]] || [[ "${func}" =~ ${funcs:-${STACK_EXCLUDE}} ]]; then
+          continue
+        else
+          file=" $(printf "%b" "${color}${file}${Normal}[${color}${line}${Normal}]") "
+          break
+        fi
+      else
+        STACK+=("${c}")
+      fi
+      ((i++))
+    done
+  fi
+  ! $filter || printf "%s\n" "${symbol}${file}$(FirstArg "$@")"
+  echo
+}
+
+#######################################
 # trap set by 'stderr' function to show stderr on EXIT and format output based on stderr and/or 'set -x' for posix
 # Globals:
 #   EXIT_STDERR
@@ -474,7 +523,6 @@ _stderr() {
   fi
   exit $rc
 }
-
 
 #######################################
 # sets trap with '_stderr' function on EXIT and redirects stderr to FD 3

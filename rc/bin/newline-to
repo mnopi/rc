@@ -10,6 +10,7 @@ set -eu
 # Examples:
 #   newline-to "$(find . -type f -maxdepth 1)"
 #   newline-to "$(find . -type f -maxdepth 1)" '*:'
+#   newline-to "${WHITE}" '|^'
 #######################################
 main() {
   [ "${2-}" ] || { p='^'; s='$'; }

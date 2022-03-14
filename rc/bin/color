@@ -1,70 +1,173 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2016
+# bashsupport disable=BP2001,BP2001
+# shellcheck disable=SC2016,SC2028,SC2034
 
 #
 # show colors and helper functions output, or generate color lib
 
 . helper.sh
+. arrays.bash
 
-# Show Test Var 1
+e="\e["
+_SCRIPT="${0##*/}"
+
+# Suffix for BackGround Colors
 #
-export VAR1=1
-# Show Test Var 2
+BACKGROUND="Bg"
+
+# Suffix for Escaped Colors
 #
-export VAR2=2
+ESCAPED="Esc"
+
+# Escaped Colors for PS1
+#
+ESCAPED_COLORS="Bold|BoldItalic|Italic|Normal"
+
+# Escaped Symbols for PS1
+#
+ESCAPED_SYMBOLS="Error|Minus|More|Multiply|Notice|Ok|Plus|Success|Tilde|Verbose|Wait|Warning"
+
+# $FORMAT_COLOR_DEFAULT value will not be a suffix in Variables and Scripts (does not apply for Normal Format)
+#
+FORMAT_COLOR_DEFAULT="Bold"
+
+# White Formats
+#
+WHITE=""
+
+# Actions Script Names and Second Argument Value
+#
+declare -Ag ACTIONS=( ["Installing"]="Start" ["Installed"]="Finish")
+
+# Color Names and Values
+#
+declare -Ag COLORS=()
+
+# Destination Directories and Files
+#
+declare -Ag DST=( ["bin"]="${RC}/color" ["lib"]="${RC_PROFILE_D}/${_SCRIPT}.sh"
+                  ["ps2"]="${RC_PROFILE_D}/ps2.sh" ["sym"]="${RC_PROFILE_D}/symbol.sh")
+
+# First Argument with Different Format: Bin Name and Format
+#
+declare -Ag FIRST=( ["bin"]="FirstArg"  ["format"]="Italic" )
+
+# Color Formats
+#
+declare -Ag FORMATS=( ["Normal"]=0 ["Bold"]=1 ["BoldItalic"]="3m${e}1" ["Dim"]=2 ["Italic"]=3 ["Under"]=4
+                      ["Invert"]=7 ["Strike"]=9 )
+
+# Color Names
+#
+declare -ag NAMES=( "Black" "Red" "Green" "Yellow" "Blue" "Magenta" "Cyan" "Grey" )
+
+# Sorted Keys of Associated Arrays
+#
+declare -Ag SORTED=( ["actions"]="$(printf "%s\n" "${!ACTIONS[@]}" | sort)" ["colors"]="" ["symbols"]="" )
+
+# Symbol Names and Colors
+#
+declare -Ag SYMBOLS_COLORS=( ["Critical"]="RedInvert" ["Debug"]="Magenta" ["Ellipsis"]="Cyan" ["Error"]="Red"
+                             ["Finish"]="Green" ["Minus"]="Red" ["More"]="Magenta" ["Multiply"]="Blue"
+                             ["Notice"]="Cyan" ["Ok"]="Green" ["Plus"]="Green" ["Start"]="Blue"
+                             ["Success"]="Blue" ["Tilde"]="Blue" ["Verbose"]="Magenta" ["Warning"]="Yellow" )
+
+# Symbol Names and Symbol
+#
+declare -Ag SYMBOLS_ICON=( ["Critical"]="✘" ["Debug"]="+" ["Ellipsis"]="…" ["Error"]="✘"
+                           ["Finish"]="＞" ["Minus"]="+" ["More"]="＞" ["Multiply"]="×"
+                           ["Notice"]="‼" ["Ok"]="✔" ["Plus"]="+" ["Start"]="＞"
+                           ["Success"]="◉" ["Tilde"]="～" ["Verbose"]="＋" ["Warning"]="！" )
+
+# Symbol Names and Prefix Symbol in Normal
+#
+declare -Ag SYMBOLS_PREFIX=( ["Finish"]="=" ["Start"]="=")
+
+# Colorized Symbols Names and Values
+#
+declare -Ag SYMBOLS=()
+
+# Tmp Directories and Files
+#
+declare -Ag TMP=(["bin"]="$(mktemp -d)" ["lib"]="$(mktemp)" ["ps2"]="$(mktemp)" ["sym"]="$(mktemp)")
 
 #######################################
-# actions
+# generate colors array global with escaped for PS1 and normal
 # Globals:
 #   ACTIONS
-#   BIN_TMP_DIR
-#   file
-#   header
-#   if
-#   symbol
+#   COLORS
+#   ESCAPE
 # Arguments:
-#  None
+#   None
+# Escaped:
+#   https://github.com/koalaman/shellcheck/wiki/SC2025
+#   https://mywiki.wooledge.org/BashFAQ/053
+#   Using \[ and \] around colors is necessary to prevent issues with command line editing/browsing/completion!
+#   Escaped should not be formatted with "printf '%b'" or "echo -e" and leave it as it is in PS1, so
+#   'printf "%s" "\[\e[31m\]"'
+#     - Red: '\[\e[31m\]' vs. '\033[31m' or '\e[31m'
+#     - Normal: '\[\e[0m\]' or '\[\e(B\e[m\]' vs. '\033[0m' or \e[0m
+#   The \[ \] are only special when you assign PS1, if you print them inside a function that runs when the prompt
+#   is displayed it doesn't work. In this case you need to use the bytes \001 and \002.
+#   prompt() { printf '\001%s\002%s\001%s\002' '\e[33m' message '\e[0m'; }
+#   PS1="\$(prompt)\$ "
+# Printf:
+#   printf '\e[33m%s\e(B\e[m' message
+#   printf '\e[33m%s\e[0m' message
+#   printf '\033[33m%s\033[0m' message
+#   printf '%b' '\e[33m'; printf '%b' message; printf '%b' '\e(B\e[m'
+#   printf '%b' '\e[33m'; printf '%b' message; printf '%b' '\e[0m'
+#   printf '%b' '\033[33m'; printf '%b' message; printf '%b' '\033[0m'
 #######################################
-action() {
-  local file script
+arrays() {
+  local color format i=0 key prefix suffix="" symbol value
 
-  for action in "${!ACTIONS[@]}"; do
-      script="${ACTIONS[${action}]}"
-      file="${BIN_TMP_DIR}/${action}"
-    cat >"${file}" <<EOF
-#!/bin/sh
-
-# <html><h2>${action}</h2>
-# <h3>Examples</h3>
-# <dl>
-# <dt>
-# Show first argument in Italic and second ${action}, prefixed with ${script} symbol:
-# </dt>
-# <dd>
-# <pre><code class="language-bash">${action} Brew
-# </code></pre>
-# </dd>
-# </dl>
-# </html>
-ret=\$?
-${script} "\${1}:" "${action}"
-exit \$ret
-EOF
-    chmod +x "${file}"
+  for format in "${!FORMATS[@]}"; do
+    # \e[0m
+    value="${e}${FORMATS["${format}"]}m"
+    COLORS["${format}"]="${value}"
+    # save "${format}" "${value}"
+    ! [[ "${format}" =~ ${ESCAPED_COLORS} ]] || COLORS["${format}${ESCAPED}"]="\[${value}\]"
   done
+
+  for color in "${NAMES[@]}"; do
+    for format in "${!FORMATS[@]}"; do
+      suffix=""; [ "${format}" = "${FORMAT_COLOR_DEFAULT}" ] || suffix="${format}"
+      key="${color}${suffix}"
+      value="${e}${FORMATS["${format}"]};3${i}m"
+      COLORS["${key}"]="${value}"
+      COLORS["${key}${BACKGROUND}"]="${e}${FORMATS["${format}"]};4${i}m"
+      # save "${key}" "${value}"
+      # save "${key}${BACKGROUND}" "${e}${FORMATS[${format}]};4${i}m"
+      ! [[ "${format}" =~ ${ESCAPED_COLORS} ]] || COLORS["${key}${ESCAPED}"]="\[${value}\]"
+    done
+    ((i+=1))
+  done
+
+  WHITE="$(sorted white)"
+  SORTED["colors"]="$(sorted)"
+
+  for symbol in "${!SYMBOLS_ICON[@]}"; do
+    prefix="$(default "${symbol}" SYMBOLS_PREFIX)"
+    value="${prefix}${COLORS["${SYMBOLS_COLORS["${symbol}"]}"]}${SYMBOLS_ICON["${symbol}"]}${COLORS["Normal"]}"
+    SYMBOLS["${symbol}"]="${value}"
+    ! [[ "${symbol}" =~ ${ESCAPED_SYMBOLS} ]] || SYMBOLS["${symbol}${ESCAPED}"]="\[${value}\]"
+  done
+
+  SORTED["symbols"]="$(printf "%s\n" "${!SYMBOLS[@]}" | sort)"
 }
 
 #######################################
 # generate lib escaped for PS1 and normal
 # Globals:
 #   BIN_DIR
-#   BIN_TMP_DIR
+#   BIN_DIR_TMP
 #   BUILD
 #   LIB_PATH
-#   LIB_TMP_PATH
+#   LIB_PATH_TMP
 #   SCRIPT
 #   SYM_PATH
-#   SYM_TMP_PATH
+#   SYM_PATH_TMP
 # Arguments:
 #   0
 # Escaped:
@@ -74,7 +177,7 @@ EOF
 #   Escaped should not be formatted with "printf '%b'" or "echo -e" and leave it as it is in PS1, so
 #   'printf "%s" "\[\e[31m\]"'
 #     - Red: '\[\e[31m\]' vs. '\033[31m' or '\e[31m'
-#     - Reset: '\[\e[0m\]' or '\[\e(B\e[m\]' vs. '\033[0m' or \e[0m
+#     - Normal: '\[\e[0m\]' or '\[\e(B\e[m\]' vs. '\033[0m' or \e[0m
 #   The \[ \] are only special when you assign PS1, if you print them inside a function that runs when the prompt
 #   is displayed it doesn't work. In this case you need to use the bytes \001 and \002.
 #   prompt() { printf '\001%s\002%s\001%s\002' '\e[33m' message '\e[0m'; }
@@ -88,112 +191,50 @@ EOF
 #   printf '%b' '\033[33m'; printf '%b' message; printf '%b' '\033[0m'
 #######################################
 build() {
-  local super
+  local dst changed=false i show=echo tmp super
   super="$(git super "$0")"
-  BUILD=true
-  BIN_TMP_DIR="$(mktemp -d)"
-  LIB_TMP_PATH="$(mktemp)"
-  SYM_TMP_PATH="$(mktemp)"
   set -eu
   cd "${super}"
-  realpath "$0" | grep -q "^${super}" || die Can Only Run from RC Repo
-  mkdir -p "${BIN_DIR}"
 
-  cat >"${LIB_TMP_PATH}" <<EOF
+  realpath "$0" | grep -q "^${super}" || die Can Only Run from RC Repo
+  [ -d "${DST["bin"]}" ] || mkdir -p "${DST["bin"]}"
+
+  cat > "${TMP["lib"]}" <<EOF
 # shellcheck shell=sh
 
 #
-# Colors library (generated by: ${SCRIPT})
+# Colors library (generated by: ${_SCRIPT})
 
 EOF
 
-  colors
-  ps2
-  symbol
-  action
-  cmp Bin "${BIN_TMP_DIR}" "${BIN_DIR}"
-  cmp Lib "${LIB_TMP_PATH}" "${LIB_PATH}"
-  cmp Symbol "${SYM_TMP_PATH}" "${SYM_PATH}"
-}
+  cat > "${TMP["sym"]}" <<EOF
+# shellcheck shell=sh
 
-#######################################
-# compares if changes and copy
-# Globals:
-#   SCRIPT
-# Arguments:
-#   1     source
-#   2     dest
-#######################################
-cmp() {
-  if ! [ -e "$3" ] || ! diff -s "$2" "$3" > /dev/null; then
-    show --start "Color $1:" Installing
-    if test -f "$3"; then
-      cp "$2" "$3"
-    else
-      rsync -av --delete "$2"/ "$3" >/dev/null
-    fi
-    git add "$3"
-    git commit --quiet -m "${SCRIPT}" "$3"
-    git push --quiet
-    show --finish "Color $1:" Installed
-  fi
-}
+#
+# Symbol Colors library (generated by: ${_SCRIPT})
 
-#######################################
-# generate colors array global with escaped for PS1 and normal
-# Globals:
-#   ACTIONS
-#   COLORS
-#   ESCAPE
-#   RESET
-# Arguments:
-#   None
-# Escaped:
-#   https://github.com/koalaman/shellcheck/wiki/SC2025
-#   https://mywiki.wooledge.org/BashFAQ/053
-#   Using \[ and \] around colors is necessary to prevent issues with command line editing/browsing/completion!
-#   Escaped should not be formatted with "printf '%b'" or "echo -e" and leave it as it is in PS1, so
-#   'printf "%s" "\[\e[31m\]"'
-#     - Red: '\[\e[31m\]' vs. '\033[31m' or '\e[31m'
-#     - Reset: '\[\e[0m\]' or '\[\e(B\e[m\]' vs. '\033[0m' or \e[0m
-#   The \[ \] are only special when you assign PS1, if you print them inside a function that runs when the prompt
-#   is displayed it doesn't work. In this case you need to use the bytes \001 and \002.
-#   prompt() { printf '\001%s\002%s\001%s\002' '\e[33m' message '\e[0m'; }
-#   PS1="\$(prompt)\$ "
-# Printf:
-#   printf '\e[33m%s\e(B\e[m' message
-#   printf '\e[33m%s\e[0m' message
-#   printf '\033[33m%s\033[0m' message
-#   printf '%b' '\e[33m'; printf '%b' message; printf '%b' '\e(B\e[m'
-#   printf '%b' '\e[33m'; printf '%b' message; printf '%b' '\e[0m'
-#   printf '%b' '\033[33m'; printf '%b' message; printf '%b' '\033[0m'
-#######################################
-colors() {
-  local e="\e[" i=0 key suffix="" value
-  declare -A formats=(["Normal"]=0 ["Bold"]=1 ["BoldItalic"]="3m${e}1" ["Dim"]=2 ["Italic"]=3 ["Under"]=4 \
-                      ["Invert"]=7 ["Strike"]=9)
-  ESCAPE="Esc"; RESET="${e}0m"
-  declare -Ag ACTIONS=( ["Installing"]="Start" ["Installed"]="Finish")
-  declare -Ag COLORS=()
+EOF
+  eval "$(awk -F '(' '/^save_.*\(/ { print $1 }' "$0")"
 
-  save Reset "${e}0m"
-  save "Reset${ESCAPE}" "\[${COLORS["Reset"]}\]"
-  for format in "${!formats[@]}"; do
-    # \e[0m
-    value="${e}${formats[${format}]}m"
-    save "${format}" "${value}"
-    ! [[ "${format}" =~ Bold|BoldItalic|Italic|Normal ]] || save "${format}${ESCAPE}" "\[${value}\]"
-  done
-  for color in Black Red Green Yellow Blue Magenta Cyan Grey; do
-    for format in "${!formats[@]}"; do
-      suffix=""; [ "${format}" = "Bold" ] || suffix="${format}"
-      key="${color}${suffix}"
-      value="${e}${formats[${format}]};3${i}m"
-      save "${key}" "${value}"
-      save "${key}Bg" "${e}${formats[${format}]};4${i}m"
-      ! [[ "${format}" =~ Bold|BoldItalic|Italic|Normal ]] || save "${key}${ESCAPE}" "\[${value}\]"
-    done
-    ((i+=1))
+  PATH="${TMP["bin"]}:${PATH}"
+
+  for i in bin lib ps2 sym; do
+    dst="${DST["${i}"]}" tmp="${TMP["${i}"]}"
+      if ! [ -e "${dst}" ] || ! diff -s "${tmp}" "${dst}" >/dev/null; then
+        cmd Installing || show="echo"
+        ${show:-Installing} "${_SCRIPT^}: ${i}"
+        if test -f "${dst}" && filehas "${tmp}" >/dev/null; then
+          cp "${tmp}" "${dst}"; changed=true
+        elif dirhas "${tmp}" 2>/dev/null; then
+          rsync -av --delete "${tmp}"/ "${dst}" >/dev/null; changed=true
+        fi
+        if $changed; then
+          git add "${dst}"
+          git commit --quiet -m "${_SCRIPT}" "${dst}"
+          git push --quiet
+          ${show:-Installed} "${_SCRIPT^}: ${i}"
+        fi
+      fi
   done
 }
 
@@ -203,45 +244,59 @@ colors() {
 #   COLORS
 #   ESCAPE
 #   LIB_PATH
-#   RESET
 #   SYM_PATH
 # Arguments:
 #   None
 #######################################
 demo() {
-  local action color current normal previous symbol
-  colors
-  . "${LIB_PATH}"
-  . "${SYM_PATH}"
-  while read -r color; do
-    current="${color:0:3}"; [ "${color:0:5}" != "Green" ] || current="${current}-"
-    [ "${current}" = "${previous-}" ] || { [ ! "${previous-}" ] || echo;previous="${current}"; }
-    printf "${COLORS[${color/${ESCAPE}/}]}%s${RESET} " "${color}"  # from array
-    printf -- "$(eval echo \$"${color/${ESCAPE}/}")%s${Reset} " "${color}"  # from lib
-    normal="${color/${ESCAPE}/}"
-    ${normal,,} "${color}" # from bin
-    echo
-  done < <(printf "%s\n" "${!COLORS[@]}" | sort | grep -v Reset)
+  local action actions array color colors current normal previous script symbol symbols variable
 
+  echo "## LIB"
+  for color in ${SORTED[colors]}; do
+    current="${color:0:3}"
+    if [[ "${color}" =~ ^$(newline-to "${WHITE}" '|^') ]]; then
+      current="WHITE-"
+    elif [ "${color:0:5}" = "Green" ]; then
+      current="${current}-"
+    fi
+    [ "${current}" = "${previous-}" ] || { [ ! "${previous-}" ] || echo; previous="${current}"; }
+
+    array="$(printf "${COLORS["${color/${ESCAPED}/}"]}%s${COLORS["Normal"]}" "${color}")"  # from array
+    variable="$(printf -- "$(eval echo \$"${color/${ESCAPED}/}")%s${Normal}" "${color}")"
+    [ "${array}" =  "${variable}" ] || { echo array: "${array}", variable: "${variable}"; exit 1; }
+
+    normal="${color/${ESCAPED}/}"
+    script="$(${normal,,} "${color,,}()")"
+    [ "${array}" = "$(${normal,,} "${color}")" ] \
+      || { echo array: "${array}", script: "$(${normal,,} "${color}")"; exit 1; }
+
+    echo "${array} ${script}"
+  done; echo
+
+  ${FIRST["bin"]} "${FIRST["bin"]}():" "${FIRST["format"]}"
   echo
 
-  while read -r symbol; do
-    printf -- "$(eval echo \$"${symbol}")%s${Reset} " " ${symbol}"
-    printf -- "$(eval echo \$"${symbol}")%s${Reset} " " ${symbol}${ESCAPE}"
-    ${symbol} "${symbol}"
-    ${symbol} "${symbol}:" Argument
+  for symbol in ${SORTED[symbols]}; do
+    array="$(printf "${SYMBOLS["${symbol/${ESCAPED}/}"]}%s${COLORS["Normal"]}" " ${symbol}")"
+    variable="$(printf -- "$(eval echo \$"${symbol/${ESCAPED}/}")%s${Normal}" " ${symbol}")"
+    [ "${array}" =  "${variable}" ] || { echo array: "${array}", variable: "${variable}"; exit 1; }
+
+    if [[ "${symbol}" =~ ${ESCAPED} ]]; then
+      printf "%s" "${array}"
+    else
+      script="$(VERBOSE=1 ${symbol} "${symbol}()")"
+      normal="$(VERBOSE=1 ${symbol} "${symbol}():" Uses "${FIRST["bin"]}()")"
+      printf "%s" "${array} ${script}"  # Symbol icons have a new line
+    fi
+    set +xv
     echo
-  done < <(awk -F '[= ]' "/export / && ! /${ESCAPE}/{ print \$2 }" "${SYM_PATH}")
+  done; echo
 
-  echo
+  for action in ${SORTED[actions]}; do
+    ${action} "${action}()" "Adds the ':'"
+  done; echo
 
-  while read -r action; do
-    ${action} Color
-    echo
-  done < <(printf "%s\n" "${!ACTIONS[@]}" | sort)
-
-  echo
-
+  echo "## FUNCTIONS: helper.sh "
   export VAR1=1 VAR2=2
   DEBUG=1 debug VAR1 2>&1
   debug Debug Message: not shown "DEBUG unset" 2>&1
@@ -251,6 +306,7 @@ demo() {
 
   echo
 
+  # TODO: Aqui lo dejo con el QUIET de los huevos.
   error Error Message 2>&1
   QUIET=1 error Not Shown: "QUIET=1" 2>&1
   error 2>&1
@@ -279,32 +335,62 @@ demo() {
 }
 
 #######################################
+# actions
+# Globals:
+#   ACTIONS
+#   BIN_DIR_TMP
+#   file
+#   header
+#   if
+#   symbol
+# Arguments:
+#  None
+#######################################
+save_bin_actions() {
+  local i file symbol
+
+  for i in "${!ACTIONS[@]}"; do
+      symbol="${ACTIONS["${i}"]}"
+      file="${TMP["bin"]}/${i}"
+    cat >"${file}" <<EOF
+#!/bin/sh
+
+# <html><h2>${i}</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>
+# Prefix output with ${symbol}, suffix output with ${i} in Normal format, and arguments in ${FIRST["format"]}:
+# </dt>
+# <dd>
+# <pre><code class="language-bash">${i} Brew
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+${symbol} "\$*:" "${i}"
+EOF
+    chmod +x "${file}"
+  done
+}
+
+#######################################
 # update colors in files and COLORS array
 # Globals:
-#   BIN_TMP_DIR
+#   BIN_DIR_TMP
 #   BUILD
 #   ESCAPE
 #   COLORS
-#   LIB_TMP_PATH
+#   LIB_PATH_TMP
 # Arguments:
 #   1   Color Variable Name
 #   2   Color Value
 #######################################
-save() {
-  local lower="${1,,}"
-  COLORS["$1"]="$2"
-  if $BUILD; then
-    local file="${BIN_TMP_DIR}/${lower}"
-
-    tee -a "${LIB_TMP_PATH}" > /dev/null <<EOF
-# <html><h2>$1</h2>
-# <p><strong><code>\$$1</code></strong> Color $1.</p>
-# </html>
-export $1="$2"
-
-EOF
-
-    if [[ "$1" =~ ${ESCAPE} ]]; then
+save_bin_colors() {
+  local i file lower
+  for i in ${SORTED["colors"]}; do
+    lower="${i,,}"
+    file="${TMP["bin"]}/${lower}"
+    if [[ "${i}" =~ ${ESCAPED} ]]; then
       cat > "${file}" <<EOF
 #!/bin/sh
 
@@ -313,14 +399,14 @@ EOF
 # <a href="https://mywiki.wooledge.org/BashFAQ/053">Dynamic prompt or read -p</a>
 # <h3>Examples</h3>
 # <dl>
-# <dt>Show arguments in $1 escaped for \$PS1,dynamic prompt or read -p:</dt>
+# <dt>Show arguments in Escaped ${i/${ESCAPED}/} for \$PS1 ,dynamic prompt or read -p:</dt>
 # <dd>
 # <pre><code class="language-bash">${lower} Show Text
 # </code></pre>
 # </dd>
 # </dl>
 # </html>
-[ \$# -eq 0 ] || printf -- '%s' "$2" "\$*" "${COLORS["Reset${ESCAPE}"]}"
+[ \$# -eq 0 ] || printf -- '%s' "${COLORS["${i}"]}" "\$*" "${COLORS["Normal${ESCAPED}"]}"
 EOF
     else
       cat > "${file}" <<EOF
@@ -329,169 +415,71 @@ EOF
 # <html><h2>${lower}</h2>
 # <h3>Examples</h3>
 # <dl>
-# <dt>Show arguments with space in $1:</dt>
+# <dt>Show arguments with space in ${i}:</dt>
 # <dd>
 # <pre><code class="language-bash">${lower} Show Text
 # </code></pre>
 # </dd>
 # </dl>
 # </html>
-[ \$# -eq 0 ] || printf '%b' "$2"; printf '%b' "\$*"; printf '%b' "${RESET}"
+[ \$# -eq 0 ] || printf '%b' "${COLORS["${i}"]}"; printf '%b' "\$*"; printf '%b' "${COLORS[Normal]}"
 EOF
     fi
     chmod +x "${file}"
-  fi
+  done
 }
 
 #######################################
-# save PS2 to profile lib
+# save executable to show first argument in italic
+# Globals:
+#   BIN_DIR_TMP
+#   FIRST
 # Arguments:
 #  None
 #######################################
-ps2() {
-  tee -a "${LIB_TMP_PATH}" > /dev/null <<'EOF'
-# PS2
-#
-export PS2="\$(if [ \$(id -u) -eq 0 ]; then printf -- '%s' '${MagentaEsc}' '> ' '${ResetEsc}'; \
-else printf -- '%s' '${GreenEsc}' '> ' '${ResetEsc}'; fi)"
+save_bin_first() {
+  local file format
+  file="${TMP["bin"]}/${FIRST["bin"]}"
+  format="${FIRST["format"]}"
+  cat > "${file}" <<EOF
+#!/bin/sh
+
+# <html><h2>firstitalic</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>
+# First Argument in ${format} and rest normal:
+# </dt>
+# <dd>
+# <pre><code class="language-bash">${FIRST["bin"]} Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+
+[ \$# -ne 0 ] || exit
+first="\$1"; shift
+[ \$# -eq 0 ] || sep=" "
+printf "\$(${format,,} "\${first}")%s\n" "\${sep-}\$*"
 EOF
+    chmod +x "${file}"
 }
 
 #######################################
 # add color symbols variables and executables
 # Globals:
-#   SYM_TMP_PATH
+#   SYM_PATH_TMP
 # Arguments:
 #   None
 #######################################
-symbol() {
-  local file header="" if="" symbol
-  tee -a "${SYM_TMP_PATH}" > /dev/null <<EOF
-# shellcheck shell=sh
-
-#
-# Color Symbols library (generated by: ${SCRIPT})
-
-# Critical Red Invert "✘"
-#
-export Critical="${COLORS["RedInvert"]}✘${Reset}"
-
-# Debug Magenta "+"
-#
-export Debug="${COLORS["Magenta"]}+${Reset}"
-
-# Error Red "✘"
-#
-export Error="${COLORS["Red"]}✘${Reset}"
-
-# Error Red "✘" Escaped
-#
-export Error${ESCAPE}="${COLORS["Red${ESCAPE}"]}✘${ResetEsc}"
-
-# Finish Green "=＞"
-#
-export Finish="=${COLORS["Green"]}＞${Reset}"
-
-# Minus Red "－"
-#
-export Minus="${COLORS["Red"]}－${Reset}"
-
-# Minus Red "－" Escaped
-#
-export Minus${ESCAPE}="${COLORS["Red${ESCAPE}"]}－${ResetEsc}"
-
-# More Magenta "＞"
-#
-export More="${COLORS["Magenta"]}＞${Reset}"
-
-# More Magenta ">" Escaped
-#
-export More${ESCAPE}="${COLORS["Magenta${ESCAPE}"]}>${ResetEsc}"
-
-# Multiply Blue "×"
-#
-export Multiply="${COLORS["Blue"]}×${Reset}"
-
-# Multiply Blue "×" Escaped
-#
-export Multiply${ESCAPE}="${COLORS["Blue${ESCAPE}"]}×${ResetEsc}"
-
-# Notice Cyan "‼"
-#
-export Notice="${COLORS["Cyan"]}‼${Reset}"
-
-# Notice Cyan "‼" Escaped
-#
-export Notice${ESCAPE}="${COLORS["Cyan${ESCAPE}"]}‼${ResetEsc}"
-
-# Ok Green "✔"
-#
-export Ok="${COLORS["Green"]}✔${Reset}"
-
-# Ok Green "✔" Escaped
-#
-export Ok${ESCAPE}="${COLORS["Green${ESCAPE}"]}✔${ResetEsc}"
-
-# Plus Green "+"
-#
-export Plus="${COLORS["Green"]}+${Reset}"
-
-# Plus Green "+" Escaped
-#
-export Plus${ESCAPE}="${COLORS["Green${ESCAPE}"]}+${ResetEsc}"
-
-# Start Blue "=＞"
-#
-export Start="=${COLORS["Blue"]}＞${Reset}"
-
-# Success Blue "◉" Escaped
-#
-export Success${ESCAPE}="${COLORS["Blue${ESCAPE}"]}◉${ResetEsc}"
-
-# Success Blue "◉"
-#
-export Success="${COLORS["Blue"]}◉${Reset}"
-
-# Success Blue "◉" Escaped
-#
-export Success${ESCAPE}="${COLORS["Blue${ESCAPE}"]}◉${ResetEsc}"
-
-# Tilde Blue "～"
-#
-export Tilde="${COLORS["Blue"]}～${Reset}"
-
-# Tilde Blue "～" Escaped
-#
-export Tilde${ESCAPE}="${COLORS["Blue${ESCAPE}"]}～${ResetEsc}"
-
-# Verbose Magenta "＋"
-#
-export Verbose="${COLORS["Magenta"]}＋${Reset}"
-
-# Verbose Magenta "＋" Escaped
-#
-export Verbose${ESCAPE}="${COLORS["Magenta${ESCAPE}"]}＋${ResetEsc}"
-
-# Wait Yellow "…"
-#
-export Wait="${COLORS["Yellow"]}…${Reset}"
-
-# Wait Yellow "…" Escaped
-#
-export Wait${ESCAPE}="${COLORS["Yellow${ESCAPE}"]}…${ResetEsc}"
-
-# Warning Yellow "！"
-#
-export Warning="${COLORS["Yellow"]}！${Reset}"
-
-# Warning Yellow "！" Escaped
-#
-export Warning${ESCAPE}="${COLORS["Yellow${ESCAPE}"]}！${ResetEsc}"
-EOF
-
-  . "${SYM_TMP_PATH}"
-  while read -r symbol; do
-    if [ "${symbol}" = 'Verbose' ]; then
+save_bin_symbols() {
+  # TODO: aqui lo dejo - Habría que mirar que coño hago con verbose, error, y el stack.
+  local file i symbol
+  for i in ${SORTED["symbols"]}; do
+    ! [[ "${i}" =~ ${ESCAPED} ]] || continue
+    local condition="" header=""
+    if [ "${i}" = 'Verbose' ]; then
+      condition=' && { [ "${VERBOSE}" -eq 1 ] || [ "${DRY_RUN-}" -eq 1 ]; }'
       header="$(cat <<'EOF'
 # <html><h2>Dry Run</h2>
 # <p><strong><code>$DRY_RUN</code></strong> (Default: 0).</p>
@@ -504,7 +492,7 @@ EOF
 DRY_RUN="${DRY_RUN:-0}"
 
 # <html><h2>Show Verbose Messages</h2>
-# <p><strong><code>$VERBOSE</code></strong>  (Default: 0).</p>
+# <p><strong><code>$VERBOSE</code></strong> (Default: 0).</p>
 # <p><strong><code>Verbose messages are shown if set to 1.</code></strong></p>
 # <p>Activate with either of:</p>
 # <ul>
@@ -515,38 +503,114 @@ DRY_RUN="${DRY_RUN:-0}"
 VERBOSE="${VERBOSE:-0}"
 EOF
 )"
-      if=' && { [ "${VERBOSE}" -eq 1 ] || [ "${DRY_RUN-}" -eq 1 ]; }'
     fi
-    file="${BIN_TMP_DIR}/${symbol}"
-    cat > "${file}" <<EOF
+
+    file="${TMP["bin"]}/${i}"
+    symbol="$(printf '%b' "${SYMBOLS["${i}"]}")"
+    cat >"${file}" <<EOF
 #!/bin/sh
 ${header}
 # <html><h2>${symbol}</h2>
 # <h3>Examples</h3>
 # <dl>
 # <dt>
-# Show arguments separated with space, prefixed with ${symbol} symbol. If more than one arguments then first in Italic:
+# Show arguments separated with space, prefixed with ${i} symbol. First argument in ${FIRST["format"]}, other Normal:
 # </dt>
 # <dd>
-# <pre><code class="language-bash">${symbol} Show Text
+# <pre><code class="language-bash">${i} Show Text
 # </code></pre>
 # </dd>
 # </dl>
 # </html>
-ret=\$?
 
-if { [ "\${QUIET-0}" -ne 1 ] && [ "\${QQUIET-0}" -ne 1 ]; }${if}; then
-  printf '%b' "$(eval echo \$"${symbol}")"
-  [ \$# -ne 0 ] || exit \$ret
-  [ \$# -eq 1 ] || { italic " \$1"; shift; }
-  printf '%s\n' " \$*"
+if [ "\${QUIET-0}" -ne 1 ]${condition}; then
+  first="\$(${FIRST["bin"]} "\$@")"
+  printf '%s' "${symbol}" "\${first:+ "\${first}"}"
+  [ ! "\${first-}" ] || echo
 fi
-
-exit \$ret
 EOF
     chmod +x "${file}"
-  done < <(awk -F '[= ]' "/export / && ! /${ESCAPE}/{ print \$2 }" "${SYM_TMP_PATH}")
+  done
+}
 
+#######################################
+# update colors in files and COLORS array
+# Globals:
+#   BIN_DIR_TMP
+#   BUILD
+#   ESCAPE
+#   COLORS
+#   LIB_PATH_TMP
+# Arguments:
+#   1   Color Variable Name
+#   2   Color Value
+#######################################
+save_lib_colors() {
+  local i
+  for i in ${SORTED["colors"]}; do
+    tee -a "${TMP["lib"]}" > /dev/null <<EOF
+# <html><h2>${i}</h2>
+# <p><strong><code>\$${i}</code></strong> Color ${i}.</p>
+# </html>
+export ${i}="${COLORS["${i}"]}"
+
+EOF
+  done
+}
+
+#######################################
+# save PS2 to profile lib
+# Arguments:
+#  None
+#######################################
+save_lib_ps2() {
+  cat > "${TMP["ps2"]}" <<EOF
+# shellcheck shell=sh
+
+#
+# PS2 Color library (generated by: ${_SCRIPT})
+
+# PS2
+#
+export PS2="\\\$(if [ \\\$(id -u) -eq 0 ]; \
+then printf -- '%s' '${COLORS["Magenta${ESCAPED}"]}' '> ' '${COLORS["Normal${ESCAPED}"]}'; \
+else printf -- '%s' '${COLORS["Green${ESCAPED}"]}' '> ' '${COLORS["Normal${ESCAPED}"]}'; fi)"
+EOF
+}
+
+#######################################
+# add color symbols variables and executables
+# Globals:
+#   SYM_PATH_TMP
+# Arguments:
+#   None
+#######################################
+save_lib_symbols() {
+  local i
+  for i in ${SORTED["symbols"]}; do
+    tee -a "${TMP["sym"]}" > /dev/null <<EOF
+# <html><h2>${i}</h2>
+# <p><strong><code>\$${i}</code></strong> Color ${i}.</p>
+# </html>
+export ${i}="${SYMBOLS["${i}"]}"
+
+EOF
+  done
+}
+
+#######################################
+# sort colors array
+# Globals:
+#   COLORS
+#   NAMES
+# Arguments:
+#   1
+#######################################
+sorted() {
+  local regex
+  regex="$(newline-to "$(printf "%s\n" "${NAMES[@]}")" '|')"
+  printf "%s\n" "${!COLORS[@]}" | grep -vE "${regex}" | sort
+  [ "${1-}" = 'white' ] || printf "%s\n" "${!COLORS[@]}" | grep -E "${regex}" | sort
 }
 
 #######################################
@@ -554,6 +618,7 @@ EOF
 # Globals:
 #   BIN_DIR
 #   BUILD
+#   FIRST
 #   LIB_PATH
 #   RC
 #   RC_PROFILE_D
@@ -563,18 +628,25 @@ EOF
 #  None
 #######################################
 main() {
-  local arg func=demo
-  BIN_DIR="${RC}/color"
-  BUILD=false
-  SCRIPT="${0##*/}"
-  LIB_PATH="${RC_PROFILE_D}/${SCRIPT}.sh"
-  SYM_PATH="${RC_PROFILE_D}/symbol.sh"
+  local arg func=demo i
+
   for arg do
     case "${arg}" in
       build) func="${arg}" ;;
       --*) fromman "$0" "$@" || exit 0 ;;
     esac
   done
+
+  arrays
+
+  for i in "${DST[@]}"; do
+    [ -e "${i}" ] || { build; break; }
+  done
+
+  for i in "${DST[@]}"; do
+    [ -d "${i}" ] || . "${i}"
+  done
+
   ${func}
 }
 
