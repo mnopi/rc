@@ -28,6 +28,11 @@ export ErrorEsc="\[\e[1;31m✘\e[0m\]"
 # </html>
 export Finish="=\e[1;32m＞\e[0m"
 
+# <html><h2>Mierda</h2>
+# <p><strong><code>$Mierda</code></strong> Color Mierda.</p>
+# </html>
+export Mierda="\e[1;31mmierda\e[0m"
+
 # <html><h2>Minus</h2>
 # <p><strong><code>$Minus</code></strong> Color Minus.</p>
 # </html>
