@@ -16,4 +16,4 @@
 [ $# -ne 0 ] || exit
 first="$1"
 [ $# -eq 1 ] || { sep=" "; shift; }
-printf "[3m${first}[0m%s\n" "${sep-}$*"
+printf "$(italic "${first}")%s\n" "${sep-}$*"
