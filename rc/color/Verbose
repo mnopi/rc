@@ -32,7 +32,7 @@ VERBOSE="${VERBOSE:-0}"
 # </dl>
 # </html>
 
-if { [ "${QUIET-0}" -ne 1 ] && [ "${QQUIET-0}" -ne 1 ]; } && { [ "${VERBOSE}" -eq 1 ] || [ "${DRY_RUN-}" -eq 1 ]; }; then
+if [ "${QUIET-0}" -ne 1 ] && { [ "${VERBOSE}" -eq 1 ] || [ "${DRY_RUN-}" -eq 1 ]; }; then
   first="$(FirstArg "$@")"
   printf '%s' "[1;35m＋[0m" "${first:+ "${first}"}"
   [ ! "${first-}" ] || echo
