@@ -5,7 +5,7 @@
 # <a href="https://mywiki.wooledge.org/BashFAQ/053">Dynamic prompt or read -p</a>
 # <h3>Examples</h3>
 # <dl>
-# <dt>Show arguments in RedNormalEsc escaped for $PS1,dynamic prompt or read -p:</dt>
+# <dt>Show arguments in Escaped RedNormal for $PS1 ,dynamic prompt or read -p:</dt>
 # <dd>
 # <pre><code class="language-bash">rednormalesc Show Text
 # </code></pre>
