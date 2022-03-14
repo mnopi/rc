@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# <html><h2>[1;36m…[0m</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>
+# Show arguments separated with space, prefixed with Ellipsis symbol. First argument in Italic, other Normal:
+# </dt>
+# <dd>
+# <pre><code class="language-bash">Ellipsis Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+
+if { [ "${QUIET-0}" -ne 1 ] && [ "${QQUIET-0}" -ne 1 ]; }; then
+  first="$(FirstArg "$@")"
+  printf '%s' "[1;36m…[0m" "${first:+ "${first}"}"
+  [ ! "${first-}" ] || echo
+fi
