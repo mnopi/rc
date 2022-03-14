@@ -13,6 +13,11 @@ export Critical="\e[7;31m✘\e[0m"
 # </html>
 export Debug="\e[1;35m+\e[0m"
 
+# <html><h2>Ellipsis</h2>
+# <p><strong><code>$Ellipsis</code></strong> Color Ellipsis.</p>
+# </html>
+export Ellipsis="\e[1;36m…\e[0m"
+
 # <html><h2>Error</h2>
 # <p><strong><code>$Error</code></strong> Color Error.</p>
 # </html>
@@ -122,16 +127,6 @@ export Verbose="\e[1;35m＋\e[0m"
 # <p><strong><code>$VerboseEsc</code></strong> Color VerboseEsc.</p>
 # </html>
 export VerboseEsc="\[\e[1;35m＋\e[0m\]"
-
-# <html><h2>Wait</h2>
-# <p><strong><code>$Wait</code></strong> Color Wait.</p>
-# </html>
-export Wait="\e[1;36m…\e[0m"
-
-# <html><h2>WaitEsc</h2>
-# <p><strong><code>$WaitEsc</code></strong> Color WaitEsc.</p>
-# </html>
-export WaitEsc="\[\e[1;36m…\e[0m\]"
 
 # <html><h2>Warning</h2>
 # <p><strong><code>$Warning</code></strong> Color Warning.</p>
