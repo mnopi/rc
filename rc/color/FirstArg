@@ -15,5 +15,5 @@
 
 [ $# -ne 0 ] || exit
 first="$1"; shift
-[ $# -eq 1 ] || sep=" "
+[ $# -eq 0 ] || sep=" "
 printf "$(italic "${first}")%s\n" "${sep-}$*"
