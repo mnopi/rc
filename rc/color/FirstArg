@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# <html><h2>firstitalic</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>
+# First Argument in Italic and rest normal:
+# </dt>
+# <dd>
+# <pre><code class="language-bash">FirstArg Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+
+[ $# -ne 0 ] || exit
+first="$1"
+[ $# -eq 1 ] || { sep=" "; shift; }
+printf "[3m${first}[0m%s\n" "${sep-}$*"

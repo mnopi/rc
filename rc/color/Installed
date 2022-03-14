@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# <html><h2>Installed</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>
+# Prefix output with Finish, suffix output with Installed in Normal format, and arguments in Italic:
+# </dt>
+# <dd>
+# <pre><code class="language-bash">Installed Brew
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+ret=$?
+Finish "${1}:" "Installed"
+exit $ret

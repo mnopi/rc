@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# <html><h2>[1;31m+[0m</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>
+# Show arguments separated with space, prefixed with Minus symbol. First argument in Italic, other Normal:
+# </dt>
+# <dd>
+# <pre><code class="language-bash">Minus Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+
+if { [ "${QUIET-0}" -ne 1 ] && [ "${QQUIET-0}" -ne 1 ]; }; then
+  printf '%s' "[1;31m+[0m" FirstArg "$@"
+fi
