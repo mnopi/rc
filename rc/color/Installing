@@ -12,6 +12,4 @@
 # </dd>
 # </dl>
 # </html>
-ret=$?
-Start "${1}:" "Installing"
-exit $ret
+Start "$*:" "Installing"

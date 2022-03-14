@@ -12,6 +12,4 @@
 # </dd>
 # </dl>
 # </html>
-ret=$?
-Finish "${1}:" "Installed"
-exit $ret
+Finish "$*:" "Installed"
