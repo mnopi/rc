@@ -5,4 +5,4 @@
 
 # PS2
 #
-export PS2="\[\e[1;36m＞\e[0m\]"
+export PS2="\$(printf '%s' "\[\e[1;36m＞\e[0m\]")"
