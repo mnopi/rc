@@ -3,8 +3,8 @@
 # <h3>Examples</h3>
 # <dl>
 # <dt>
-# Show arguments separated with space, prefixed with Warning symbol. First argument in Bold,
-# other Italic:
+# Show arguments separated with space, prefixed with Warning symbol.
+# All arguments in Yellow:
 # </dt>
 # <dd>
 # <pre><code class="language-bash">Warning Show Text
@@ -14,7 +14,7 @@
 # </html>
 
 if [ "${QUIET-0}" -ne 1 ]; then
-  first="$(firstother "$@")"
+  first="$(yellow "$@")"
   printf '%s' "[1;33m![0m" "${first:+ "${first}"}"
   [ ! "${first-}" ] || echo
 fi

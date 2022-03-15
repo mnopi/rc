@@ -3,8 +3,8 @@
 # <h3>Examples</h3>
 # <dl>
 # <dt>
-# Show arguments separated with space, prefixed with Debug symbol. First argument in Bold,
-# other Italic:
+# Show arguments separated with space, prefixed with Debug symbol.
+# All arguments in Grey:
 # </dt>
 # <dd>
 # <pre><code class="language-bash">Debug Show Text
@@ -14,7 +14,7 @@
 # </html>
 
 if [ "${QUIET-0}" -ne 1 ]; then
-  first="$(firstother "$@")"
+  first="$(grey "$@")"
   printf '%s' "[1;37m+[0m" "${first:+ "${first}"}"
   [ ! "${first-}" ] || echo
 fi

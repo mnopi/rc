@@ -3,8 +3,8 @@
 # <h3>Examples</h3>
 # <dl>
 # <dt>
-# Show arguments separated with space, prefixed with Critical symbol. First argument in Bold,
-# other Italic:
+# Show arguments separated with space, prefixed with Critical symbol.
+# All arguments in RedInvert:
 # </dt>
 # <dd>
 # <pre><code class="language-bash">Critical Show Text
@@ -14,7 +14,7 @@
 # </html>
 
 if [ "${QUIET-0}" -ne 1 ]; then
-  first="$(firstother "$@")"
+  first="$(redinvert "$@")"
   printf '%s' "[7;31m✘[0m" "${first:+ "${first}"}"
   [ ! "${first-}" ] || echo
 fi
