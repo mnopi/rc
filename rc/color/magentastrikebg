@@ -10,4 +10,4 @@
 # </dd>
 # </dl>
 # </html>
-[ $# -eq 0 ] || printf '%b' "\e[9;45m"; printf '%b' "$*"; printf '%b' "\e[0m"
+[ $# -eq 0 ] || printf -- '%b' "\e[9;45m"; printf '%b' "$*"; printf -- '%b' "\e[0m"
