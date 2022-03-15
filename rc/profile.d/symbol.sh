@@ -11,7 +11,7 @@ export Critical="\e[7;31m✘\e[0m"
 # <html><h2>Debug</h2>
 # <p><strong><code>$Debug</code></strong> Color Debug.</p>
 # </html>
-export Debug="\e[1;35m+\e[0m"
+export Debug="\e[1;37m+\e[0m"
 
 # <html><h2>Ellipsis</h2>
 # <p><strong><code>$Ellipsis</code></strong> Color Ellipsis.</p>
