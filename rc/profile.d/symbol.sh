@@ -131,10 +131,10 @@ export VerboseEsc="\[\e[1;35m＋\e[0m\]"
 # <html><h2>Warning</h2>
 # <p><strong><code>$Warning</code></strong> Color Warning.</p>
 # </html>
-export Warning="\e[1;33m！\e[0m"
+export Warning="\e[1;33m!\e[0m"
 
 # <html><h2>WarningEsc</h2>
 # <p><strong><code>$WarningEsc</code></strong> Color WarningEsc.</p>
 # </html>
-export WarningEsc="\[\e[1;33m！\e[0m\]"
+export WarningEsc="\[\e[1;33m!\e[0m\]"
 
