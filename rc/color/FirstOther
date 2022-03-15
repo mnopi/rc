@@ -4,7 +4,7 @@
 # <h3>Examples</h3>
 # <dl>
 # <dt>
-# First Argument in Normal and rest Italic:
+# First Argument in Bold and rest Italic:
 # </dt>
 # <dd>
 # <pre><code class="language-bash">FirstOther Show Text
@@ -14,6 +14,6 @@
 # </html>
 
 [ $# -ne 0 ] || exit 0
-first="$(normal "$1")"; shift
+first="$(bold "$1")"; shift
 [ $# -eq 0 ] || sep=" "
 printf "${first}%s\n" "${sep-}$(italic "$@")"

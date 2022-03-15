@@ -23,7 +23,7 @@ VERBOSE="${VERBOSE:-0}"
 # <h3>Examples</h3>
 # <dl>
 # <dt>
-# Show arguments separated with space, prefixed with Verbose symbol. First argument in Normal,
+# Show arguments separated with space, prefixed with Verbose symbol. First argument in Bold,
 # other Italic:
 # </dt>
 # <dd>
