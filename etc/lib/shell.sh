@@ -17,9 +17,7 @@ if [ "${BASH_VERSION-}" ]; then
   #
   SH="${PROMPT_SH}"; TRAP_SIGNAL="ERR"
   ! (return 0 2>/dev/null) || SOURCED=1
-  case "${0##*/}" in
-    sh) PROMPT_SH="sh"; TRAP_SIGNAL="EXIT" ;;
-  esac
+
   # shellcheck disable=SC3028,SC3054
   if [ "${BASH_VERSINFO[0]}" -ge 4 ]; then
     # Bash version greater or equal than 4

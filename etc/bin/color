@@ -50,7 +50,7 @@ declare -Ag DST=( ["bin"]="${RC}/color" ["lib"]="${RC_PROFILE_D}/${_SCRIPT}.sh"
 
 # First Argument with Different Format: Bin Name and Format
 #
-declare -Ag FIRST=( ["bin"]="FirstArg"  ["format"]="Italic" )
+declare -Ag FIRST=( ["bin"]="firstother" ["first"]="Bold" ["other"]="Italic")
 
 # Color Formats
 #
@@ -63,25 +63,39 @@ declare -ag NAMES=( "Black" "Red" "Green" "Yellow" "Blue" "Magenta" "Cyan" "Grey
 
 # Sorted Keys of Associated Arrays
 #
-declare -Ag SORTED=( ["actions"]="$(printf "%s\n" "${!ACTIONS[@]}" | sort)" ["colors"]="" ["symbols"]="" )
+declare -Ag SORTED=( ["actions"]="$(printf -- "%s\n" "${!ACTIONS[@]}" | sort)" ["colors"]="" ["symbols"]="" )
 
 # Symbol Names and Colors
 #
-declare -Ag SYMBOLS_COLORS=( ["Critical"]="RedInvert" ["Debug"]="Magenta" ["Ellipsis"]="Cyan" ["Error"]="Red"
-                             ["Finish"]="Green" ["Minus"]="Red" ["More"]="Magenta" ["Multiply"]="Blue"
-                             ["Notice"]="Cyan" ["Ok"]="Green" ["Plus"]="Green" ["Start"]="Blue"
-                             ["Success"]="Blue" ["Tilde"]="Blue" ["Verbose"]="Magenta" ["Warning"]="Yellow" )
+declare -Ag SYMBOLS_COLORS=( ["Critical"]="RedInvert" ["Debug"]="Magenta" ["Ellipsis"]="Cyan"
+                             ["Error"]="Red" ["Finish"]="Green" ["Minus"]="Red"
+                             ["More"]="Magenta" ["Multiply"]="Blue" ["Notice"]="Yellow"
+                             ["Ok"]="Green" ["Plus"]="Green" ["Start"]="Blue"
+                             ["Success"]="Blue" ["Tilde"]="Blue" ["Verbose"]="Cyan"
+                             ["Warning"]="Yellow" )
 
 # Symbol Names and Symbol
 #
-declare -Ag SYMBOLS_ICON=( ["Critical"]="✘" ["Debug"]="+" ["Ellipsis"]="…" ["Error"]="✘"
-                           ["Finish"]="＞" ["Minus"]="+" ["More"]="＞" ["Multiply"]="×"
-                           ["Notice"]="‼" ["Ok"]="✔" ["Plus"]="+" ["Start"]="＞"
-                           ["Success"]="◉" ["Tilde"]="～" ["Verbose"]="＋" ["Warning"]="！" )
+declare -Ag SYMBOLS_ICON=( ["Critical"]="✘" ["Debug"]="＋" ["Ellipsis"]="…"
+                           ["Error"]="✘" ["Finish"]="＞" ["Minus"]="-"
+                           ["More"]="＞" ["Multiply"]="×" ["Notice"]="！""‼"
+                           ["Ok"]="✔" ["Plus"]="+" ["Start"]="＞"
+                           ["Success"]="◉" ["Tilde"]="～" ["Verbose"]="＞"
+                           ["Warning"]="‼" )
 
 # Symbol Names and Prefix Symbol in Normal
 #
 declare -Ag SYMBOLS_PREFIX=( ["Finish"]="=" ["Start"]="=")
+
+
+# Symbol Names and Text Color
+#
+declare -Ag SYMBOLS_TEXT=( ["Critical"]="Red" ["Debug"]="${FIRST["bin"]}" ["Ellipsis"]="CyanDim"
+                           ["Error"]="${FIRST["bin"]}" ["Finish"]="${FIRST["bin"]}" ["Minus"]="${FIRST["bin"]}"
+                           ["More"]="${FIRST["bin"]}" ["Multiply"]="${FIRST["bin"]}" ["Notice"]="YellowDim"
+                           ["Ok"]="${FIRST["bin"]}" ["Plus"]="${FIRST["bin"]}" ["Start"]="${FIRST["bin"]}"
+                           ["Success"]="${FIRST["bin"]}" ["Tilde"]="${SYMBOLS_COLORS["Tilde"]}" ["Verbose"]="CyanDim"
+                           ["Warning"]="${FIRST["bin"]}" )
 
 # Colorized Symbols Names and Values
 #
@@ -154,7 +168,7 @@ arrays() {
     ! [[ "${symbol}" =~ ${ESCAPED_SYMBOLS} ]] || SYMBOLS["${symbol}${ESCAPED}"]="\[${value}\]"
   done
 
-  SORTED["symbols"]="$(printf "%s\n" "${!SYMBOLS[@]}" | sort)"
+  SORTED["symbols"]="$(printf -- "%s\n" "${!SYMBOLS[@]}" | sort)"
 }
 
 #######################################
@@ -191,7 +205,7 @@ arrays() {
 #   printf '%b' '\033[33m'; printf '%b' message; printf '%b' '\033[0m'
 #######################################
 build() {
-  local dst changed=false i show=echo tmp super
+  local dst changed=false i show tmp super
   super="$(git super "$0")"
   set -eu
   cd "${super}"
@@ -222,17 +236,19 @@ EOF
     dst="${DST["${i}"]}" tmp="${TMP["${i}"]}"
       if ! [ -e "${dst}" ] || ! diff -s "${tmp}" "${dst}" >/dev/null; then
         cmd Installing || show="echo"
-        ${show:-Installing} "${_SCRIPT^}: ${i}"
-        if test -f "${dst}" && filehas "${tmp}" >/dev/null; then
+        ${show:-Installing} "${_SCRIPT^} ${i^^}"
+        if { [ ! -e "${dst}" ] && [ -f "${tmp}" ]; } || { test -f "${dst}" && filehas "${tmp}"; } >/dev/null; then
           cp "${tmp}" "${dst}"; changed=true
         elif dirhas "${tmp}" 2>/dev/null; then
           rsync -av --delete "${tmp}"/ "${dst}" >/dev/null; changed=true
+        else
+          warning "${_SCRIPT^} ${i^^}": Skipped
         fi
         if $changed; then
           git add "${dst}"
           git commit --quiet -m "${_SCRIPT}" "${dst}"
           git push --quiet
-          ${show:-Installed} "${_SCRIPT^}: ${i}"
+          ${show:-Installed} "${_SCRIPT^} ${i^^}"
         fi
       fi
   done
@@ -251,7 +267,6 @@ EOF
 demo() {
   local action actions array color colors current normal previous script symbol symbols variable
 
-  echo "## LIB"
   for color in ${SORTED[colors]}; do
     current="${color:0:3}"
     if [[ "${color}" =~ ^$(newline-to "${WHITE}" '|^') ]]; then
@@ -261,7 +276,7 @@ demo() {
     fi
     [ "${current}" = "${previous-}" ] || { [ ! "${previous-}" ] || echo; previous="${current}"; }
 
-    array="$(printf "${COLORS["${color/${ESCAPED}/}"]}%s${COLORS["Normal"]}" "${color}")"  # from array
+    array="$(printf -- "${COLORS["${color/${ESCAPED}/}"]}%s${COLORS["Normal"]}" "${color}")"  # from array
     variable="$(printf -- "$(eval echo \$"${color/${ESCAPED}/}")%s${Normal}" "${color}")"
     [ "${array}" =  "${variable}" ] || { echo array: "${array}", variable: "${variable}"; exit 1; }
 
@@ -273,20 +288,20 @@ demo() {
     echo "${array} ${script}"
   done; echo
 
-  ${FIRST["bin"]} "${FIRST["bin"]}():" "${FIRST["format"]}"
+  ${FIRST["bin"]} "${FIRST["bin"]}():" "${FIRST["other"]}"
   echo
 
   for symbol in ${SORTED[symbols]}; do
-    array="$(printf "${SYMBOLS["${symbol/${ESCAPED}/}"]}%s${COLORS["Normal"]}" " ${symbol}")"
+    array="$(printf -- "${SYMBOLS["${symbol/${ESCAPED}/}"]}%s${COLORS["Normal"]}" " ${symbol}")"
     variable="$(printf -- "$(eval echo \$"${symbol/${ESCAPED}/}")%s${Normal}" " ${symbol}")"
     [ "${array}" =  "${variable}" ] || { echo array: "${array}", variable: "${variable}"; exit 1; }
 
     if [[ "${symbol}" =~ ${ESCAPED} ]]; then
-      printf "%s" "${array}"
+      printf -- "%s" "${array}"
     else
       script="$(VERBOSE=1 ${symbol} "${symbol}()")"
       normal="$(VERBOSE=1 ${symbol} "${symbol}():" Uses "${FIRST["bin"]}()")"
-      printf "%s" "${array} ${script}"  # Symbol icons have a new line
+      printf -- "%s" "${array} ${script}"  # Symbol icons have a new line
     fi
     set +xv
     echo
@@ -296,40 +311,28 @@ demo() {
     ${action} "${action}()" "Adds the ':'"
   done; echo
 
-  echo "## FUNCTIONS: helper.sh "
-  export VAR1=1 VAR2=2
-  DEBUG=1 debug VAR1 2>&1
-  debug Debug Message: not shown "DEBUG unset" 2>&1
-  DEBUG=1 debug VAR1 VAR2 2>&1
-  DEBUG=1 QUIET=1 debug Not Shown: "QUIET=1" 2>&1
-  DEBUG=1 debug 2>&1
-
+  DEBUG=1 VAR1="debug(): Function" VAR2=2 debug VAR1
+  DEBUG=1 VAR1="debug(): Function" VAR2=2 debug VAR1 VAR2
+  DEBUG=1 debug
+  VAR1=1 debug
+  QUIET=1 DEBUG=1 VAR1=1 debug
   echo
 
-  # TODO: Aqui lo dejo con el QUIET de los huevos.
-  error Error Message 2>&1
-  QUIET=1 error Not Shown: "QUIET=1" 2>&1
-  error 2>&1
-
+  error "error()": Function
+  error
+  QUIET=1 error
   echo
 
-  success Success Message
-  QUIET=1 success Not Shown: "QUIET=1"
-  success
-
+  warning "warning()": Function
+  warning
+  QUIET=1 warning
   echo
 
-  VERBOSE=1 verbose Verbose Message: "VERBOSE=1"
-  VERBOSE=1 QUIET=1 verbose Not Shown: "QUIET=1"
-  VERBOSE=1 verbose
-
-  echo
-
-  WARNING=1 warning Warning Message: "WARNING=1" 2>&1
-  WARNING=1 QUIET=1 warning Not shown: "QUIET=1" 2>&1
-  WARNING=1 warning 2>&1
-
-  echo
+  for i in Debug Error Warning; do
+    DEBUG=1 $i "${i}" Script
+    DEBUG=1 ${i,,} "${i,,}" Function
+    echo
+  done
 
   die Die Message
 }
@@ -359,7 +362,7 @@ save_bin_actions() {
 # <h3>Examples</h3>
 # <dl>
 # <dt>
-# Prefix output with ${symbol}, suffix output with ${i} in Normal format, and arguments in ${FIRST["format"]}:
+# Prefix output with ${symbol}, suffix output with ${i} in ${FIRST["other"]} format, and arguments in ${FIRST["first"]}:
 # </dt>
 # <dd>
 # <pre><code class="language-bash">${i} Brew
@@ -422,7 +425,7 @@ EOF
 # </dd>
 # </dl>
 # </html>
-[ \$# -eq 0 ] || printf '%b' "${COLORS["${i}"]}"; printf '%b' "\$*"; printf '%b' "${COLORS[Normal]}"
+[ \$# -eq 0 ] || printf -- '%b' "${COLORS["${i}"]}"; printf '%b' "\$*"; printf -- '%b' "${COLORS[Normal]}"
 EOF
     fi
     chmod +x "${file}"
@@ -438,9 +441,8 @@ EOF
 #  None
 #######################################
 save_bin_first() {
-  local file format
+  local file first=${FIRST["first"]} other=${FIRST["other"]}
   file="${TMP["bin"]}/${FIRST["bin"]}"
-  format="${FIRST["format"]}"
   cat > "${file}" <<EOF
 #!/bin/sh
 
@@ -448,7 +450,7 @@ save_bin_first() {
 # <h3>Examples</h3>
 # <dl>
 # <dt>
-# First Argument in ${format} and rest normal:
+# First Argument in ${first} and rest ${other}:
 # </dt>
 # <dd>
 # <pre><code class="language-bash">${FIRST["bin"]} Show Text
@@ -457,10 +459,10 @@ save_bin_first() {
 # </dl>
 # </html>
 
-[ \$# -ne 0 ] || exit
-first="\$1"; shift
+[ \$# -ne 0 ] || exit 0
+first="\$(${first,,} "\$1")"; shift
 [ \$# -eq 0 ] || sep=" "
-printf "\$(${format,,} "\${first}")%s\n" "\${sep-}\$*"
+printf -- "\${first}%s\n" "\${sep-}\$(${other,,} "\$@")"
 EOF
     chmod +x "${file}"
 }
@@ -473,48 +475,27 @@ EOF
 #   None
 #######################################
 save_bin_symbols() {
-  # TODO: aqui lo dejo - Habría que mirar que coño hago con verbose, error, y el stack.
-  local file i symbol
+  local condition file i symbol format
   for i in ${SORTED["symbols"]}; do
     ! [[ "${i}" =~ ${ESCAPED} ]] || continue
-    local condition="" header=""
-    if [ "${i}" = 'Verbose' ]; then
-      condition=' && { [ "${VERBOSE}" -eq 1 ] || [ "${DRY_RUN-}" -eq 1 ]; }'
-      header="$(cat <<'EOF'
-# <html><h2>Dry Run</h2>
-# <p><strong><code>$DRY_RUN</code></strong> (Default: 0).</p>
-# <p>Activate with either of:</p>
-# <ul>
-# <li><code>DRY_RUN=1</code></li>
-# <li><code>--dryrun</code></li>
-# </ul>
-# </html>
-DRY_RUN="${DRY_RUN:-0}"
-
-# <html><h2>Show Verbose Messages</h2>
-# <p><strong><code>$VERBOSE</code></strong> (Default: 0).</p>
-# <p><strong><code>Verbose messages are shown if set to 1.</code></strong></p>
-# <p>Activate with either of:</p>
-# <ul>
-# <li><code>VERBOSE=1</code></li>
-# <li><code>--verbose</code></li>
-# </ul>
-# </html>
-VERBOSE="${VERBOSE:-0}"
-EOF
-)"
-    fi
-
+    case "${i}" in
+      Debug) condition='[ "${DEBUG-0}" -eq 1 ] || exit $rc' ;;
+      Verbose) condition='[ "${VERBOSE-0}" -eq 1 ] || exit $rc' ;;
+      *) condition=""
+    esac
+    format="${SYMBOLS_TEXT["${i}"]}"
     file="${TMP["bin"]}/${i}"
     symbol="$(printf '%b' "${SYMBOLS["${i}"]}")"
     cat >"${file}" <<EOF
 #!/bin/sh
-${header}
+
 # <html><h2>${symbol}</h2>
 # <h3>Examples</h3>
 # <dl>
 # <dt>
-# Show arguments separated with space, prefixed with ${i} symbol. First argument in ${FIRST["format"]}, other Normal:
+# Show arguments separated with space, prefixed with ${i} symbol.
+# $(if [ "${format}" = "${FIRST["bin"]}" ]; then echo "First argument in ${FIRST["first"]}, other ${FIRST["other"]}"; \
+  else echo "All arguments in ${format}"; fi):
 # </dt>
 # <dd>
 # <pre><code class="language-bash">${i} Show Text
@@ -522,12 +503,13 @@ ${header}
 # </dd>
 # </dl>
 # </html>
-
-if [ "\${QUIET-0}" -ne 1 ]${condition}; then
-  first="\$(${FIRST["bin"]} "\$@")"
-  printf '%s' "${symbol}" "\${first:+ "\${first}"}"
-  [ ! "\${first-}" ] || echo
-fi
+rc=\$?
+[ "\${QUIET-0}" -ne 1 ] || exit \$rc
+${condition}
+msg="\$(${format,,} "\$@")"
+printf -- '%s' "${symbol}" "\${msg:+ "\${msg}"}"
+[ ! "\${msg-}" ] || echo
+exit \$rc
 EOF
     chmod +x "${file}"
   done
@@ -572,9 +554,10 @@ save_lib_ps2() {
 
 # PS2
 #
-export PS2="\\\$(if [ \\\$(id -u) -eq 0 ]; \
-then printf -- '%s' '${COLORS["Magenta${ESCAPED}"]}' '> ' '${COLORS["Normal${ESCAPED}"]}'; \
-else printf -- '%s' '${COLORS["Green${ESCAPED}"]}' '> ' '${COLORS["Normal${ESCAPED}"]}'; fi)"
+export PS2="\\\$(printf '%s' '${SYMBOLS["Verbose${ESCAPED}"]}')"
+#export PS2="\\\$(if [ \\\$(id -u) -eq 0 ]; \
+#then printf -- '%s' '${COLORS["Magenta${ESCAPED}"]}' '> ' '${COLORS["Normal${ESCAPED}"]}'; \
+#else printf -- '%s' '${COLORS["Green${ESCAPED}"]}' '> ' '${COLORS["Normal${ESCAPED}"]}'; fi)"
 EOF
 }
 
@@ -608,9 +591,9 @@ EOF
 #######################################
 sorted() {
   local regex
-  regex="$(newline-to "$(printf "%s\n" "${NAMES[@]}")" '|')"
-  printf "%s\n" "${!COLORS[@]}" | grep -vE "${regex}" | sort
-  [ "${1-}" = 'white' ] || printf "%s\n" "${!COLORS[@]}" | grep -E "${regex}" | sort
+  regex="$(newline-to "$(printf -- "%s\n" "${NAMES[@]}")" '|')"
+  printf -- "%s\n" "${!COLORS[@]}" | grep -vE "${regex}" | sort
+  [ "${1-}" = 'white' ] || printf -- "%s\n" "${!COLORS[@]}" | grep -E "${regex}" | sort
 }
 
 #######################################
@@ -644,7 +627,7 @@ main() {
   done
 
   for i in "${DST[@]}"; do
-    [ -d "${i}" ] || . "${i}"
+    [ -d "${i}" ] || [ ! -f "${i}" ] || . "${i}"
   done
 
   ${func}

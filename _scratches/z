@@ -1,0 +1,28 @@
+
+set -v
+
+. ./s
+za() {
+  echo "z.a: $0"
+  echo "z.a: ZSH_EVAL_CONTEXT: ${ZSH_EVAL_CONTEXT}"
+  echo "z.a: ZSH_ARGZERO: ${ZSH_ARGZERO}"
+  echo
+}
+
+main() {
+  echo "z.main: $0"
+  echo "z.main: ZSH_EVAL_CONTEXT: ${ZSH_EVAL_CONTEXT}"
+  echo "z.main: ZSH_ARGZERO: ${ZSH_ARGZERO}"
+  echo
+  za
+}
+
+case "${ZSH_ARGZERO-}" in
+  *zsh) MAIN=0; SOURCED=1; RC="$0"; echo ME HA HECHO SOURCE EL SÑOR ZSH ;;
+esac
+
+echo "z: $0"
+echo "z: ZSH_EVAL_CONTEXT: ${ZSH_EVAL_CONTEXT}"
+echo "z: ZSH_ARGZERO: ${ZSH_ARGZERO}"
+echo
+main

@@ -1,0 +1,124 @@
+# shellcheck shell=sh disable=SC3040,SC3054,SC2296
+
+#
+# System /etc/profile
+
+# RC Directory Physical Path
+#
+: "${RC="${RC_PREFIX:-/etc}"}"; export RC
+
+# RC profile File ($ENV)Physical Path
+#
+: "${RC_PROFILE="${RC}/profile"}"; export RC_PROFILE
+
+# profile has been sourced (only at login shell and only one if called from /etc/profile, ~/.profile, ~/.bashrc ...)
+#
+: "${PROFILE_SOURCED=0}"; export PROFILE_SOURCED
+
+# rc.d has been sourced (only at interactive shell and only once if called also from ~/.bashrc)
+#
+: "${RC_SOURCED=0}"
+
+# Default trap signal, EXIT for posix or ERR for BASH
+#
+: "${TRAP_SIGNAL=EXIT}"
+
+# Running shell (when is 'bash sh' will be set to 'bash')
+#
+: "${SH=${0##*/}}"
+
+# 1 if Sourced From Script and Not the Shell, 0 if sourced by a shell (as far as we know)
+#
+: "${MAIN=1}"
+
+# POSIX mode, set -o posix is not inherited for new shells only subshells
+# https://www.gnu.org/software/bash/manual/html_node/Bash-POSIX-Mode.html
+#
+: "${POSIXLY_CORRECT=1}"; export POSIXLY_CORRECT
+
+# Has been sourced (for the shell that has been used check $SH)
+#
+: "${SOURCED=0}"
+
+if [ "${RC_SOURCED-0}" -eq 0 ]; then
+  case "${ZSH_ARGZERO:-${SH}}" in
+    ash|bash|dash|ksh|sh)
+      MAIN=0
+      [ ! "${BASH_SOURCE-}" ] || RC_PROFILE="${BASH_SOURCE[0]}"
+      [ ! "${KSH_VERSION-}" ] || RC_PROFILE="${.sh.file}"
+      SOURCED=1
+      ;;
+    *zsh)
+      MAIN=0
+      RC_PROFILE="$0"
+      SH="zsh"
+      SOURCED=1
+      ;;
+    *)
+      case "${BASH##*/}" in
+        bash|sh)
+          MAIN=1
+          RC_PROFILE="${BASH_SOURCE[0]}"
+          SH="${BASH##*/}"
+          ! (return 0 2>/dev/null) || SOURCED=1
+          ;;
+      esac
+      case "${ZSH_ARGZERO-}" in
+        *)
+          MAIN=1
+          RC_PROFILE="${ZSH_ARGZERO}"
+          SH="zsh"
+      esac
+      case "${ZSH_EVAL_CONTEXT}" in *:file) RC_PROFILE="$0"; SH="zsh"; SOURCED=1 ;; esac
+
+      ;;
+  esac
+
+  if [ "$(printf %.1s "${BASH_VERSION-0}")" -ge 4 ]; then
+    RC="${BASH_SOURCE[0]}"
+  fi
+fi
+if [ "${PROFILE_SOURCED-0}" -eq 0 ]; then
+  [ ! "${BASH_SOURCE-}" ] || RC="${BASH_SOURCE[0]}"
+  RC="$( cd "$( dirname "${RC}")" || return; pwd -P )"
+
+  # ENV: when sh is running interactive
+  # https://www.gnu.org/software/bash/manual/bash.html#Invoked-non_002dinteractively
+  export ENV="${RC}/profile"
+
+  PROFILE_SOURCED=1
+
+  # RC completions: sourced by $RC_PROFILE at the end
+  #
+  export RC_COMPLETIONS_D="${RC}/completions.d"
+
+  # rc.d compat dir:  sourced $RC_PROFILE_SH after pathsd (libs and bin)
+  #
+  export RC_D="${RC}/rc.d"
+
+  # RC $PATH compat dir: sourced in order by $RC_PROFILE after $RC_PROFILE_D,
+  # they can have a variable already defined in $RC_PROFILE_D
+  #
+  export RC_PATHS_D="${RC}/paths.d"
+
+  # RC profile.d compat dir: everything that is exported (only run once), sourced by $RC_PROFILE_SH
+  #
+  export RC_PROFILE_D="${RC}/profile.d"
+
+  # RC share (not exported)
+  #
+  export RC_SHARE="${RC}/share"
+
+  for _rc_profile in "${RC_PROFILE_D}"/*; do
+    . "${_rc_profile}"
+  done; unset _rc_profile
+
+  eval "$("${RC}/bin/pathsd")"
+fi
+
+{ [ "${PS1-}" ] && [ "${RC_SOURCED-0}" -eq 0 ]; } || return
+RC_SOURCED=1
+
+for _rc_d in "${RC_D}"/*.sh; do
+  . "${_rc_d}"
+done; unset _rc_d

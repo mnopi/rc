@@ -16,5 +16,8 @@
         </targets>
       </library>
     </scriptLibraries>
+    <globalVariables>
+      <var name=".sh.file" />
+    </globalVariables>
   </component>
 </project>

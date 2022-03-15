@@ -1,6 +1,7 @@
 #!/bin/bash
 
 stack() {
+  caller
   declare -i i="${1:-1}"
   [ "${STACK-}" ] || STACK=()
   local c caller=()

@@ -1,0 +1,22 @@
+
+
+sa() {
+  echo "s.a: $0"
+  echo "s.a: ZSH_EVAL_CONTEXT: ${ZSH_EVAL_CONTEXT}"
+  echo "s.a: ZSH_ARGZERO: ${ZSH_ARGZERO}"
+  echo
+}
+
+main() {
+  echo "s.main: $0"
+  echo "s.main: ZSH_EVAL_CONTEXT: ${ZSH_EVAL_CONTEXT}"
+  echo "s.main: ZSH_ARGZERO: ${ZSH_ARGZERO}"
+  echo
+  sa
+}
+
+echo "s: $0"
+echo "s: ZSH_EVAL_CONTEXT: ${ZSH_EVAL_CONTEXT}"
+echo "s: ZSH_ARGZERO: ${ZSH_ARGZERO}"
+echo
+main
