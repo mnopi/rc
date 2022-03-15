@@ -5,5 +5,5 @@
 
 # PS2
 #
-export PS2="\$(printf -- '%s' "\[\e[1;36m＞\e[0m\]")"
+export PS2="\$(printf '%s' "\[\e[1;36m＞\e[0m\]")"
 #export PS2="\$(if [ \$(id -u) -eq 0 ]; #then printf -- '%s' '\[\e[1;35m\]' '> ' '\[\e[0m\]'; #else printf -- '%s' '\[\e[1;32m\]' '> ' '\[\e[0m\]'; fi)"
