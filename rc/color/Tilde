@@ -17,6 +17,6 @@ rc=$?
 [ "${QUIET-0}" -ne 1 ] || exit $rc
 
 msg="$(blue "$@")"
-printf -- '%s' "--" "${msg:+ "${msg}"}"
+printf '%s' "--" "${msg:+ "${msg}"}"
 [ ! "${msg-}" ] || echo
 exit $rc
