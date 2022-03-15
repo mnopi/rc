@@ -13,7 +13,7 @@
 # </dl>
 # </html>
 
-[ $# -ne 0 ] || exit
+[ $# -ne 0 ] || exit 0
 first="$1"; shift
 [ $# -eq 0 ] || sep=" "
 printf "$(italic "${first}")%s\n" "${sep-}$*"

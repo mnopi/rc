@@ -10,7 +10,7 @@
 DRY_RUN="${DRY_RUN:-0}"
 
 # <html><h2>Show Verbose Messages</h2>
-# <p><strong><code>$VERBOSE</code></strong>  (Default: 0).</p>
+# <p><strong><code>$VERBOSE</code></strong> (Default: 0).</p>
 # <p><strong><code>Verbose messages are shown if set to 1.</code></strong></p>
 # <p>Activate with either of:</p>
 # <ul>
