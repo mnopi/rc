@@ -15,7 +15,7 @@
 # </html>
 
 if [ "${QUIET-0}" -ne 1 ]; then
-  first="$(FirstOther "$@")"
-  printf '%b' "[1;34m◉[0m" "${first:+ "\e[1;34m${first}\e[0m"}"
+  first="$(FirstOther "\e[1;34m$@\e[0m")"
+  printf '%s' "[1;34m◉[0m" "${first:+ "${first}"}"
   [ ! "${first-}" ] || echo
 fi
