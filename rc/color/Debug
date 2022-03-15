@@ -5,7 +5,7 @@
 # <dl>
 # <dt>
 # Show arguments separated with space, prefixed with Debug symbol.
-# All arguments in MagentaDim:
+# First argument in Bold, other Italic:
 # </dt>
 # <dd>
 # <pre><code class="language-bash">Debug Show Text
@@ -15,8 +15,8 @@
 # </html>
 rc=$?
 [ "${QUIET-0}" -ne 1 ] || exit $rc
-
-msg="$(magentadim "$@")"
+[ "${DEBUG-0}" -eq 1 ] || exit $rc
+msg="$(firstother "$@")"
 printf '%s' "[1;35m＋[0m" "${msg:+ "${msg}"}"
 [ ! "${msg-}" ] || echo
 exit $rc
