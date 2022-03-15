@@ -11,7 +11,7 @@ export Critical="\e[7;31m✘\e[0m"
 # <html><h2>Debug</h2>
 # <p><strong><code>$Debug</code></strong> Color Debug.</p>
 # </html>
-export Debug="\e[1;37m+\e[0m"
+export Debug="\e[1;35m＋\e[0m"
 
 # <html><h2>Ellipsis</h2>
 # <p><strong><code>$Ellipsis</code></strong> Color Ellipsis.</p>
@@ -36,12 +36,12 @@ export Finish="=\e[1;32m＞\e[0m"
 # <html><h2>Minus</h2>
 # <p><strong><code>$Minus</code></strong> Color Minus.</p>
 # </html>
-export Minus="\e[1;31m+\e[0m"
+export Minus="\e[1;31m-\e[0m"
 
 # <html><h2>MinusEsc</h2>
 # <p><strong><code>$MinusEsc</code></strong> Color MinusEsc.</p>
 # </html>
-export MinusEsc="\[\e[1;31m+\e[0m\]"
+export MinusEsc="\[\e[1;31m-\e[0m\]"
 
 # <html><h2>More</h2>
 # <p><strong><code>$More</code></strong> Color More.</p>
@@ -66,12 +66,12 @@ export MultiplyEsc="\[\e[1;34m×\e[0m\]"
 # <html><h2>Notice</h2>
 # <p><strong><code>$Notice</code></strong> Color Notice.</p>
 # </html>
-export Notice="\e[1;36m‼\e[0m"
+export Notice="\e[1;33m‼\e[0m"
 
 # <html><h2>NoticeEsc</h2>
 # <p><strong><code>$NoticeEsc</code></strong> Color NoticeEsc.</p>
 # </html>
-export NoticeEsc="\[\e[1;36m‼\e[0m\]"
+export NoticeEsc="\[\e[1;33m‼\e[0m\]"
 
 # <html><h2>Ok</h2>
 # <p><strong><code>$Ok</code></strong> Color Ok.</p>
@@ -121,12 +121,12 @@ export TildeEsc="\[\e[1;34m～\e[0m\]"
 # <html><h2>Verbose</h2>
 # <p><strong><code>$Verbose</code></strong> Color Verbose.</p>
 # </html>
-export Verbose="\e[1;35m＋\e[0m"
+export Verbose="\e[1;36m＞\e[0m"
 
 # <html><h2>VerboseEsc</h2>
 # <p><strong><code>$VerboseEsc</code></strong> Color VerboseEsc.</p>
 # </html>
-export VerboseEsc="\[\e[1;35m＋\e[0m\]"
+export VerboseEsc="\[\e[1;36m＞\e[0m\]"
 
 # <html><h2>Warning</h2>
 # <p><strong><code>$Warning</code></strong> Color Warning.</p>
