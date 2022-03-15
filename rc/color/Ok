@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# <html><h2>--</h2>
+# <html><h2>[1;32m✔[0m</h2>
 # <h3>Examples</h3>
 # <dl>
 # <dt>
@@ -17,6 +17,6 @@ rc=$?
 [ "${QUIET-0}" -ne 1 ] || exit $rc
 
 msg="$(firstother "$@")"
-printf '%s' "--" "${msg:+ "${msg}"}"
+printf '%s' "[1;32m✔[0m" "${msg:+ "${msg}"}"
 [ ! "${msg-}" ] || echo
 exit $rc
