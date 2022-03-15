@@ -66,12 +66,12 @@ export MultiplyEsc="\[\e[1;34m×\e[0m\]"
 # <html><h2>Notice</h2>
 # <p><strong><code>$Notice</code></strong> Color Notice.</p>
 # </html>
-export Notice="\e[1;33m‼\e[0m"
+export Notice="\e[1;33m！‼\e[0m"
 
 # <html><h2>NoticeEsc</h2>
 # <p><strong><code>$NoticeEsc</code></strong> Color NoticeEsc.</p>
 # </html>
-export NoticeEsc="\[\e[1;33m‼\e[0m\]"
+export NoticeEsc="\[\e[1;33m！‼\e[0m\]"
 
 # <html><h2>Ok</h2>
 # <p><strong><code>$Ok</code></strong> Color Ok.</p>
@@ -131,10 +131,10 @@ export VerboseEsc="\[\e[1;36m＞\e[0m\]"
 # <html><h2>Warning</h2>
 # <p><strong><code>$Warning</code></strong> Color Warning.</p>
 # </html>
-export Warning="\e[1;33m!\e[0m"
+export Warning="\e[1;33m‼\e[0m"
 
 # <html><h2>WarningEsc</h2>
 # <p><strong><code>$WarningEsc</code></strong> Color WarningEsc.</p>
 # </html>
-export WarningEsc="\[\e[1;33m!\e[0m\]"
+export WarningEsc="\[\e[1;33m‼\e[0m\]"
 
