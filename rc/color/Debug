@@ -1,11 +1,11 @@
 #!/bin/sh
 
-# <html><h2>[1;37m+[0m</h2>
+# <html><h2>[1;35m＋[0m</h2>
 # <h3>Examples</h3>
 # <dl>
 # <dt>
 # Show arguments separated with space, prefixed with Debug symbol.
-# All arguments in GreyDim:
+# All arguments in MagentaDim:
 # </dt>
 # <dd>
 # <pre><code class="language-bash">Debug Show Text
@@ -14,7 +14,7 @@
 # </dl>
 # </html>
 if [ "${QUIET-0}" -ne 1 ]; then
-  first="$(greydim "$@")"
-  printf '%s' "[1;37m+[0m" "${first:+ "${first}"}"
+  first="$(magentadim "$@")"
+  printf '%s' "[1;35m＋[0m" "${first:+ "${first}"}"
   [ ! "${first-}" ] || echo
 fi
