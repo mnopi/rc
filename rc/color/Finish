@@ -4,7 +4,8 @@
 # <h3>Examples</h3>
 # <dl>
 # <dt>
-# Show arguments separated with space, prefixed with Finish symbol. First argument in Italic, other Normal:
+# Show arguments separated with space, prefixed with Finish symbol. First argument in Normal,
+# other Italic:
 # </dt>
 # <dd>
 # <pre><code class="language-bash">Finish Show Text
@@ -14,7 +15,7 @@
 # </html>
 
 if [ "${QUIET-0}" -ne 1 ]; then
-  first="$(FirstArg "$@")"
+  first="$(FirstOther "$@")"
   printf '%s' "=[1;32m＞[0m" "${first:+ "${first}"}"
   [ ! "${first-}" ] || echo
 fi

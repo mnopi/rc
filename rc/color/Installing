@@ -4,7 +4,7 @@
 # <h3>Examples</h3>
 # <dl>
 # <dt>
-# Prefix output with Start, suffix output with Installing in Normal format, and arguments in Italic:
+# Prefix output with Start, suffix output with Installing in Italic format, and arguments in Normal:
 # </dt>
 # <dd>
 # <pre><code class="language-bash">Installing Brew
