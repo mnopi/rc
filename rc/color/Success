@@ -13,8 +13,10 @@
 # </dd>
 # </dl>
 # </html>
-if [ "${QUIET-0}" -ne 1 ]; then
-  first="$(firstother "$@")"
-  printf '%s' "[1;34m◉[0m" "${first:+ "${first}"}"
-  [ ! "${first-}" ] || echo
-fi
+rc=$?
+[ "${QUIET-0}" -ne 1 ] || exit $rc
+
+msg="$(firstother "$@")"
+printf '%s' "[1;34m◉[0m" "${msg:+ "${msg}"}"
+[ ! "${msg-}" ] || echo
+exit $rc
