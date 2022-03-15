@@ -4,7 +4,7 @@
 # <dl>
 # <dt>
 # Show arguments separated with space, prefixed with Verbose symbol.
-# All arguments in Magenta:
+# All arguments in MagentaDim:
 # </dt>
 # <dd>
 # <pre><code class="language-bash">Verbose Show Text
@@ -14,7 +14,7 @@
 # </html>
 
 if [ "${QUIET-0}" -ne 1 ] && { [ "${VERBOSE}" -eq 1 ] || [ "${DRY_RUN-}" -eq 1 ]; }; then
-  first="$(magenta "$@")"
+  first="$(magentadim "$@")"
   printf '%s' "[1;35m＋[0m" "${first:+ "${first}"}"
   [ ! "${first-}" ] || echo
 fi

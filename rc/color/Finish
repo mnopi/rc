@@ -4,7 +4,7 @@
 # <dl>
 # <dt>
 # Show arguments separated with space, prefixed with Finish symbol.
-# All arguments in Green:
+# First argument in Bold, other Italic:
 # </dt>
 # <dd>
 # <pre><code class="language-bash">Finish Show Text
@@ -14,7 +14,7 @@
 # </html>
 
 if [ "${QUIET-0}" -ne 1 ]; then
-  first="$(green "$@")"
+  first="$(firstother "$@")"
   printf '%s' "=[1;32m＞[0m" "${first:+ "${first}"}"
   [ ! "${first-}" ] || echo
 fi

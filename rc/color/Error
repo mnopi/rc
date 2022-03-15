@@ -4,7 +4,7 @@
 # <dl>
 # <dt>
 # Show arguments separated with space, prefixed with Error symbol.
-# All arguments in Red:
+# First argument in Bold, other Italic:
 # </dt>
 # <dd>
 # <pre><code class="language-bash">Error Show Text
@@ -14,7 +14,7 @@
 # </html>
 
 if [ "${QUIET-0}" -ne 1 ]; then
-  first="$(red "$@")"
+  first="$(firstother "$@")"
   printf '%s' "[1;31m✘[0m" "${first:+ "${first}"}"
   [ ! "${first-}" ] || echo
 fi

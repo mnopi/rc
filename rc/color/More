@@ -4,7 +4,7 @@
 # <dl>
 # <dt>
 # Show arguments separated with space, prefixed with More symbol.
-# All arguments in Magenta:
+# First argument in Bold, other Italic:
 # </dt>
 # <dd>
 # <pre><code class="language-bash">More Show Text
@@ -14,7 +14,7 @@
 # </html>
 
 if [ "${QUIET-0}" -ne 1 ]; then
-  first="$(magenta "$@")"
+  first="$(firstother "$@")"
   printf '%s' "[1;35m＞[0m" "${first:+ "${first}"}"
   [ ! "${first-}" ] || echo
 fi
