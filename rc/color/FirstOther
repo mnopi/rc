@@ -7,7 +7,7 @@
 # First Argument in Bold and rest Italic:
 # </dt>
 # <dd>
-# <pre><code class="language-bash">FirstOther Show Text
+# <pre><code class="language-bash">firstother Show Text
 # </code></pre>
 # </dd>
 # </dl>
