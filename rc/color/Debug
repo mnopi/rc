@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# <html><h2>[1;35m+[0m</h2>
+# <html><h2>[1;37m+[0m</h2>
 # <h3>Examples</h3>
 # <dl>
 # <dt>
@@ -15,7 +15,7 @@
 # </html>
 
 if [ "${QUIET-0}" -ne 1 ]; then
-  first="$(FirstOther "$@")"
-  printf '%s' "[1;35m+[0m" "${first:+ "${first}"}"
+  first="$(FirstOther "Grey$@"\e[0m)"
+  printf '%s' "[1;37m+[0m" "${first:+ "${first}"}"
   [ ! "${first-}" ] || echo
 fi
