@@ -13,7 +13,7 @@
 # </dd>
 # </dl>
 # </html>
-if [ "${QUIET-0}" -ne 1 ] && { [ "${VERBOSE}" -eq 1 ] || [ "${DRY_RUN-}" -eq 1 ]; }; then
+if [ "${QUIET-0}" -ne 1 ] && { [ "${VERBOSE-0}" -eq 1 ] || [ "${DRY_RUN-0}" -eq 1 ]; }; then
   first="$(magentadim "$@")"
   printf '%s' "[1;35m＋[0m" "${first:+ "${first}"}"
   [ ! "${first-}" ] || echo
