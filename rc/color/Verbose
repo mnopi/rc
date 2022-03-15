@@ -34,7 +34,7 @@ VERBOSE="${VERBOSE:-0}"
 # </html>
 
 if [ "${QUIET-0}" -ne 1 ] && { [ "${VERBOSE}" -eq 1 ] || [ "${DRY_RUN-}" -eq 1 ]; }; then
-  first="$(FirstOther "\e[1;35m$@\e[0m")"
+  first="$(FirstOther "$@\e[0m")"
   printf '%s' "[1;35m＋[0m" "${first:+ "${first}"}"
   [ ! "${first-}" ] || echo
 fi
