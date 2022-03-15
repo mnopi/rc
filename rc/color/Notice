@@ -16,6 +16,6 @@
 
 if [ "${QUIET-0}" -ne 1 ]; then
   first="$(FirstOther "$@")"
-  printf '%s' "[1;36m‼[0m" "${first:+ "${first}\e[0m"}"
+  printf '%s' "[1;36m‼[0m" "${first:+ "${first}"}"
   [ ! "${first-}" ] || echo
 fi
