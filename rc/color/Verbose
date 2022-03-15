@@ -17,6 +17,6 @@ rc=$?
 [ "${QUIET-0}" -ne 1 ] || exit $rc
 [ "${VERBOSE-0}" -eq 1 ] || exit $rc
 msg="$(cyandim "$@")"
-printf '%s' "[1;36m＞[0m" "${msg:+ "${msg}"}"
+printf -- '%s' "[1;36m＞[0m" "${msg:+ "${msg}"}"
 [ ! "${msg-}" ] || echo
 exit $rc
