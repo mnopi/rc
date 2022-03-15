@@ -5,7 +5,7 @@
 # <dl>
 # <dt>
 # Show arguments separated with space, prefixed with Tilde symbol.
-# First argument in Bold, other Italic:
+# All arguments in Blue:
 # </dt>
 # <dd>
 # <pre><code class="language-bash">Tilde Show Text
@@ -16,7 +16,7 @@
 rc=$?
 [ "${QUIET-0}" -ne 1 ] || exit $rc
 
-msg="$(firstother "$@")"
+msg="$(blue "$@")"
 printf '%s' "[1;34m～[0m" "${msg:+ "${msg}"}"
 [ ! "${msg-}" ] || echo
 exit $rc

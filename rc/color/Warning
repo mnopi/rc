@@ -1,11 +1,11 @@
 #!/bin/sh
 
-# <html><h2>[1;33m![0m</h2>
+# <html><h2>[1;33m‼[0m</h2>
 # <h3>Examples</h3>
 # <dl>
 # <dt>
 # Show arguments separated with space, prefixed with Warning symbol.
-# All arguments in YellowDim:
+# First argument in Bold, other Italic:
 # </dt>
 # <dd>
 # <pre><code class="language-bash">Warning Show Text
@@ -16,7 +16,7 @@
 rc=$?
 [ "${QUIET-0}" -ne 1 ] || exit $rc
 
-msg="$(yellowdim "$@")"
-printf '%s' "[1;33m![0m" "${msg:+ "${msg}"}"
+msg="$(firstother "$@")"
+printf '%s' "[1;33m‼[0m" "${msg:+ "${msg}"}"
 [ ! "${msg-}" ] || echo
 exit $rc
