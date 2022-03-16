@@ -9,5 +9,5 @@ main() {
   cmd docker || exit
   docker system prune --volumes --force "$@"
 }
-
+echo $@
 main "$@"

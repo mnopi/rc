@@ -1,0 +1,34 @@
+#!/bin/sh
+
+#
+# RC
+
+set -eu
+
+extract() {
+  :
+}
+
+
+make() {
+  cd "$(git super "$0")" || echo Can Only Run from RC Repo
+  version="$(svu --strip-prefix "v" current)"
+  target="${1:+$1/}release/${RC_NAME}-${version}.run"
+  [ "${1-}" ] || ! test -f "${target}" || echo Release Already Exists: "${target}"
+  tmp="$(mktemp -d)"
+  rsync -av --links "${RC}" "${tmp}"
+  cp "${RC_PROFILE}" "${tmp}"
+  echo makeself --nocomp "${tmp}" "${target}" "${RC_NAME} ${1:-${version}}" "$0" >/dev/null
+}
+
+main() {
+  for arg; do
+    case "${arg}" in
+      make) make tests ;;
+      release) make ;;
+    esac
+  done
+}
+
+main "$@"
+

@@ -1,0 +1,42 @@
+#!/bin/sh
+
+: git rev-parse
+
+#######################################
+# git spec
+# Globals:
+#   SCRIPT
+# Arguments:
+#  None
+#######################################
+spec() {
+  cat <<EOF
+${SCRIPT}
+${SCRIPT} $(magenta "<path>")
+
+${SCRIPT} - is git repository $(magenta "<path>") \
+--
+h,help    Show help and exit.
+EOF
+}
+
+#######################################
+# is git repository
+# Arguments:
+#  [<path>]     path (default: cwd)
+#######################################
+main() {
+  CHANGED=false
+  PREFIX='v'
+  [ "${strip}" != 'true' ] || { flag='--strip-prefix'; PREFIX=''; }
+  CURRENT=$(svu "${flag}" current)
+  NEXT=$(svu "${flag}" next)
+  [ "${CURRENT}" = "${NEXT}" ] || CHANGED=true
+  git tag "${NEXT}"
+  git push origin "${NEXT}"
+  git-is
+  git ${1:+-C "$(git dirname "$1")"} top  >/dev/null 2>&1;
+}
+
+. git-parse.sh; shift
+main "$@"

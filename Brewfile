@@ -21,6 +21,7 @@ if RUBY_PLATFORM[/darwin/]
   brew "brew-cask-completion"
   brew "bundler-completion"
   brew "coreutils"
+  brew "dash"
   brew "direnv"
   brew "duf"
   brew "exiftool"

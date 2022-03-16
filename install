@@ -1,0 +1,26 @@
+#!/bin/sh
+
+#
+# RC Installation and Update
+# cat install | sh -s
+# sh -c "$(cat install)"
+# ./install
+
+# docker run -it --rm -e RC_PREFIX=/rc -v "$PWD:/rc" alpine . /rc/profile
+
+set -eu
+if [ "$(basename "$0")" = 'install' ]; then
+  downloaded=true
+  cd "$(dirname "$0")"
+else
+  downloaded=false
+fi
+
+set -x
+echo "$0, ${RC_PREFIX:-${PWD}}, ${downloaded}, $*"
+set +x
+
+RC_PREFIX="${PWD}" . ./profile
+
+[ "${ETC}" = "${RC_INSTALL}" ] || exit
+echo "${ETC}: Installing"

@@ -1,7 +1,8 @@
 #!/bin/sh
 
 main() {
-  rc=$1
+  rc="$(($1))"
+
   printf -- "%s" "\[\e]0;\h@\u: \w\a\]"
   if [ "${rc}" -eq 0 ]; then
     greenesc "✔ "
@@ -15,12 +16,12 @@ main() {
     sed -n "H;\${x;s|\n|/|g;s|^//|/|;s|^/~|~|;s|^~/||;p;}") "
 
   [ ! "${HOST_PROMPT-}" ] || blueesc "${HOST_PROMPT} "
-  [ ! "${PROMPT_SH-}" ] || greyesc "${PROMPT_SH} "
+  [ "${PROMPT_SH}" = "1" ] || greyesc "${PROMPT_SH} "
 
-  func=magentaesc
-  [ "$(id -u)" -eq 0 ] || func=greenesc
-  ${func} "〉"
-  exit "$1"
+  function="magentaesc"
+  [ "$(id -u)" -eq 0 ] || function="greenesc"
+  "${function}" "〉"
+  exit $rc
 }
 
 main "$@"

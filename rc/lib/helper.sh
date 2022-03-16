@@ -494,7 +494,7 @@ strict() {
   set "${_set:-+o}" errexit nounset
   if [ "${BASH_VERSION-}" ]; then
     if [ "${_set- }" ]; then
-      trap _strict "${TRAP_SIGNAL}"
+      trap _strict "${TRAP_SIGNAL:-EXIT}"
     fi
     set "${_set:-+o}" errtrace
     set "${_set:-+o}" pipefail
@@ -571,7 +571,6 @@ warning() { stack "${Warning}" "$@"; }
 
 #######################################
 # Strict mode and debugging
-. shell.sh || return 1
 [ "${STRICT-1}" -eq 0 ] || [ "${PS1-}" ] || strict
 [ "${STDERR-0}" -eq 0 ] || stderr
 [ "${XTRACE-0}" -eq 0 ] || { set -x; xtrace; export SHELLOPTS; }
