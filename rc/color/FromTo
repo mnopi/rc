@@ -18,5 +18,5 @@
 # </html>
 rc=$?
 [ "${QUIET-0}" -ne 1 ] || exit $rc
-printf -- '%s' "$(Bold "$1"): " "$(Italic "$2") " "=[1;34m＞[0m " "$(Italic "$3")"
+printf -- '%s' "\033[1;32m✔\033[0m " $(Bold "$1"): " "$(Italic "$2") " "=[1;34m＞[0m " "$(Italic "$3")"
 exit $rc
