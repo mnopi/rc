@@ -18,5 +18,5 @@
 # </html>
 rc=$?
 [ "${QUIET-0}" -ne 1 ] || exit $rc
-printf -- '%s' "$(Bold "$1"): " "$(Italic "$2") " "  /Users/j5pu/rc/rc/bin/color Traceback (most recent call first): " "$(Italic "$3")"
+printf -- '%s' "$(Bold "$1"): " "$(Italic "$2") " "=[1;34m＞[0m " "$(Italic "$3")"
 exit $rc
