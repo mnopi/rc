@@ -231,6 +231,7 @@ export SHARE_COMPLETIONS_D
 export SSH
 
 # Path with sudo command
+# https://linuxhandbook.com/run-alias-as-sudo/
 #
 export SUDOC='/usr/bin/sudo'
 
@@ -377,10 +378,10 @@ system() {
 
   if [ "${SSH_CLIENT-}" ] || [ "${SSH_CONNECTION-}" ] || [ "${SSH_TTY-}" ]; then
     SSH=1
-    HOST_PROMPT="⇌ ${HOST}"
+    HOST_PROMPT="⇌"
   elif [ -f '/.dockerenv' ]; then
     CONTAINER=1
-    HOST_PROMPT="❒ ${DIST_ID} ${HOST}"
+    HOST_PROMPT="❒"
     [ ! "${DEBIAN_LIKE-}" ] || DEBIAN_FRONTEND='noninteractive'
     if [ "${NO_CACHE-}" ]; then
       PM_INSTALL="${PM_INSTALL} ${NO_CACHE}"

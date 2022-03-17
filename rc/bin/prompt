@@ -1,11 +1,14 @@
 #!/bin/sh
+# shellcheck disable=SC3028,SC3054
+
+ellipsis() { value="${2:+$1}$(echo "${2:-"${pwd}"}" | tr '/' '\n' | tail -3 | newline-to "/")"; }
 
 main() {
   rc="$(($1))"
   esc="esc"
 
   case "${SH-}" in
-    dash) esc=""; printf -- "%s" "\033]0;\h@\u: \w\a" ;;
+    dash|ksh) esc=""; printf -- "%b" '\033]0;\h@\u: \w\a' ;;
     *) printf -- "%s" "\[\e]0;\h@\u: \w\a\]" ;;
   esac
 
@@ -17,14 +20,37 @@ main() {
 
   # TODO: /Library/Developer/CommandLineTools/usr/share/git-core
   #   substituir por ... o directamente quitarle el /
-  "cyan${esc}" "$(pwd | sed "s|${HOME}|~|" | tr '/' '\n' | tail -3 \
-    | sed -n "H;\${x;s|\n|/|g;s|^//|/|;s|^/~|~|;s|^~/||;p;}") "
+  root=true; [ "$(id -u)" -eq 0 ] || root=false
+  pwd="$(pwd)"
+  home="$(echo "${HOME}" | awk -v RS=/ 'END{print NR-1}')"
+  length="$(echo "${pwd}" | awk -v RS=/ 'END{print NR-1}')"
+  function="blue"; test -w "${pwd}" || function="yellow"
+  max=3
+  case "${pwd}" in
+    "/") function="red"; value="/" ;;
+    "${HOME}") value="${TildeIcon}" ;;
+    "${HOME}"*)
+      value="${pwd##"${HOME}/"}"
+      home="$(echo "${HOME}" | awk -v RS=/ 'END{print NR-1}')"
+      final="$((length-home))"
+      [ $final -lt "$((max+1))" ] || ellipsis "${EllipsisIcon} " "${value}"
+      ;;
+    *)
+      value="${pwd#?}"
+      final="$((length-home))"
+      [ "${length}" -lt "$((max))" ] || ellipsis "${EllipsisIcon} " "${value}"
+      ;;
+  esac
+  set +x
+  "${function}${esc}" "${value} "
 
-  [ ! "${HOST_PROMPT-}" ] || "blue${esc}" "${HOST_PROMPT} "
-  [ "${BASH4:-${SH}}" = "1" ] || [ ! "${SH-}" ] || "grey${_ESCAPED_PROMPT}" "${SH} "
+  if [ "${HOST_PROMPT-}" ]; then
+    "cyan${esc}" "${HOST_PROMPT} ${HOST}${CONTAINER:- }"
+    [ "${CONTAINER-0}" -eq 0 ] || { "grey${esc}" "["; "cyan${esc}" "${DIST_ID}"; "grey${esc}" "] "; }
+  fi
+  [ "${BASH4:-${SH}}" = "1" ] || [ ! "${SH-}" ] || "grey${esc}" "${SH} "
 
-  function="magenta"
-  [ "$(id -u)" -eq 0 ] || function="green"
+  function="red"; $root || function="green"
   "${function}${esc}" "〉"
   exit $rc
 }

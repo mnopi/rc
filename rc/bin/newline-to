@@ -2,6 +2,9 @@
 
 set -eu
 
+regex() { sed -n "H;\${x;s/\n/${1:-|}/g;s/^${1:-|}//;p;}"; }
+vertical()  { sed -n "H;\${x;s|\n|${1:-/}|g;s|^${1:-/}||;p;}"; }
+
 #######################################
 # replace newline with value and remove last newline always (adds prefix '^' and suffix '$' for default)
 # Arguments:
@@ -11,10 +14,15 @@ set -eu
 #   newline-to "$(find . -type f -maxdepth 1)"
 #   newline-to "$(find . -type f -maxdepth 1)" '*:'
 #   newline-to "${WHITE}" '|^'
+#   printf '%s\n' 1 2 3  | newline-to "|"
+#   newline-to "$(printf '%s\n' 1 2 3 )" "|"
 #######################################
 main() {
+  function="vertical"; echo "${2:-|}" | grep -q -- '/' || function="regex"
   [ "${2-}" ] || { p='^'; s='$'; }
-  echo "${p-}$1${s-}" | awk 'NF' | sed -n "H;\${x;s/\n/${2:-|}/g;s/^${2:-|}//;p;}"
+  echo "${p-}$1${s-}" | awk 'NF' | "${function}"
 }
+
+test -t 0 || set -- "$(cat </dev/stdin)" "$@"
 
 main "$@"

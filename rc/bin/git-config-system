@@ -197,7 +197,7 @@ update () {
   command="sudo git config --file=${GIT_CONFIG_SYSTEM:-${GIT_TEMPLATE_DIR}/config} $1"
   previous="$(${command} || true)"
   if [ "${previous}" != "$2" ]; then
-    ${command} "$2" && Ok GIT "${msg:-System Config}": "$1": "${previous}" "$(magenta "=>")" "$2"
+    ${command} "$2" && FromTo GIT "${msg:-System Config}: $1" "${previous}" "$2"
   fi
 }
 

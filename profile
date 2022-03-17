@@ -69,7 +69,7 @@ export SH=""
 #
 export TRAP_SIGNAL="EXIT"
 
-resh() { unset PROFILE_SOURCED RC_SOURCED; . "${ENV}"; }
+rebash() { unset PROFILE_SOURCED RC_SOURCED; . "${ENV}"; }
 
 if [ "${RC_SOURCED-0}" -eq 0 ]; then
   RC_SOURCED=1; _interactive_source=1
@@ -177,14 +177,14 @@ if [ "${PROFILE_SOURCED-0}" -eq 0 ]; then
   #
   export RC_SHARE="${RC}/share"
 
-  for _rc_profile in "${RC_PROFILE_D}"/*; do
+  for _rc_profile in "${RC_PROFILE_D}"/*.sh; do
     . "${_rc_profile}"
   done; unset _rc_profile
 
   eval "$("${RC}/bin/pathsd")"
 fi
 
-{ [ "${PS1-}" ] && [ "${_interactive_source-0}" -eq 1 ]; } || return 0
+{ { [ "${PS1-}" ] || echo $- | grep -q i; } && [ "${_interactive_source-0}" -eq 1 ]; } || return 0
 
 [ ! "${BASH-}" ] || shopt -s checkwinsize execfail histappend
 

@@ -67,18 +67,18 @@ declare -Ag SORTED=(["actions"]="$(printf -- "%s\n" "${!ACTIONS[@]}" | sort)" ["
 
 # Symbol Names and Colors
 #
-declare -Ag SYMBOLS_COLORS=(["Critical"]="RedInvert" ["Debug"]="Magenta" ["Ellipsis"]="Cyan"
-  ["Error"]="Red" ["Finish"]="Green" ["Minus"]="Red"
-  ["More"]="Magenta" ["Multiply"]="Blue" ["Notice"]="Yellow"
+declare -Ag SYMBOLS_COLORS=(["Critical"]="RedInvert" ["Debug"]="Magenta" ["Division"]="Yellow"
+  ["Ellipsis"]="Cyan" ["Error"]="Red" ["Finish"]="Green"
+  ["Minus"]="Red" ["More"]="Magenta" ["Multiply"]="Blue" ["Notice"]="Yellow"
   ["Ok"]="Green" ["Plus"]="Green" ["Start"]="Blue"
   ["Success"]="Blue" ["Tilde"]="Blue" ["Verbose"]="Cyan"
   ["Warning"]="Yellow")
 
 # Symbol Names and Symbol
 #
-declare -Ag SYMBOLS_ICON=(["Critical"]="✘" ["Debug"]="＋" ["Ellipsis"]="…"
-  ["Error"]="✘" ["Finish"]="＞" ["Minus"]="-"
-  ["More"]="＞" ["Multiply"]="×" ["Notice"]="！""‼"
+declare -Ag SYMBOLS_ICON=(["Critical"]="✘" ["Debug"]="＋" ["Division"]="∕"
+  ["Ellipsis"]="…" ["Error"]="✘" ["Finish"]="＞"
+  ["Minus"]="-" ["More"]="＞" ["Multiply"]="×" ["Notice"]="！""‼"
   ["Ok"]="✔" ["Plus"]="+" ["Start"]="＞"
   ["Success"]="◉" ["Tilde"]="～" ["Verbose"]="＞"
   ["Warning"]="‼")
@@ -89,9 +89,9 @@ declare -Ag SYMBOLS_PREFIX=(["Finish"]="=" ["Start"]="=")
 
 # Symbol Names and Text Color
 #
-declare -Ag SYMBOLS_TEXT=(["Critical"]="Red" ["Debug"]="${FIRST["bin"]}" ["Ellipsis"]="CyanDim"
-  ["Error"]="${FIRST["bin"]}" ["Finish"]="${FIRST["bin"]}" ["Minus"]="${FIRST["bin"]}"
-  ["More"]="${FIRST["bin"]}" ["Multiply"]="${FIRST["bin"]}" ["Notice"]="YellowDim"
+declare -Ag SYMBOLS_TEXT=(["Critical"]="Red" ["Debug"]="${FIRST["bin"]}" ["Division"]="${FIRST["bin"]}"
+  ["Ellipsis"]="CyanDim" ["Error"]="${FIRST["bin"]}" ["Finish"]="${FIRST["bin"]}"
+  ["Minus"]="${FIRST["bin"]}" ["More"]="${FIRST["bin"]}" ["Multiply"]="${FIRST["bin"]}" ["Notice"]="YellowDim"
   ["Ok"]="${FIRST["bin"]}" ["Plus"]="${FIRST["bin"]}" ["Start"]="${FIRST["bin"]}"
   ["Success"]="${FIRST["bin"]}" ["Tilde"]="${SYMBOLS_COLORS["Tilde"]}" ["Verbose"]="CyanDim"
   ["Warning"]="${FIRST["bin"]}")
@@ -496,19 +496,21 @@ EOF
 #   None
 #######################################
 save_bin_fromto() {
-  local file first="${FIRST["first"]}" name="FromTo" other="${FIRST["other"]}" symbol="Start"
+  local file first="${FIRST["first"]}" name="FromTo" other="${FIRST["other"]}" prefix symbol
+  prefix="$(Ok)"
+  symbol="$(magenta "=>")"
   file="${TMP["bin"]}/${name}"
   cat >"${file}" <<EOF
 #!/bin/sh
 
-# <html><h2>${symbol}</h2>
+# <html><h2>${name}</h2>
 # <h3>Examples</h3>
 # <dl>
 # <dt>
 # Prefix: Ok symbol
 # 1st argument: ${first} (adds ':')
 # 2nd argument: ${other}
-# Separator: Start
+# Separator: ${symbol}
 # 3rd argument: ${other}
 # </dt>
 # <dd>
@@ -517,10 +519,9 @@ save_bin_fromto() {
 # </dd>
 # </dl>
 # </html>
-rc=\$?
 [ "\${QUIET-0}" -ne 1 ] || exit \$rc
-printf -- '%s' "\$(${first} "\$1"): " "\$(${other} "\$2") " "$(${symbol}) " "\$(${other} "\$3")"
-exit \$rc
+printf -- '%s' "${prefix} " "\$(${first} "\$1"): " "\$(${other} "\$2") " "${symbol} " "\$(${other} "\$3")"
+echo
 EOF
   chmod +x "${file}"
 }
