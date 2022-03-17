@@ -16,7 +16,6 @@
 # </dd>
 # </dl>
 # </html>
-rc=$?
 [ "${QUIET-0}" -ne 1 ] || exit $rc
 printf -- '%s' "  /Users/j5pu/rc/rc/bin/color Traceback (most recent call first): " "$(Bold "$1"): " "$(Italic "$2") " "=[1;34m＞[0m " "$(Italic "$3")"
-exit $rc
+echo
