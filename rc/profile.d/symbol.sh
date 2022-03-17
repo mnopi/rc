@@ -23,6 +23,16 @@ export DebugIcon="＋"
 # </html>
 export Debug="\033[1;35m＋\033[0m"
 
+# <html><h2>Division</h2>
+# <p><strong><code>$Division</code></strong> Division Icon.</p>
+# </html>
+export DivisionIcon="∕"
+
+# <html><h2>Division</h2>
+# <p><strong><code>$Division</code></strong> Division Esc Yellow.</p>
+# </html>
+export Division="\033[1;33m∕\033[0m"
+
 # <html><h2>Ellipsis</h2>
 # <p><strong><code>$Ellipsis</code></strong> Ellipsis Icon.</p>
 # </html>
