@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# <html><h2>Start</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>
+# Prefix: Ok symbol
+# 1st argument: Bold (adds ':')
+# 2nd argument: Italic
+# Separator: Start
+# 3rd argument: Italic
+# </dt>
+# <dd>
+# <pre><code class="language-bash">FromTo " :" false true
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+rc=$?
+[ "${QUIET-0}" -ne 1 ] || exit $rc
+printf -- '%s' "$(Bold "$1"):" "$(Italic "$2")" "Start" "$(Italic "$3")"
+exit $rc
