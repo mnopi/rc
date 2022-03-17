@@ -35,9 +35,11 @@ export RC_PREFIX
 
 # ETC Directory or RC Repository Physical Path
 # ETC="${RC_PREFIX:-${RC_INSTALL}}"
+#
 export ETC
 
 # RC profile File ($ENV)Physical Path
+#
 #
 export ENV="${RC_PREFIX:-${RC_INSTALL}}/${RC_PROFILE}"
 
@@ -133,9 +135,9 @@ if [ "${RC_SOURCED-0}" -eq 0 ]; then
     fi
   fi
 
-  for i in 0 ETC ENV RC SH MAIN SOURCED; do
-    echo "${i}: $(eval echo \$$i)"
-  done; unset i
+#  for i in 0 ETC ENV RC SH MAIN SOURCED; do
+#    echo "${i}: $(eval echo \$$i)"
+#  done; unset i
 fi
 
 if [ "${PROFILE_SOURCED-0}" -eq 0 ]; then
