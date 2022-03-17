@@ -11,7 +11,7 @@ export CriticalIcon="✘"
 # <html><h2>Critical</h2>
 # <p><strong><code>$Critical</code></strong> Critical Esc RedInvert.</p>
 # </html>
-export Critical="\e[7;31m✘\e[0m"
+export Critical="\033[7;31m✘\033[0m"
 
 # <html><h2>Debug</h2>
 # <p><strong><code>$Debug</code></strong> Debug Icon.</p>
@@ -21,7 +21,7 @@ export DebugIcon="＋"
 # <html><h2>Debug</h2>
 # <p><strong><code>$Debug</code></strong> Debug Esc Magenta.</p>
 # </html>
-export Debug="\e[1;35m＋\e[0m"
+export Debug="\033[1;35m＋\033[0m"
 
 # <html><h2>Ellipsis</h2>
 # <p><strong><code>$Ellipsis</code></strong> Ellipsis Icon.</p>
@@ -31,12 +31,12 @@ export EllipsisIcon="…"
 # <html><h2>Ellipsis</h2>
 # <p><strong><code>$Ellipsis</code></strong> Ellipsis Esc Cyan.</p>
 # </html>
-export Ellipsis="\e[1;36m…\e[0m"
+export Ellipsis="\033[1;36m…\033[0m"
 
 # <html><h2>EllipsisEsc</h2>
 # <p><strong><code>$EllipsisEsc</code></strong> Ellipsis Esc Cyan.</p>
 # </html>
-export EllipsisEsc="\[\e[1;36m…\e[0m\]"
+export EllipsisEsc="\[\033[1;36m…\033[0m\]"
 
 # <html><h2>Error</h2>
 # <p><strong><code>$Error</code></strong> Error Icon.</p>
@@ -46,12 +46,12 @@ export ErrorIcon="✘"
 # <html><h2>Error</h2>
 # <p><strong><code>$Error</code></strong> Error Esc Red.</p>
 # </html>
-export Error="\e[1;31m✘\e[0m"
+export Error="\033[1;31m✘\033[0m"
 
 # <html><h2>ErrorEsc</h2>
 # <p><strong><code>$ErrorEsc</code></strong> Error Esc Red.</p>
 # </html>
-export ErrorEsc="\[\e[1;31m✘\e[0m\]"
+export ErrorEsc="\[\033[1;31m✘\033[0m\]"
 
 # <html><h2>Finish</h2>
 # <p><strong><code>$Finish</code></strong> Finish Icon.</p>
@@ -61,7 +61,7 @@ export FinishIcon="＞"
 # <html><h2>Finish</h2>
 # <p><strong><code>$Finish</code></strong> Finish Esc Green.</p>
 # </html>
-export Finish="=\e[1;32m＞\e[0m"
+export Finish="=\033[1;32m＞\033[0m"
 
 # <html><h2>Minus</h2>
 # <p><strong><code>$Minus</code></strong> Minus Icon.</p>
@@ -71,12 +71,12 @@ export MinusIcon="-"
 # <html><h2>Minus</h2>
 # <p><strong><code>$Minus</code></strong> Minus Esc Red.</p>
 # </html>
-export Minus="\e[1;31m-\e[0m"
+export Minus="\033[1;31m-\033[0m"
 
 # <html><h2>MinusEsc</h2>
 # <p><strong><code>$MinusEsc</code></strong> Minus Esc Red.</p>
 # </html>
-export MinusEsc="\[\e[1;31m-\e[0m\]"
+export MinusEsc="\[\033[1;31m-\033[0m\]"
 
 # <html><h2>More</h2>
 # <p><strong><code>$More</code></strong> More Icon.</p>
@@ -86,12 +86,12 @@ export MoreIcon="＞"
 # <html><h2>More</h2>
 # <p><strong><code>$More</code></strong> More Esc Magenta.</p>
 # </html>
-export More="\e[1;35m＞\e[0m"
+export More="\033[1;35m＞\033[0m"
 
 # <html><h2>MoreEsc</h2>
 # <p><strong><code>$MoreEsc</code></strong> More Esc Magenta.</p>
 # </html>
-export MoreEsc="\[\e[1;35m＞\e[0m\]"
+export MoreEsc="\[\033[1;35m＞\033[0m\]"
 
 # <html><h2>Multiply</h2>
 # <p><strong><code>$Multiply</code></strong> Multiply Icon.</p>
@@ -101,12 +101,12 @@ export MultiplyIcon="×"
 # <html><h2>Multiply</h2>
 # <p><strong><code>$Multiply</code></strong> Multiply Esc Blue.</p>
 # </html>
-export Multiply="\e[1;34m×\e[0m"
+export Multiply="\033[1;34m×\033[0m"
 
 # <html><h2>MultiplyEsc</h2>
 # <p><strong><code>$MultiplyEsc</code></strong> Multiply Esc Blue.</p>
 # </html>
-export MultiplyEsc="\[\e[1;34m×\e[0m\]"
+export MultiplyEsc="\[\033[1;34m×\033[0m\]"
 
 # <html><h2>Notice</h2>
 # <p><strong><code>$Notice</code></strong> Notice Icon.</p>
@@ -116,12 +116,12 @@ export NoticeIcon="！‼"
 # <html><h2>Notice</h2>
 # <p><strong><code>$Notice</code></strong> Notice Esc Yellow.</p>
 # </html>
-export Notice="\e[1;33m！‼\e[0m"
+export Notice="\033[1;33m！‼\033[0m"
 
 # <html><h2>NoticeEsc</h2>
 # <p><strong><code>$NoticeEsc</code></strong> Notice Esc Yellow.</p>
 # </html>
-export NoticeEsc="\[\e[1;33m！‼\e[0m\]"
+export NoticeEsc="\[\033[1;33m！‼\033[0m\]"
 
 # <html><h2>Ok</h2>
 # <p><strong><code>$Ok</code></strong> Ok Icon.</p>
@@ -131,12 +131,12 @@ export OkIcon="✔"
 # <html><h2>Ok</h2>
 # <p><strong><code>$Ok</code></strong> Ok Esc Green.</p>
 # </html>
-export Ok="\e[1;32m✔\e[0m"
+export Ok="\033[1;32m✔\033[0m"
 
 # <html><h2>OkEsc</h2>
 # <p><strong><code>$OkEsc</code></strong> Ok Esc Green.</p>
 # </html>
-export OkEsc="\[\e[1;32m✔\e[0m\]"
+export OkEsc="\[\033[1;32m✔\033[0m\]"
 
 # <html><h2>Plus</h2>
 # <p><strong><code>$Plus</code></strong> Plus Icon.</p>
@@ -146,12 +146,12 @@ export PlusIcon="+"
 # <html><h2>Plus</h2>
 # <p><strong><code>$Plus</code></strong> Plus Esc Green.</p>
 # </html>
-export Plus="\e[1;32m+\e[0m"
+export Plus="\033[1;32m+\033[0m"
 
 # <html><h2>PlusEsc</h2>
 # <p><strong><code>$PlusEsc</code></strong> Plus Esc Green.</p>
 # </html>
-export PlusEsc="\[\e[1;32m+\e[0m\]"
+export PlusEsc="\[\033[1;32m+\033[0m\]"
 
 # <html><h2>Start</h2>
 # <p><strong><code>$Start</code></strong> Start Icon.</p>
@@ -161,7 +161,7 @@ export StartIcon="＞"
 # <html><h2>Start</h2>
 # <p><strong><code>$Start</code></strong> Start Esc Blue.</p>
 # </html>
-export Start="=\e[1;34m＞\e[0m"
+export Start="=\033[1;34m＞\033[0m"
 
 # <html><h2>Success</h2>
 # <p><strong><code>$Success</code></strong> Success Icon.</p>
@@ -171,12 +171,12 @@ export SuccessIcon="◉"
 # <html><h2>Success</h2>
 # <p><strong><code>$Success</code></strong> Success Esc Blue.</p>
 # </html>
-export Success="\e[1;34m◉\e[0m"
+export Success="\033[1;34m◉\033[0m"
 
 # <html><h2>SuccessEsc</h2>
 # <p><strong><code>$SuccessEsc</code></strong> Success Esc Blue.</p>
 # </html>
-export SuccessEsc="\[\e[1;34m◉\e[0m\]"
+export SuccessEsc="\[\033[1;34m◉\033[0m\]"
 
 # <html><h2>Tilde</h2>
 # <p><strong><code>$Tilde</code></strong> Tilde Icon.</p>
@@ -186,12 +186,12 @@ export TildeIcon="～"
 # <html><h2>Tilde</h2>
 # <p><strong><code>$Tilde</code></strong> Tilde Esc Blue.</p>
 # </html>
-export Tilde="\e[1;34m～\e[0m"
+export Tilde="\033[1;34m～\033[0m"
 
 # <html><h2>TildeEsc</h2>
 # <p><strong><code>$TildeEsc</code></strong> Tilde Esc Blue.</p>
 # </html>
-export TildeEsc="\[\e[1;34m～\e[0m\]"
+export TildeEsc="\[\033[1;34m～\033[0m\]"
 
 # <html><h2>Verbose</h2>
 # <p><strong><code>$Verbose</code></strong> Verbose Icon.</p>
@@ -201,12 +201,12 @@ export VerboseIcon="＞"
 # <html><h2>Verbose</h2>
 # <p><strong><code>$Verbose</code></strong> Verbose Esc Cyan.</p>
 # </html>
-export Verbose="\e[1;36m＞\e[0m"
+export Verbose="\033[1;36m＞\033[0m"
 
 # <html><h2>VerboseEsc</h2>
 # <p><strong><code>$VerboseEsc</code></strong> Verbose Esc Cyan.</p>
 # </html>
-export VerboseEsc="\[\e[1;36m＞\e[0m\]"
+export VerboseEsc="\[\033[1;36m＞\033[0m\]"
 
 # <html><h2>Warning</h2>
 # <p><strong><code>$Warning</code></strong> Warning Icon.</p>
@@ -216,10 +216,10 @@ export WarningIcon="‼"
 # <html><h2>Warning</h2>
 # <p><strong><code>$Warning</code></strong> Warning Esc Yellow.</p>
 # </html>
-export Warning="\e[1;33m‼\e[0m"
+export Warning="\033[1;33m‼\033[0m"
 
 # <html><h2>WarningEsc</h2>
 # <p><strong><code>$WarningEsc</code></strong> Warning Esc Yellow.</p>
 # </html>
-export WarningEsc="\[\e[1;33m‼\e[0m\]"
+export WarningEsc="\[\033[1;33m‼\033[0m\]"
 
