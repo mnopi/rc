@@ -6,860 +6,860 @@
 # <html><h2>Bold</h2>
 # <p><strong><code>$Bold</code></strong> Color Bold.</p>
 # </html>
-export Bold="\e[1m"
+export Bold="\033[1m"
 
 # <html><h2>BoldEsc</h2>
 # <p><strong><code>$BoldEsc</code></strong> Color BoldEsc.</p>
 # </html>
-export BoldEsc="\[\e[1m\]"
+export BoldEsc="\[\033[1m\]"
 
 # <html><h2>BoldItalic</h2>
 # <p><strong><code>$BoldItalic</code></strong> Color BoldItalic.</p>
 # </html>
-export BoldItalic="\e[3m\e[1m"
+export BoldItalic="\033[3m\033[1m"
 
 # <html><h2>BoldItalicEsc</h2>
 # <p><strong><code>$BoldItalicEsc</code></strong> Color BoldItalicEsc.</p>
 # </html>
-export BoldItalicEsc="\[\e[3m\e[1m\]"
+export BoldItalicEsc="\[\033[3m\033[1m\]"
 
 # <html><h2>Dim</h2>
 # <p><strong><code>$Dim</code></strong> Color Dim.</p>
 # </html>
-export Dim="\e[2m"
+export Dim="\033[2m"
 
 # <html><h2>Invert</h2>
 # <p><strong><code>$Invert</code></strong> Color Invert.</p>
 # </html>
-export Invert="\e[7m"
+export Invert="\033[7m"
 
 # <html><h2>Italic</h2>
 # <p><strong><code>$Italic</code></strong> Color Italic.</p>
 # </html>
-export Italic="\e[3m"
+export Italic="\033[3m"
 
 # <html><h2>ItalicEsc</h2>
 # <p><strong><code>$ItalicEsc</code></strong> Color ItalicEsc.</p>
 # </html>
-export ItalicEsc="\[\e[3m\]"
+export ItalicEsc="\[\033[3m\]"
 
 # <html><h2>Normal</h2>
 # <p><strong><code>$Normal</code></strong> Color Normal.</p>
 # </html>
-export Normal="\e[0m"
+export Normal="\033[0m"
 
 # <html><h2>NormalEsc</h2>
 # <p><strong><code>$NormalEsc</code></strong> Color NormalEsc.</p>
 # </html>
-export NormalEsc="\[\e[0m\]"
+export NormalEsc="\[\033[0m\]"
 
 # <html><h2>Strike</h2>
 # <p><strong><code>$Strike</code></strong> Color Strike.</p>
 # </html>
-export Strike="\e[9m"
+export Strike="\033[9m"
 
 # <html><h2>Under</h2>
 # <p><strong><code>$Under</code></strong> Color Under.</p>
 # </html>
-export Under="\e[4m"
+export Under="\033[4m"
 
 # <html><h2>Black</h2>
 # <p><strong><code>$Black</code></strong> Color Black.</p>
 # </html>
-export Black="\e[1;30m"
+export Black="\033[1;30m"
 
 # <html><h2>BlackBg</h2>
 # <p><strong><code>$BlackBg</code></strong> Color BlackBg.</p>
 # </html>
-export BlackBg="\e[1;40m"
+export BlackBg="\033[1;40m"
 
 # <html><h2>BlackBoldItalic</h2>
 # <p><strong><code>$BlackBoldItalic</code></strong> Color BlackBoldItalic.</p>
 # </html>
-export BlackBoldItalic="\e[3m\e[1;30m"
+export BlackBoldItalic="\033[3m\033[1;30m"
 
 # <html><h2>BlackBoldItalicBg</h2>
 # <p><strong><code>$BlackBoldItalicBg</code></strong> Color BlackBoldItalicBg.</p>
 # </html>
-export BlackBoldItalicBg="\e[3m\e[1;40m"
+export BlackBoldItalicBg="\033[3m\033[1;40m"
 
 # <html><h2>BlackBoldItalicEsc</h2>
 # <p><strong><code>$BlackBoldItalicEsc</code></strong> Color BlackBoldItalicEsc.</p>
 # </html>
-export BlackBoldItalicEsc="\[\e[3m\e[1;30m\]"
+export BlackBoldItalicEsc="\[\033[3m\033[1;30m\]"
 
 # <html><h2>BlackDim</h2>
 # <p><strong><code>$BlackDim</code></strong> Color BlackDim.</p>
 # </html>
-export BlackDim="\e[2;30m"
+export BlackDim="\033[2;30m"
 
 # <html><h2>BlackDimBg</h2>
 # <p><strong><code>$BlackDimBg</code></strong> Color BlackDimBg.</p>
 # </html>
-export BlackDimBg="\e[2;40m"
+export BlackDimBg="\033[2;40m"
 
 # <html><h2>BlackEsc</h2>
 # <p><strong><code>$BlackEsc</code></strong> Color BlackEsc.</p>
 # </html>
-export BlackEsc="\[\e[1;30m\]"
+export BlackEsc="\[\033[1;30m\]"
 
 # <html><h2>BlackInvert</h2>
 # <p><strong><code>$BlackInvert</code></strong> Color BlackInvert.</p>
 # </html>
-export BlackInvert="\e[7;30m"
+export BlackInvert="\033[7;30m"
 
 # <html><h2>BlackInvertBg</h2>
 # <p><strong><code>$BlackInvertBg</code></strong> Color BlackInvertBg.</p>
 # </html>
-export BlackInvertBg="\e[7;40m"
+export BlackInvertBg="\033[7;40m"
 
 # <html><h2>BlackItalic</h2>
 # <p><strong><code>$BlackItalic</code></strong> Color BlackItalic.</p>
 # </html>
-export BlackItalic="\e[3;30m"
+export BlackItalic="\033[3;30m"
 
 # <html><h2>BlackItalicBg</h2>
 # <p><strong><code>$BlackItalicBg</code></strong> Color BlackItalicBg.</p>
 # </html>
-export BlackItalicBg="\e[3;40m"
+export BlackItalicBg="\033[3;40m"
 
 # <html><h2>BlackItalicEsc</h2>
 # <p><strong><code>$BlackItalicEsc</code></strong> Color BlackItalicEsc.</p>
 # </html>
-export BlackItalicEsc="\[\e[3;30m\]"
+export BlackItalicEsc="\[\033[3;30m\]"
 
 # <html><h2>BlackNormal</h2>
 # <p><strong><code>$BlackNormal</code></strong> Color BlackNormal.</p>
 # </html>
-export BlackNormal="\e[0;30m"
+export BlackNormal="\033[0;30m"
 
 # <html><h2>BlackNormalBg</h2>
 # <p><strong><code>$BlackNormalBg</code></strong> Color BlackNormalBg.</p>
 # </html>
-export BlackNormalBg="\e[0;40m"
+export BlackNormalBg="\033[0;40m"
 
 # <html><h2>BlackNormalEsc</h2>
 # <p><strong><code>$BlackNormalEsc</code></strong> Color BlackNormalEsc.</p>
 # </html>
-export BlackNormalEsc="\[\e[0;30m\]"
+export BlackNormalEsc="\[\033[0;30m\]"
 
 # <html><h2>BlackStrike</h2>
 # <p><strong><code>$BlackStrike</code></strong> Color BlackStrike.</p>
 # </html>
-export BlackStrike="\e[9;30m"
+export BlackStrike="\033[9;30m"
 
 # <html><h2>BlackStrikeBg</h2>
 # <p><strong><code>$BlackStrikeBg</code></strong> Color BlackStrikeBg.</p>
 # </html>
-export BlackStrikeBg="\e[9;40m"
+export BlackStrikeBg="\033[9;40m"
 
 # <html><h2>BlackUnder</h2>
 # <p><strong><code>$BlackUnder</code></strong> Color BlackUnder.</p>
 # </html>
-export BlackUnder="\e[4;30m"
+export BlackUnder="\033[4;30m"
 
 # <html><h2>BlackUnderBg</h2>
 # <p><strong><code>$BlackUnderBg</code></strong> Color BlackUnderBg.</p>
 # </html>
-export BlackUnderBg="\e[4;40m"
+export BlackUnderBg="\033[4;40m"
 
 # <html><h2>Blue</h2>
 # <p><strong><code>$Blue</code></strong> Color Blue.</p>
 # </html>
-export Blue="\e[1;34m"
+export Blue="\033[1;34m"
 
 # <html><h2>BlueBg</h2>
 # <p><strong><code>$BlueBg</code></strong> Color BlueBg.</p>
 # </html>
-export BlueBg="\e[1;44m"
+export BlueBg="\033[1;44m"
 
 # <html><h2>BlueBoldItalic</h2>
 # <p><strong><code>$BlueBoldItalic</code></strong> Color BlueBoldItalic.</p>
 # </html>
-export BlueBoldItalic="\e[3m\e[1;34m"
+export BlueBoldItalic="\033[3m\033[1;34m"
 
 # <html><h2>BlueBoldItalicBg</h2>
 # <p><strong><code>$BlueBoldItalicBg</code></strong> Color BlueBoldItalicBg.</p>
 # </html>
-export BlueBoldItalicBg="\e[3m\e[1;44m"
+export BlueBoldItalicBg="\033[3m\033[1;44m"
 
 # <html><h2>BlueBoldItalicEsc</h2>
 # <p><strong><code>$BlueBoldItalicEsc</code></strong> Color BlueBoldItalicEsc.</p>
 # </html>
-export BlueBoldItalicEsc="\[\e[3m\e[1;34m\]"
+export BlueBoldItalicEsc="\[\033[3m\033[1;34m\]"
 
 # <html><h2>BlueDim</h2>
 # <p><strong><code>$BlueDim</code></strong> Color BlueDim.</p>
 # </html>
-export BlueDim="\e[2;34m"
+export BlueDim="\033[2;34m"
 
 # <html><h2>BlueDimBg</h2>
 # <p><strong><code>$BlueDimBg</code></strong> Color BlueDimBg.</p>
 # </html>
-export BlueDimBg="\e[2;44m"
+export BlueDimBg="\033[2;44m"
 
 # <html><h2>BlueEsc</h2>
 # <p><strong><code>$BlueEsc</code></strong> Color BlueEsc.</p>
 # </html>
-export BlueEsc="\[\e[1;34m\]"
+export BlueEsc="\[\033[1;34m\]"
 
 # <html><h2>BlueInvert</h2>
 # <p><strong><code>$BlueInvert</code></strong> Color BlueInvert.</p>
 # </html>
-export BlueInvert="\e[7;34m"
+export BlueInvert="\033[7;34m"
 
 # <html><h2>BlueInvertBg</h2>
 # <p><strong><code>$BlueInvertBg</code></strong> Color BlueInvertBg.</p>
 # </html>
-export BlueInvertBg="\e[7;44m"
+export BlueInvertBg="\033[7;44m"
 
 # <html><h2>BlueItalic</h2>
 # <p><strong><code>$BlueItalic</code></strong> Color BlueItalic.</p>
 # </html>
-export BlueItalic="\e[3;34m"
+export BlueItalic="\033[3;34m"
 
 # <html><h2>BlueItalicBg</h2>
 # <p><strong><code>$BlueItalicBg</code></strong> Color BlueItalicBg.</p>
 # </html>
-export BlueItalicBg="\e[3;44m"
+export BlueItalicBg="\033[3;44m"
 
 # <html><h2>BlueItalicEsc</h2>
 # <p><strong><code>$BlueItalicEsc</code></strong> Color BlueItalicEsc.</p>
 # </html>
-export BlueItalicEsc="\[\e[3;34m\]"
+export BlueItalicEsc="\[\033[3;34m\]"
 
 # <html><h2>BlueNormal</h2>
 # <p><strong><code>$BlueNormal</code></strong> Color BlueNormal.</p>
 # </html>
-export BlueNormal="\e[0;34m"
+export BlueNormal="\033[0;34m"
 
 # <html><h2>BlueNormalBg</h2>
 # <p><strong><code>$BlueNormalBg</code></strong> Color BlueNormalBg.</p>
 # </html>
-export BlueNormalBg="\e[0;44m"
+export BlueNormalBg="\033[0;44m"
 
 # <html><h2>BlueNormalEsc</h2>
 # <p><strong><code>$BlueNormalEsc</code></strong> Color BlueNormalEsc.</p>
 # </html>
-export BlueNormalEsc="\[\e[0;34m\]"
+export BlueNormalEsc="\[\033[0;34m\]"
 
 # <html><h2>BlueStrike</h2>
 # <p><strong><code>$BlueStrike</code></strong> Color BlueStrike.</p>
 # </html>
-export BlueStrike="\e[9;34m"
+export BlueStrike="\033[9;34m"
 
 # <html><h2>BlueStrikeBg</h2>
 # <p><strong><code>$BlueStrikeBg</code></strong> Color BlueStrikeBg.</p>
 # </html>
-export BlueStrikeBg="\e[9;44m"
+export BlueStrikeBg="\033[9;44m"
 
 # <html><h2>BlueUnder</h2>
 # <p><strong><code>$BlueUnder</code></strong> Color BlueUnder.</p>
 # </html>
-export BlueUnder="\e[4;34m"
+export BlueUnder="\033[4;34m"
 
 # <html><h2>BlueUnderBg</h2>
 # <p><strong><code>$BlueUnderBg</code></strong> Color BlueUnderBg.</p>
 # </html>
-export BlueUnderBg="\e[4;44m"
+export BlueUnderBg="\033[4;44m"
 
 # <html><h2>Cyan</h2>
 # <p><strong><code>$Cyan</code></strong> Color Cyan.</p>
 # </html>
-export Cyan="\e[1;36m"
+export Cyan="\033[1;36m"
 
 # <html><h2>CyanBg</h2>
 # <p><strong><code>$CyanBg</code></strong> Color CyanBg.</p>
 # </html>
-export CyanBg="\e[1;46m"
+export CyanBg="\033[1;46m"
 
 # <html><h2>CyanBoldItalic</h2>
 # <p><strong><code>$CyanBoldItalic</code></strong> Color CyanBoldItalic.</p>
 # </html>
-export CyanBoldItalic="\e[3m\e[1;36m"
+export CyanBoldItalic="\033[3m\033[1;36m"
 
 # <html><h2>CyanBoldItalicBg</h2>
 # <p><strong><code>$CyanBoldItalicBg</code></strong> Color CyanBoldItalicBg.</p>
 # </html>
-export CyanBoldItalicBg="\e[3m\e[1;46m"
+export CyanBoldItalicBg="\033[3m\033[1;46m"
 
 # <html><h2>CyanBoldItalicEsc</h2>
 # <p><strong><code>$CyanBoldItalicEsc</code></strong> Color CyanBoldItalicEsc.</p>
 # </html>
-export CyanBoldItalicEsc="\[\e[3m\e[1;36m\]"
+export CyanBoldItalicEsc="\[\033[3m\033[1;36m\]"
 
 # <html><h2>CyanDim</h2>
 # <p><strong><code>$CyanDim</code></strong> Color CyanDim.</p>
 # </html>
-export CyanDim="\e[2;36m"
+export CyanDim="\033[2;36m"
 
 # <html><h2>CyanDimBg</h2>
 # <p><strong><code>$CyanDimBg</code></strong> Color CyanDimBg.</p>
 # </html>
-export CyanDimBg="\e[2;46m"
+export CyanDimBg="\033[2;46m"
 
 # <html><h2>CyanEsc</h2>
 # <p><strong><code>$CyanEsc</code></strong> Color CyanEsc.</p>
 # </html>
-export CyanEsc="\[\e[1;36m\]"
+export CyanEsc="\[\033[1;36m\]"
 
 # <html><h2>CyanInvert</h2>
 # <p><strong><code>$CyanInvert</code></strong> Color CyanInvert.</p>
 # </html>
-export CyanInvert="\e[7;36m"
+export CyanInvert="\033[7;36m"
 
 # <html><h2>CyanInvertBg</h2>
 # <p><strong><code>$CyanInvertBg</code></strong> Color CyanInvertBg.</p>
 # </html>
-export CyanInvertBg="\e[7;46m"
+export CyanInvertBg="\033[7;46m"
 
 # <html><h2>CyanItalic</h2>
 # <p><strong><code>$CyanItalic</code></strong> Color CyanItalic.</p>
 # </html>
-export CyanItalic="\e[3;36m"
+export CyanItalic="\033[3;36m"
 
 # <html><h2>CyanItalicBg</h2>
 # <p><strong><code>$CyanItalicBg</code></strong> Color CyanItalicBg.</p>
 # </html>
-export CyanItalicBg="\e[3;46m"
+export CyanItalicBg="\033[3;46m"
 
 # <html><h2>CyanItalicEsc</h2>
 # <p><strong><code>$CyanItalicEsc</code></strong> Color CyanItalicEsc.</p>
 # </html>
-export CyanItalicEsc="\[\e[3;36m\]"
+export CyanItalicEsc="\[\033[3;36m\]"
 
 # <html><h2>CyanNormal</h2>
 # <p><strong><code>$CyanNormal</code></strong> Color CyanNormal.</p>
 # </html>
-export CyanNormal="\e[0;36m"
+export CyanNormal="\033[0;36m"
 
 # <html><h2>CyanNormalBg</h2>
 # <p><strong><code>$CyanNormalBg</code></strong> Color CyanNormalBg.</p>
 # </html>
-export CyanNormalBg="\e[0;46m"
+export CyanNormalBg="\033[0;46m"
 
 # <html><h2>CyanNormalEsc</h2>
 # <p><strong><code>$CyanNormalEsc</code></strong> Color CyanNormalEsc.</p>
 # </html>
-export CyanNormalEsc="\[\e[0;36m\]"
+export CyanNormalEsc="\[\033[0;36m\]"
 
 # <html><h2>CyanStrike</h2>
 # <p><strong><code>$CyanStrike</code></strong> Color CyanStrike.</p>
 # </html>
-export CyanStrike="\e[9;36m"
+export CyanStrike="\033[9;36m"
 
 # <html><h2>CyanStrikeBg</h2>
 # <p><strong><code>$CyanStrikeBg</code></strong> Color CyanStrikeBg.</p>
 # </html>
-export CyanStrikeBg="\e[9;46m"
+export CyanStrikeBg="\033[9;46m"
 
 # <html><h2>CyanUnder</h2>
 # <p><strong><code>$CyanUnder</code></strong> Color CyanUnder.</p>
 # </html>
-export CyanUnder="\e[4;36m"
+export CyanUnder="\033[4;36m"
 
 # <html><h2>CyanUnderBg</h2>
 # <p><strong><code>$CyanUnderBg</code></strong> Color CyanUnderBg.</p>
 # </html>
-export CyanUnderBg="\e[4;46m"
+export CyanUnderBg="\033[4;46m"
 
 # <html><h2>Green</h2>
 # <p><strong><code>$Green</code></strong> Color Green.</p>
 # </html>
-export Green="\e[1;32m"
+export Green="\033[1;32m"
 
 # <html><h2>GreenBg</h2>
 # <p><strong><code>$GreenBg</code></strong> Color GreenBg.</p>
 # </html>
-export GreenBg="\e[1;42m"
+export GreenBg="\033[1;42m"
 
 # <html><h2>GreenBoldItalic</h2>
 # <p><strong><code>$GreenBoldItalic</code></strong> Color GreenBoldItalic.</p>
 # </html>
-export GreenBoldItalic="\e[3m\e[1;32m"
+export GreenBoldItalic="\033[3m\033[1;32m"
 
 # <html><h2>GreenBoldItalicBg</h2>
 # <p><strong><code>$GreenBoldItalicBg</code></strong> Color GreenBoldItalicBg.</p>
 # </html>
-export GreenBoldItalicBg="\e[3m\e[1;42m"
+export GreenBoldItalicBg="\033[3m\033[1;42m"
 
 # <html><h2>GreenBoldItalicEsc</h2>
 # <p><strong><code>$GreenBoldItalicEsc</code></strong> Color GreenBoldItalicEsc.</p>
 # </html>
-export GreenBoldItalicEsc="\[\e[3m\e[1;32m\]"
+export GreenBoldItalicEsc="\[\033[3m\033[1;32m\]"
 
 # <html><h2>GreenDim</h2>
 # <p><strong><code>$GreenDim</code></strong> Color GreenDim.</p>
 # </html>
-export GreenDim="\e[2;32m"
+export GreenDim="\033[2;32m"
 
 # <html><h2>GreenDimBg</h2>
 # <p><strong><code>$GreenDimBg</code></strong> Color GreenDimBg.</p>
 # </html>
-export GreenDimBg="\e[2;42m"
+export GreenDimBg="\033[2;42m"
 
 # <html><h2>GreenEsc</h2>
 # <p><strong><code>$GreenEsc</code></strong> Color GreenEsc.</p>
 # </html>
-export GreenEsc="\[\e[1;32m\]"
+export GreenEsc="\[\033[1;32m\]"
 
 # <html><h2>GreenInvert</h2>
 # <p><strong><code>$GreenInvert</code></strong> Color GreenInvert.</p>
 # </html>
-export GreenInvert="\e[7;32m"
+export GreenInvert="\033[7;32m"
 
 # <html><h2>GreenInvertBg</h2>
 # <p><strong><code>$GreenInvertBg</code></strong> Color GreenInvertBg.</p>
 # </html>
-export GreenInvertBg="\e[7;42m"
+export GreenInvertBg="\033[7;42m"
 
 # <html><h2>GreenItalic</h2>
 # <p><strong><code>$GreenItalic</code></strong> Color GreenItalic.</p>
 # </html>
-export GreenItalic="\e[3;32m"
+export GreenItalic="\033[3;32m"
 
 # <html><h2>GreenItalicBg</h2>
 # <p><strong><code>$GreenItalicBg</code></strong> Color GreenItalicBg.</p>
 # </html>
-export GreenItalicBg="\e[3;42m"
+export GreenItalicBg="\033[3;42m"
 
 # <html><h2>GreenItalicEsc</h2>
 # <p><strong><code>$GreenItalicEsc</code></strong> Color GreenItalicEsc.</p>
 # </html>
-export GreenItalicEsc="\[\e[3;32m\]"
+export GreenItalicEsc="\[\033[3;32m\]"
 
 # <html><h2>GreenNormal</h2>
 # <p><strong><code>$GreenNormal</code></strong> Color GreenNormal.</p>
 # </html>
-export GreenNormal="\e[0;32m"
+export GreenNormal="\033[0;32m"
 
 # <html><h2>GreenNormalBg</h2>
 # <p><strong><code>$GreenNormalBg</code></strong> Color GreenNormalBg.</p>
 # </html>
-export GreenNormalBg="\e[0;42m"
+export GreenNormalBg="\033[0;42m"
 
 # <html><h2>GreenNormalEsc</h2>
 # <p><strong><code>$GreenNormalEsc</code></strong> Color GreenNormalEsc.</p>
 # </html>
-export GreenNormalEsc="\[\e[0;32m\]"
+export GreenNormalEsc="\[\033[0;32m\]"
 
 # <html><h2>GreenStrike</h2>
 # <p><strong><code>$GreenStrike</code></strong> Color GreenStrike.</p>
 # </html>
-export GreenStrike="\e[9;32m"
+export GreenStrike="\033[9;32m"
 
 # <html><h2>GreenStrikeBg</h2>
 # <p><strong><code>$GreenStrikeBg</code></strong> Color GreenStrikeBg.</p>
 # </html>
-export GreenStrikeBg="\e[9;42m"
+export GreenStrikeBg="\033[9;42m"
 
 # <html><h2>GreenUnder</h2>
 # <p><strong><code>$GreenUnder</code></strong> Color GreenUnder.</p>
 # </html>
-export GreenUnder="\e[4;32m"
+export GreenUnder="\033[4;32m"
 
 # <html><h2>GreenUnderBg</h2>
 # <p><strong><code>$GreenUnderBg</code></strong> Color GreenUnderBg.</p>
 # </html>
-export GreenUnderBg="\e[4;42m"
+export GreenUnderBg="\033[4;42m"
 
 # <html><h2>Grey</h2>
 # <p><strong><code>$Grey</code></strong> Color Grey.</p>
 # </html>
-export Grey="\e[1;37m"
+export Grey="\033[1;37m"
 
 # <html><h2>GreyBg</h2>
 # <p><strong><code>$GreyBg</code></strong> Color GreyBg.</p>
 # </html>
-export GreyBg="\e[1;47m"
+export GreyBg="\033[1;47m"
 
 # <html><h2>GreyBoldItalic</h2>
 # <p><strong><code>$GreyBoldItalic</code></strong> Color GreyBoldItalic.</p>
 # </html>
-export GreyBoldItalic="\e[3m\e[1;37m"
+export GreyBoldItalic="\033[3m\033[1;37m"
 
 # <html><h2>GreyBoldItalicBg</h2>
 # <p><strong><code>$GreyBoldItalicBg</code></strong> Color GreyBoldItalicBg.</p>
 # </html>
-export GreyBoldItalicBg="\e[3m\e[1;47m"
+export GreyBoldItalicBg="\033[3m\033[1;47m"
 
 # <html><h2>GreyBoldItalicEsc</h2>
 # <p><strong><code>$GreyBoldItalicEsc</code></strong> Color GreyBoldItalicEsc.</p>
 # </html>
-export GreyBoldItalicEsc="\[\e[3m\e[1;37m\]"
+export GreyBoldItalicEsc="\[\033[3m\033[1;37m\]"
 
 # <html><h2>GreyDim</h2>
 # <p><strong><code>$GreyDim</code></strong> Color GreyDim.</p>
 # </html>
-export GreyDim="\e[2;37m"
+export GreyDim="\033[2;37m"
 
 # <html><h2>GreyDimBg</h2>
 # <p><strong><code>$GreyDimBg</code></strong> Color GreyDimBg.</p>
 # </html>
-export GreyDimBg="\e[2;47m"
+export GreyDimBg="\033[2;47m"
 
 # <html><h2>GreyEsc</h2>
 # <p><strong><code>$GreyEsc</code></strong> Color GreyEsc.</p>
 # </html>
-export GreyEsc="\[\e[1;37m\]"
+export GreyEsc="\[\033[1;37m\]"
 
 # <html><h2>GreyInvert</h2>
 # <p><strong><code>$GreyInvert</code></strong> Color GreyInvert.</p>
 # </html>
-export GreyInvert="\e[7;37m"
+export GreyInvert="\033[7;37m"
 
 # <html><h2>GreyInvertBg</h2>
 # <p><strong><code>$GreyInvertBg</code></strong> Color GreyInvertBg.</p>
 # </html>
-export GreyInvertBg="\e[7;47m"
+export GreyInvertBg="\033[7;47m"
 
 # <html><h2>GreyItalic</h2>
 # <p><strong><code>$GreyItalic</code></strong> Color GreyItalic.</p>
 # </html>
-export GreyItalic="\e[3;37m"
+export GreyItalic="\033[3;37m"
 
 # <html><h2>GreyItalicBg</h2>
 # <p><strong><code>$GreyItalicBg</code></strong> Color GreyItalicBg.</p>
 # </html>
-export GreyItalicBg="\e[3;47m"
+export GreyItalicBg="\033[3;47m"
 
 # <html><h2>GreyItalicEsc</h2>
 # <p><strong><code>$GreyItalicEsc</code></strong> Color GreyItalicEsc.</p>
 # </html>
-export GreyItalicEsc="\[\e[3;37m\]"
+export GreyItalicEsc="\[\033[3;37m\]"
 
 # <html><h2>GreyNormal</h2>
 # <p><strong><code>$GreyNormal</code></strong> Color GreyNormal.</p>
 # </html>
-export GreyNormal="\e[0;37m"
+export GreyNormal="\033[0;37m"
 
 # <html><h2>GreyNormalBg</h2>
 # <p><strong><code>$GreyNormalBg</code></strong> Color GreyNormalBg.</p>
 # </html>
-export GreyNormalBg="\e[0;47m"
+export GreyNormalBg="\033[0;47m"
 
 # <html><h2>GreyNormalEsc</h2>
 # <p><strong><code>$GreyNormalEsc</code></strong> Color GreyNormalEsc.</p>
 # </html>
-export GreyNormalEsc="\[\e[0;37m\]"
+export GreyNormalEsc="\[\033[0;37m\]"
 
 # <html><h2>GreyStrike</h2>
 # <p><strong><code>$GreyStrike</code></strong> Color GreyStrike.</p>
 # </html>
-export GreyStrike="\e[9;37m"
+export GreyStrike="\033[9;37m"
 
 # <html><h2>GreyStrikeBg</h2>
 # <p><strong><code>$GreyStrikeBg</code></strong> Color GreyStrikeBg.</p>
 # </html>
-export GreyStrikeBg="\e[9;47m"
+export GreyStrikeBg="\033[9;47m"
 
 # <html><h2>GreyUnder</h2>
 # <p><strong><code>$GreyUnder</code></strong> Color GreyUnder.</p>
 # </html>
-export GreyUnder="\e[4;37m"
+export GreyUnder="\033[4;37m"
 
 # <html><h2>GreyUnderBg</h2>
 # <p><strong><code>$GreyUnderBg</code></strong> Color GreyUnderBg.</p>
 # </html>
-export GreyUnderBg="\e[4;47m"
+export GreyUnderBg="\033[4;47m"
 
 # <html><h2>Magenta</h2>
 # <p><strong><code>$Magenta</code></strong> Color Magenta.</p>
 # </html>
-export Magenta="\e[1;35m"
+export Magenta="\033[1;35m"
 
 # <html><h2>MagentaBg</h2>
 # <p><strong><code>$MagentaBg</code></strong> Color MagentaBg.</p>
 # </html>
-export MagentaBg="\e[1;45m"
+export MagentaBg="\033[1;45m"
 
 # <html><h2>MagentaBoldItalic</h2>
 # <p><strong><code>$MagentaBoldItalic</code></strong> Color MagentaBoldItalic.</p>
 # </html>
-export MagentaBoldItalic="\e[3m\e[1;35m"
+export MagentaBoldItalic="\033[3m\033[1;35m"
 
 # <html><h2>MagentaBoldItalicBg</h2>
 # <p><strong><code>$MagentaBoldItalicBg</code></strong> Color MagentaBoldItalicBg.</p>
 # </html>
-export MagentaBoldItalicBg="\e[3m\e[1;45m"
+export MagentaBoldItalicBg="\033[3m\033[1;45m"
 
 # <html><h2>MagentaBoldItalicEsc</h2>
 # <p><strong><code>$MagentaBoldItalicEsc</code></strong> Color MagentaBoldItalicEsc.</p>
 # </html>
-export MagentaBoldItalicEsc="\[\e[3m\e[1;35m\]"
+export MagentaBoldItalicEsc="\[\033[3m\033[1;35m\]"
 
 # <html><h2>MagentaDim</h2>
 # <p><strong><code>$MagentaDim</code></strong> Color MagentaDim.</p>
 # </html>
-export MagentaDim="\e[2;35m"
+export MagentaDim="\033[2;35m"
 
 # <html><h2>MagentaDimBg</h2>
 # <p><strong><code>$MagentaDimBg</code></strong> Color MagentaDimBg.</p>
 # </html>
-export MagentaDimBg="\e[2;45m"
+export MagentaDimBg="\033[2;45m"
 
 # <html><h2>MagentaEsc</h2>
 # <p><strong><code>$MagentaEsc</code></strong> Color MagentaEsc.</p>
 # </html>
-export MagentaEsc="\[\e[1;35m\]"
+export MagentaEsc="\[\033[1;35m\]"
 
 # <html><h2>MagentaInvert</h2>
 # <p><strong><code>$MagentaInvert</code></strong> Color MagentaInvert.</p>
 # </html>
-export MagentaInvert="\e[7;35m"
+export MagentaInvert="\033[7;35m"
 
 # <html><h2>MagentaInvertBg</h2>
 # <p><strong><code>$MagentaInvertBg</code></strong> Color MagentaInvertBg.</p>
 # </html>
-export MagentaInvertBg="\e[7;45m"
+export MagentaInvertBg="\033[7;45m"
 
 # <html><h2>MagentaItalic</h2>
 # <p><strong><code>$MagentaItalic</code></strong> Color MagentaItalic.</p>
 # </html>
-export MagentaItalic="\e[3;35m"
+export MagentaItalic="\033[3;35m"
 
 # <html><h2>MagentaItalicBg</h2>
 # <p><strong><code>$MagentaItalicBg</code></strong> Color MagentaItalicBg.</p>
 # </html>
-export MagentaItalicBg="\e[3;45m"
+export MagentaItalicBg="\033[3;45m"
 
 # <html><h2>MagentaItalicEsc</h2>
 # <p><strong><code>$MagentaItalicEsc</code></strong> Color MagentaItalicEsc.</p>
 # </html>
-export MagentaItalicEsc="\[\e[3;35m\]"
+export MagentaItalicEsc="\[\033[3;35m\]"
 
 # <html><h2>MagentaNormal</h2>
 # <p><strong><code>$MagentaNormal</code></strong> Color MagentaNormal.</p>
 # </html>
-export MagentaNormal="\e[0;35m"
+export MagentaNormal="\033[0;35m"
 
 # <html><h2>MagentaNormalBg</h2>
 # <p><strong><code>$MagentaNormalBg</code></strong> Color MagentaNormalBg.</p>
 # </html>
-export MagentaNormalBg="\e[0;45m"
+export MagentaNormalBg="\033[0;45m"
 
 # <html><h2>MagentaNormalEsc</h2>
 # <p><strong><code>$MagentaNormalEsc</code></strong> Color MagentaNormalEsc.</p>
 # </html>
-export MagentaNormalEsc="\[\e[0;35m\]"
+export MagentaNormalEsc="\[\033[0;35m\]"
 
 # <html><h2>MagentaStrike</h2>
 # <p><strong><code>$MagentaStrike</code></strong> Color MagentaStrike.</p>
 # </html>
-export MagentaStrike="\e[9;35m"
+export MagentaStrike="\033[9;35m"
 
 # <html><h2>MagentaStrikeBg</h2>
 # <p><strong><code>$MagentaStrikeBg</code></strong> Color MagentaStrikeBg.</p>
 # </html>
-export MagentaStrikeBg="\e[9;45m"
+export MagentaStrikeBg="\033[9;45m"
 
 # <html><h2>MagentaUnder</h2>
 # <p><strong><code>$MagentaUnder</code></strong> Color MagentaUnder.</p>
 # </html>
-export MagentaUnder="\e[4;35m"
+export MagentaUnder="\033[4;35m"
 
 # <html><h2>MagentaUnderBg</h2>
 # <p><strong><code>$MagentaUnderBg</code></strong> Color MagentaUnderBg.</p>
 # </html>
-export MagentaUnderBg="\e[4;45m"
+export MagentaUnderBg="\033[4;45m"
 
 # <html><h2>Red</h2>
 # <p><strong><code>$Red</code></strong> Color Red.</p>
 # </html>
-export Red="\e[1;31m"
+export Red="\033[1;31m"
 
 # <html><h2>RedBg</h2>
 # <p><strong><code>$RedBg</code></strong> Color RedBg.</p>
 # </html>
-export RedBg="\e[1;41m"
+export RedBg="\033[1;41m"
 
 # <html><h2>RedBoldItalic</h2>
 # <p><strong><code>$RedBoldItalic</code></strong> Color RedBoldItalic.</p>
 # </html>
-export RedBoldItalic="\e[3m\e[1;31m"
+export RedBoldItalic="\033[3m\033[1;31m"
 
 # <html><h2>RedBoldItalicBg</h2>
 # <p><strong><code>$RedBoldItalicBg</code></strong> Color RedBoldItalicBg.</p>
 # </html>
-export RedBoldItalicBg="\e[3m\e[1;41m"
+export RedBoldItalicBg="\033[3m\033[1;41m"
 
 # <html><h2>RedBoldItalicEsc</h2>
 # <p><strong><code>$RedBoldItalicEsc</code></strong> Color RedBoldItalicEsc.</p>
 # </html>
-export RedBoldItalicEsc="\[\e[3m\e[1;31m\]"
+export RedBoldItalicEsc="\[\033[3m\033[1;31m\]"
 
 # <html><h2>RedDim</h2>
 # <p><strong><code>$RedDim</code></strong> Color RedDim.</p>
 # </html>
-export RedDim="\e[2;31m"
+export RedDim="\033[2;31m"
 
 # <html><h2>RedDimBg</h2>
 # <p><strong><code>$RedDimBg</code></strong> Color RedDimBg.</p>
 # </html>
-export RedDimBg="\e[2;41m"
+export RedDimBg="\033[2;41m"
 
 # <html><h2>RedEsc</h2>
 # <p><strong><code>$RedEsc</code></strong> Color RedEsc.</p>
 # </html>
-export RedEsc="\[\e[1;31m\]"
+export RedEsc="\[\033[1;31m\]"
 
 # <html><h2>RedInvert</h2>
 # <p><strong><code>$RedInvert</code></strong> Color RedInvert.</p>
 # </html>
-export RedInvert="\e[7;31m"
+export RedInvert="\033[7;31m"
 
 # <html><h2>RedInvertBg</h2>
 # <p><strong><code>$RedInvertBg</code></strong> Color RedInvertBg.</p>
 # </html>
-export RedInvertBg="\e[7;41m"
+export RedInvertBg="\033[7;41m"
 
 # <html><h2>RedItalic</h2>
 # <p><strong><code>$RedItalic</code></strong> Color RedItalic.</p>
 # </html>
-export RedItalic="\e[3;31m"
+export RedItalic="\033[3;31m"
 
 # <html><h2>RedItalicBg</h2>
 # <p><strong><code>$RedItalicBg</code></strong> Color RedItalicBg.</p>
 # </html>
-export RedItalicBg="\e[3;41m"
+export RedItalicBg="\033[3;41m"
 
 # <html><h2>RedItalicEsc</h2>
 # <p><strong><code>$RedItalicEsc</code></strong> Color RedItalicEsc.</p>
 # </html>
-export RedItalicEsc="\[\e[3;31m\]"
+export RedItalicEsc="\[\033[3;31m\]"
 
 # <html><h2>RedNormal</h2>
 # <p><strong><code>$RedNormal</code></strong> Color RedNormal.</p>
 # </html>
-export RedNormal="\e[0;31m"
+export RedNormal="\033[0;31m"
 
 # <html><h2>RedNormalBg</h2>
 # <p><strong><code>$RedNormalBg</code></strong> Color RedNormalBg.</p>
 # </html>
-export RedNormalBg="\e[0;41m"
+export RedNormalBg="\033[0;41m"
 
 # <html><h2>RedNormalEsc</h2>
 # <p><strong><code>$RedNormalEsc</code></strong> Color RedNormalEsc.</p>
 # </html>
-export RedNormalEsc="\[\e[0;31m\]"
+export RedNormalEsc="\[\033[0;31m\]"
 
 # <html><h2>RedStrike</h2>
 # <p><strong><code>$RedStrike</code></strong> Color RedStrike.</p>
 # </html>
-export RedStrike="\e[9;31m"
+export RedStrike="\033[9;31m"
 
 # <html><h2>RedStrikeBg</h2>
 # <p><strong><code>$RedStrikeBg</code></strong> Color RedStrikeBg.</p>
 # </html>
-export RedStrikeBg="\e[9;41m"
+export RedStrikeBg="\033[9;41m"
 
 # <html><h2>RedUnder</h2>
 # <p><strong><code>$RedUnder</code></strong> Color RedUnder.</p>
 # </html>
-export RedUnder="\e[4;31m"
+export RedUnder="\033[4;31m"
 
 # <html><h2>RedUnderBg</h2>
 # <p><strong><code>$RedUnderBg</code></strong> Color RedUnderBg.</p>
 # </html>
-export RedUnderBg="\e[4;41m"
+export RedUnderBg="\033[4;41m"
 
 # <html><h2>Yellow</h2>
 # <p><strong><code>$Yellow</code></strong> Color Yellow.</p>
 # </html>
-export Yellow="\e[1;33m"
+export Yellow="\033[1;33m"
 
 # <html><h2>YellowBg</h2>
 # <p><strong><code>$YellowBg</code></strong> Color YellowBg.</p>
 # </html>
-export YellowBg="\e[1;43m"
+export YellowBg="\033[1;43m"
 
 # <html><h2>YellowBoldItalic</h2>
 # <p><strong><code>$YellowBoldItalic</code></strong> Color YellowBoldItalic.</p>
 # </html>
-export YellowBoldItalic="\e[3m\e[1;33m"
+export YellowBoldItalic="\033[3m\033[1;33m"
 
 # <html><h2>YellowBoldItalicBg</h2>
 # <p><strong><code>$YellowBoldItalicBg</code></strong> Color YellowBoldItalicBg.</p>
 # </html>
-export YellowBoldItalicBg="\e[3m\e[1;43m"
+export YellowBoldItalicBg="\033[3m\033[1;43m"
 
 # <html><h2>YellowBoldItalicEsc</h2>
 # <p><strong><code>$YellowBoldItalicEsc</code></strong> Color YellowBoldItalicEsc.</p>
 # </html>
-export YellowBoldItalicEsc="\[\e[3m\e[1;33m\]"
+export YellowBoldItalicEsc="\[\033[3m\033[1;33m\]"
 
 # <html><h2>YellowDim</h2>
 # <p><strong><code>$YellowDim</code></strong> Color YellowDim.</p>
 # </html>
-export YellowDim="\e[2;33m"
+export YellowDim="\033[2;33m"
 
 # <html><h2>YellowDimBg</h2>
 # <p><strong><code>$YellowDimBg</code></strong> Color YellowDimBg.</p>
 # </html>
-export YellowDimBg="\e[2;43m"
+export YellowDimBg="\033[2;43m"
 
 # <html><h2>YellowEsc</h2>
 # <p><strong><code>$YellowEsc</code></strong> Color YellowEsc.</p>
 # </html>
-export YellowEsc="\[\e[1;33m\]"
+export YellowEsc="\[\033[1;33m\]"
 
 # <html><h2>YellowInvert</h2>
 # <p><strong><code>$YellowInvert</code></strong> Color YellowInvert.</p>
 # </html>
-export YellowInvert="\e[7;33m"
+export YellowInvert="\033[7;33m"
 
 # <html><h2>YellowInvertBg</h2>
 # <p><strong><code>$YellowInvertBg</code></strong> Color YellowInvertBg.</p>
 # </html>
-export YellowInvertBg="\e[7;43m"
+export YellowInvertBg="\033[7;43m"
 
 # <html><h2>YellowItalic</h2>
 # <p><strong><code>$YellowItalic</code></strong> Color YellowItalic.</p>
 # </html>
-export YellowItalic="\e[3;33m"
+export YellowItalic="\033[3;33m"
 
 # <html><h2>YellowItalicBg</h2>
 # <p><strong><code>$YellowItalicBg</code></strong> Color YellowItalicBg.</p>
 # </html>
-export YellowItalicBg="\e[3;43m"
+export YellowItalicBg="\033[3;43m"
 
 # <html><h2>YellowItalicEsc</h2>
 # <p><strong><code>$YellowItalicEsc</code></strong> Color YellowItalicEsc.</p>
 # </html>
-export YellowItalicEsc="\[\e[3;33m\]"
+export YellowItalicEsc="\[\033[3;33m\]"
 
 # <html><h2>YellowNormal</h2>
 # <p><strong><code>$YellowNormal</code></strong> Color YellowNormal.</p>
 # </html>
-export YellowNormal="\e[0;33m"
+export YellowNormal="\033[0;33m"
 
 # <html><h2>YellowNormalBg</h2>
 # <p><strong><code>$YellowNormalBg</code></strong> Color YellowNormalBg.</p>
 # </html>
-export YellowNormalBg="\e[0;43m"
+export YellowNormalBg="\033[0;43m"
 
 # <html><h2>YellowNormalEsc</h2>
 # <p><strong><code>$YellowNormalEsc</code></strong> Color YellowNormalEsc.</p>
 # </html>
-export YellowNormalEsc="\[\e[0;33m\]"
+export YellowNormalEsc="\[\033[0;33m\]"
 
 # <html><h2>YellowStrike</h2>
 # <p><strong><code>$YellowStrike</code></strong> Color YellowStrike.</p>
 # </html>
-export YellowStrike="\e[9;33m"
+export YellowStrike="\033[9;33m"
 
 # <html><h2>YellowStrikeBg</h2>
 # <p><strong><code>$YellowStrikeBg</code></strong> Color YellowStrikeBg.</p>
 # </html>
-export YellowStrikeBg="\e[9;43m"
+export YellowStrikeBg="\033[9;43m"
 
 # <html><h2>YellowUnder</h2>
 # <p><strong><code>$YellowUnder</code></strong> Color YellowUnder.</p>
 # </html>
-export YellowUnder="\e[4;33m"
+export YellowUnder="\033[4;33m"
 
 # <html><h2>YellowUnderBg</h2>
 # <p><strong><code>$YellowUnderBg</code></strong> Color YellowUnderBg.</p>
 # </html>
-export YellowUnderBg="\e[4;43m"
+export YellowUnderBg="\033[4;43m"
 
