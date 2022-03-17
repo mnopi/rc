@@ -2,25 +2,30 @@
 
 main() {
   rc="$(($1))"
+  esc="esc"
 
-  printf -- "%s" "\[\e]0;\h@\u: \w\a\]"
+  case "${SH-}" in
+    dash) esc=""; printf -- "%s" "\033]0;\h@\u: \w\a" ;;
+    *) printf -- "%s" "\[\e]0;\h@\u: \w\a\]" ;;
+  esac
+
   if [ "${rc}" -eq 0 ]; then
-    greenesc "✔ "
+    "green${esc}" "✔ "
   else
-    redesc "$1 "
+    "red${esc}" "$1 "
   fi
 
   # TODO: /Library/Developer/CommandLineTools/usr/share/git-core
   #   substituir por ... o directamente quitarle el /
-  cyanesc "$(pwd | sed "s|${HOME}|~|" | tr '/' '\n' | tail -3 | \
-    sed -n "H;\${x;s|\n|/|g;s|^//|/|;s|^/~|~|;s|^~/||;p;}") "
+  "cyan${esc}" "$(pwd | sed "s|${HOME}|~|" | tr '/' '\n' | tail -3 \
+    | sed -n "H;\${x;s|\n|/|g;s|^//|/|;s|^/~|~|;s|^~/||;p;}") "
 
-  [ ! "${HOST_PROMPT-}" ] || blueesc "${HOST_PROMPT} "
-  [ "${PROMPT_SH}" = "1" ] || greyesc "${PROMPT_SH} "
+  [ ! "${HOST_PROMPT-}" ] || "blue${esc}" "${HOST_PROMPT} "
+  [ "${BASH4:-${SH}}" = "1" ] || [ ! "${SH-}" ] || "grey${_ESCAPED_PROMPT}" "${SH} "
 
-  function="magentaesc"
-  [ "$(id -u)" -eq 0 ] || function="greenesc"
-  "${function}" "〉"
+  function="magenta"
+  [ "$(id -u)" -eq 0 ] || function="green"
+  "${function}${esc}" "〉"
   exit $rc
 }
 

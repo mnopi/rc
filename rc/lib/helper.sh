@@ -304,17 +304,16 @@ parse() {
 #     ps -o pid= -o comm= | sed -n "s/^ \{0,\}$$ //p"  # command
 #     ps -o pid= -o args= | sed -n "s/^ \{0,\}$PPID //p"
 #     ps -o pid= -o comm= | sed -n "s/^ \{0,\}$PPID //p"
-#     lsof -p $$ -Fn | tail -n1 | sed 's!^[^/]*!!g'
+#     lsof -p $$ | tail -n1 | cut -d ' ' -f1
 #######################################
 psargs() {
-  fromman psargs "$@" || exit 0
+  command sudo cat "/proc/${1-$$}/cmdline" 2>/dev/null | tr '\0' ' ' || \
+    command sudo ps ax -o pid= -o args= 2>/dev/null | sed -n "s/^ \{0,\}${1-$$} //p";
+}
 
-  if command -v ps >/dev/null; then
-    ps -p $$ -o comm command args
-    if ! ps -p $$ -o args= 2>/dev/null; then
-      ps -o pid= -o args= | awk '/$$/ { $1=$1 };1' | grep "^$$ " | cut -d ' ' -f 2-
-    fi
-  fi
+pscomm() {
+  sudo cat "/proc/${1-$$}/cmdline" 2>/dev/null | tr '\0' ' ' || \
+    sudo ps ax -o pid= -o comm= 2>/dev/null | sed -n "s/^ \{0,\}${1-$$} //p";
 }
 
 #######################################
@@ -388,6 +387,7 @@ _stderr() {
   rc=$?
   set +xv
   exec 2>&3
+  #exec 2>&3 3>&-
 
   if test -s "${EXIT_STDERR-}"; then
     # Unset debug so grep unbound works and grep + 2 times just in case set -x and set +x was put in the middle.
@@ -401,9 +401,9 @@ _stderr() {
     fi
 
     if { [ "${was_debug-0}" -eq 1 ] || [ $rc -ne 0 ]; } && [ "${QQUIET-0}" -eq 0 ]; then
-      echo
+      >&2 echo
       # https://unix.stackexchange.com/questions/475548/removing-all-non-ascii-characters-from-a-workflow-file
-      LC_ALL=C tr -dc '\0-\177' < "${EXIT_STDERR}" | sed "s/^\(+\)\1\{0,\} /$(magenta 'debug>  &')/g; \
+      >&2 LC_ALL=C tr -dc '\0-\177' < "${EXIT_STDERR}" | sed "s/^\(+\)\1\{0,\} /$(magenta 'debug>  &')/g; \
         /^.*\[.*debug>/!s/^/$(red 'stderr>') /g"
     fi
   fi
@@ -451,17 +451,17 @@ _strict() {
   comm -13 "${SETSAVE}" "${_tmp}" > "${diff}"
 
   last="$(magenta "${BASH_COMMAND}")"
-  Error "${BASH_SOURCE[1]}:${BASH_LINENO[0]} ${last} ($(red $code))"
+  >&2 Error "${BASH_SOURCE[1]}:${BASH_LINENO[0]} ${last} ($(red $code))"
   if [ ${#FUNCNAME[@]} -gt 2 ]; then
     echo "  $(Debug)${BASH_SOURCE[1]} Traceback (most recent call first):"
     for ((i=0; i < ${#FUNCNAME[@]} - 1; i++)); do
       funcname="$(green "${FUNCNAME[$i]}")"
       [ "$i" -ne "0" ] || funcname="${last}"
-      echo "    $(More)${BASH_SOURCE[$i + 1]}:${BASH_LINENO[$i]} ${funcname}"
+      >&2 echo "    $(More)${BASH_SOURCE[$i + 1]}:${BASH_LINENO[$i]} ${funcname}"
     done
   fi
 
-  printf "  $(Debug)$(italic "Vars File: ")%s\n" "${diff}"
+  >&2 printf "  $(Debug)$(italic "Vars File: ")%s\n" "${diff}"
 
   exit "${code}"
 }
@@ -529,15 +529,10 @@ _xtrace() {
   # set -u err not caught in signal EXIT.
   # if lsof is posix then use: stderr="$(lsof -d2 | grep $$ | awk '{ print $NF }')"
   rc=$?
-  #set +xv
-
-  # Quiets any stderr/$XTRACE/$XVERBOSE when 1 (default: 0)
-  #
-  QQUIET="${QQUIET-0}"
 
   if test -s "${EXIT_XTRACE-}" && [ "${QQUIET-0}" -eq 0 ]; then
-    echo
-    LC_ALL=C tr -dc '\0-\177' < "${EXIT_XTRACE}" | sed "s/^\(+\)\1\{0,\} /$(magenta 'debug>  &')/g"
+    >&2 echo
+    >&2 LC_ALL=C tr -dc '\0-\177' < "${EXIT_XTRACE}" | sed "s/^\(+\)\1\{0,\} /$(magenta 'debug>  &')/g"
   fi
   exit $rc
 }

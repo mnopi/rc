@@ -8,7 +8,7 @@
 . helper.sh
 . arrays.bash
 
-e="\e["
+e="\033["  # dash needs \033[
 _SCRIPT="${0##*/}"
 
 # Suffix for BackGround Colors
@@ -484,6 +484,43 @@ save_bin_first() {
 first="\$(${first,,} "\$1")"; shift
 [ \$# -eq 0 ] || sep=" "
 printf -- "\${first}%s\n" "\${sep-}\$(${other,,} "\$@")"
+EOF
+  chmod +x "${file}"
+}
+
+#######################################
+# add color symbols variables and executables
+# Globals:
+#   SYM_PATH_TMP
+# Arguments:
+#   None
+#######################################
+save_bin_fromto() {
+  local file first="${FIRST["first"]}" name="FromTo" other="${FIRST["other"]}" symbol="Start"
+  file="${TMP["bin"]}/${name}"
+  cat >"${file}" <<EOF
+#!/bin/sh
+
+# <html><h2>${symbol}</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>
+# Prefix: Ok symbol
+# 1st argument: ${first} (adds ':')
+# 2nd argument: ${other}
+# Separator: Start
+# 3rd argument: ${other}
+# </dt>
+# <dd>
+# <pre><code class="language-bash">${name} " :" false true
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+rc=\$?
+[ "\${QUIET-0}" -ne 1 ] || exit \$rc
+printf -- '%s' "\$(${first} "\$1"): " "\$(${other} "\$2") " "$(${symbol}) " "\$(${other} "\$3")"
+exit \$rc
 EOF
   chmod +x "${file}"
 }

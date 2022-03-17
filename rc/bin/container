@@ -109,6 +109,7 @@ one() {
 #######################################
 run() {
   local im="$1"; shift
+  echo "${volume}:${dest}"
   "${docker[@]}" run -i "${t[@]}" "${opts[@]}" "${entrypoint[@]}" -v "${volume}:${dest}" "${im}" "$@"
 }
 

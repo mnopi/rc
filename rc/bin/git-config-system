@@ -7,10 +7,6 @@ cmd git || exit 0
 
 STDERR=1 . helper.sh
 
-branch='main'
-remote='origin'
-template='/etc/git/template'; sudo mkdir -p "${template}"
-
 #######################################
 # main config values
 # Globals:
@@ -77,14 +73,14 @@ config () {
 
   update fetch.prune true
 
-  update git-extras.default-branch "${branch}"
+  update git-extras.default-branch "${DEFAULT_BRANCH}"
 
   update help.autocorrect 0
 
   update http.postBuffer 157286400
 
-  update init.defaultBranch "${branch}"
-  update init.templateDir "${template}"
+  update init.defaultBranch "${DEFAULT_BRANCH}"
+  update init.templateDir "${GIT_TEMPLATE_DIR}"
 
   update pager.branch false
   update pager.tag false
@@ -114,7 +110,6 @@ config () {
 #######################################
 credential() {
   # TODO: cask broken (tap "microsoft/git", cask "git-credential-manager-core")
-  file='--system'
   gcm=/usr/local/share/gcm-core/git-credential-manager-core
 
   if [ ! "${GITHUB_RUN_ID-}" ]; then
@@ -126,9 +121,9 @@ credential() {
       update credential."https://dev.azure.com".useHttpPath true
     elif [ "$(git config --system credential.helper)" = "${gcm}" ]; then
       sudo git config --system --unset-all credential.helper && \
-        show --warning GIT Config System: Removed "$(magenta "=>")" credential.helper
+        Warning GIT Config System: "Removed $(magenta "=>") credential.helper"
       sudo git config --system --unset-all credential."https://dev.azure.com".useHttpPath && \
-        show --warning GIT Config System: Removed "$(magenta "=>")" credential."https://dev.azure.com".useHttpPath
+        Warning GIT Config System: "Removed $(magenta "=>") credential.\"https://dev.azure.com\".useHttpPath"
     fi
     if [ "${MACOS}" -eq 1 ]; then
       update credential.credentialStore keychain
@@ -174,17 +169,17 @@ EOF
 #######################################
 template () {
   msg="Template Config"
-  file="--file=${template}/config"
-  update "branch.${branch}.remote" "${remote}"
-  update "branch.${branch}.merge" "refs/heads/${branch}"
+  update "branch.${DEFAULT_BRANCH}.remote" "${DEFAULT_REMOTE}"
+  update "branch.${DEFAULT_BRANCH}.merge" "refs/heads/${DEFAULT_BRANCH}"
   update core.bare false
   update core.filemode true
   update core.ignorecase true
   update core.logallrefupdates true
   update core.precomposeunicode true
   update core.repositoryformatversion 0
-  [ -f  "${template}/HEAD" ] || { echo "ref: refs/heads/${branch}" | sudo tee "${template}/HEAD" >/dev/null \
-    && show GIT Template File: "${template}/HEAD"; }
+  [ -f  "${GIT_TEMPLATE_DIR}/HEAD" ] || \
+    { echo "ref: refs/heads/${DEFAULT_BRANCH}" | sudo tee "${GIT_TEMPLATE_DIR}/HEAD" >/dev/null \
+    && Ok GIT Template File: "${GIT_TEMPLATE_DIR}/HEAD"; }
 }
 
 #######################################
@@ -199,10 +194,10 @@ template () {
 #   2
 #######################################
 update () {
-  command="sudo git config ${file} $1"
+  command="sudo git config --file=${GIT_CONFIG_SYSTEM:-${GIT_TEMPLATE_DIR}/config} $1"
   previous="$(${command} || true)"
   if [ "${previous}" != "$2" ]; then
-    ${command} "$2" && show GIT "${msg:-System Config}": "$1": "${previous}" "$(magenta "=>")" "$2"
+    ${command} "$2" && Ok GIT "${msg:-System Config}": "$1": "${previous}" "$(magenta "=>")" "$2"
   fi
 }
 
@@ -218,15 +213,18 @@ main() {
   for arg; do
     case "${arg}" in
       --force)
-        sudo rm -rf /etc/gitconfig "${template}"/*
-        show --notice GIT Config System: Removed
+        sudo rm -rf "${GIT_CONFIG_SYSTEM}" "${GIT_TEMPLATE_DIR}"/*
+        Warning GIT Config System: Removed
         ;;
       --) : ;;
     esac
   done
 
+  sudo mkdir -p "${GIT_TEMPLATE_DIR}"
   config
   credential
+
+  unset GIT_CONFIG_SYSTEM
   template
 }
 

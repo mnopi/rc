@@ -34,20 +34,20 @@ export RC_PROFILE="profile"
 export RC_PREFIX
 
 # ETC Directory or RC Repository Physical Path
-#
-: "${ETC="${RC_PREFIX:-${RC_INSTALL}}"}"; export ETC
+# ETC="${RC_PREFIX:-${RC_INSTALL}}"
+export ETC
 
 # RC profile File ($ENV)Physical Path
 #
-: "${ENV="${ETC}/${RC_PROFILE}"}"; export ENV
+export ENV="${RC_PREFIX:-${RC_INSTALL}}/${RC_PROFILE}"
 
 # RC Sources Directory Physical Path
-#
-: "${RC="${ETC}/${RC_NAME}"}"; export RC
+# RC="${ETC}/${RC_NAME}"
+export RC
 
 # profile has been sourced (only at login shell and only one if called from /etc/profile, ~/.profile, ~/.bashrc ...)
 #
-: "${PROFILE_SOURCED=0}"; export PROFILE_SOURCED
+export PROFILE_SOURCED
 
 # 1 if Sourced From Script and Not the Shell, 0 if sourced by a shell (as far as we know)
 #
@@ -59,7 +59,7 @@ export RC_PREFIX
 
 # Running shell (when is 'bash sh' will be set to 'bash')
 #
-export SH="${0##*/}"
+export SH=""
 
 # Has been sourced (for the shell that has been used check $SH)
 #
@@ -69,11 +69,13 @@ export SH="${0##*/}"
 #
 export TRAP_SIGNAL="EXIT"
 
+resh() { unset PROFILE_SOURCED RC_SOURCED; . "${ENV}"; }
+
 if [ "${RC_SOURCED-0}" -eq 0 ]; then
   RC_SOURCED=1; _interactive_source=1
-
-  case "${ZSH_ARGZERO:-${SH}}" in
-    ash|bash|dash|ksh|sh)
+  SH="${ZSH_ARGZERO:-${0##*/}}"
+  case "${SH}" in
+    ash|bash|busybox|dash|ksh|sh)
       MAIN=0
       [ ! "${BASH_SOURCE-}" ] || ENV="${BASH_SOURCE[0]}"
       [ ! "${KSH_VERSION-}" ] || ENV="${.sh.file}"
@@ -86,26 +88,38 @@ if [ "${RC_SOURCED-0}" -eq 0 ]; then
       SOURCED=1
       ;;
     *)
-      case "${BASH##*/}" in
-        bash|sh)
-          echo MIERDA
-          MAIN=1
-          ENV="${BASH_SOURCE[0]}"
-          SH="${BASH##*/}"
-          ! (return 0 2>/dev/null) || SOURCED=1
-          ;;
-      esac
-      case "${ZSH_ARGZERO-}" in
-        *)
-          MAIN=1
-          ENV="${ZSH_ARGZERO}"
-          SH="zsh"
-      esac
-      case "${ZSH_EVAL_CONTEXT-}" in *:file) ENV="$0"; SH="zsh"; SOURCED=1 ;; esac
-      [ ! "${KSH_VERSION}" ] || { ENV="${.sh.file}"; SH="ksh"; [ "$0" = "${ENV}" ] || SOURCED=1;  }
+      if [ "${BASH-}" ]; then
+        case "${BASH##*/}" in
+          bash|sh)
+            ENV="${BASH_SOURCE[0]}"
+            SH="${BASH##*/}"
+            ! (return 0 2>/dev/null) || SOURCED=1
+            ;;
+        esac
+      elif [ "${ZSH_EVAL_CONTEXT-}" ]; then
+        ENV="${ZSH_ARGZERO}"
+        SH="zsh"
+        case "${ZSH_EVAL_CONTEXT}" in
+          *:file) ENV="$0"; SH="zsh"; SOURCED=1 ;;
+        esac
+      elif [ "${KSH_VERSION-}" ]; then
+        ENV="${.sh.file}"
+        SH="ksh"
+        [ "$0" = "${ENV}" ] || SOURCED=1
+      else
+        SH="$(cat /proc/$$/comm 2>/dev/null || ps -o pid= -o comm= 2>/dev/null | sed -n "s/^ \{0,\}$$ //p")"
+        case "${SH}" in
+         ash|*/ash|busybox|*/busybox|sh|*/sh|dash|*/dash) : ;;
+         *) SH="" ;;
+        esac
+      fi
       ;;
   esac
+  _shell="$(readlink "$(command -pv "${SH}")" 2>/dev/null)"; _shell="${_shell##*/}"
 
+  SH="${_shell:-${SH##*/}}"; unset _shell
+
+  test -f "${ENV}" || { echo profile: "${ENV}": No such file, set \$RC_PREFIX to the directory of profile; return 1; }
   ETC="$( command -p cd "$( command -p dirname "${ENV}")" || return; command -p pwd -P )"
   ENV="${ETC}/${RC_PROFILE}"
   RC="${ETC}/${RC_NAME}"
@@ -134,6 +148,10 @@ if [ "${PROFILE_SOURCED-0}" -eq 0 ]; then
   # RC Colors Installation Directory for $PATH
   #
   export RC_COLOR="${RC}/color"
+
+  # Configuration for Tools that can be set with Global Variable and are not dynamically updated.
+  #
+  export RC_CONFIG="${RC}/config"
 
   # RC completions sourced on each interactive sh
   #

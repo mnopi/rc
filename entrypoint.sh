@@ -1,10 +1,11 @@
 #!/bin/sh
 
-[ "${RC_D-}" ] || . "${RC_PREFIX:-/rc}/rc/profile" || exit
+export ENV=/etc/profile
+! test -d /rc || { export RC_PREFIX=/rc; export ENV=/rc/profile; }
 
 set -eu
 
-[ "$(cat /etc/profile 2>/dev/null || true)" = "${RC}/profile" ] || cp "${RC}/profile" /etc/profile
+# [ "$(cat /etc/profile 2>/dev/null || true)" = "${RC}/profile" ] || cp "${RC}/profile" /etc/profile
 
 if [ "$#" -eq 0 ] || [ "${1#-}" != "$1" ] || \
   type "$1" 2>/dev/null | grep -q -E "is a function|is aliased to|is a shell keyword"; then
