@@ -4,8 +4,8 @@
 #  y mirar las imágenes y el self de los huevos. Meter el .oh-,y-zsh aqui también con
 
 #TODO: mirar que he borrado los colores por lo que usaba en stack !
-PS1="\$(prompt \$? '${SH}' ${SH_RC})"  # dash, sh, busybox need a script.
-PS2="$(prompt ps2 "${SH}")"
+#PS1="\$(prompt \$? '${SH}' ${SH_RC})"  # dash, sh, busybox need a script.
+#PS2="$(prompt ps2 "${SH}")"
 
 case "${SH}" in
   bash|sh)

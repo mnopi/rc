@@ -1,0 +1,14 @@
+# shellcheck shell=bash 
+
+#######################################
+# bash prompt
+# Globals:
+#   PS1
+#   SH
+#   SH_RC
+# Arguments:
+#  None
+#######################################
+_prompt() { PS1="$(prompt $? "${SH}")"; }
+
+export PROMPT_COMMAND="_prompt \$?${PROMPT_COMMAND:+; ${PROMPT_COMMAND}}"

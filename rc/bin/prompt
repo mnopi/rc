@@ -34,7 +34,7 @@ ellipsis() { directories="${2:+$1}$(echo "${2:-"${pwd}"}" | tr '/' '\n' | tail -
 
 host() { show "${host}" "$1 ${HOST} "; }
 
-ps2() { [ "${1-}" != "ps2" ] || { show "${Magenta}" "${VerboseIcon}"; exit; }; }
+ps2() { if [ "${1-}" = "ps2" ]; then show "${Magenta}" "${VerboseIcon}"; else exit; fi; }
 
 rc() {
   if [ "${rc}" -eq 0 ]; then
@@ -44,13 +44,13 @@ rc() {
   fi
 }
 
-shell() { [ "$2" = "bash4" ] || [ ! "${1-}" ] || show "${Grey}" "$1 "; }
+shell() { [ ! "${1-}" ] || [ "$1" = "bash-4" ] || [ ! "${1-}" ] || show "${Grey}" "${1#posix-} "; }
 
 show() { printf -- "%${string}" "${open}${1}${close}" "${2}" "${normal}"; }
 
 ssh() { [ "${SSH-0}" -eq 0 ] || host "${HarpoonIcon}"; }
 
-title() { printf -- "%${string}" "${open}\033]0;\h@\u: \w\a${close}"; }
+title() { printf -- "%${string}" "${open}\033]0;\h@\u: \w\a${close}"; if [ "${1-}" = "title" ]; then exit; fi; }
 
 user() { color="${Red}"; [ "$(id -u)" -eq 0 ] || color="${Green}"; show "${color}" "${RightIcon}"; }
 
@@ -71,13 +71,13 @@ main() {
 
   ps2 "$1"
 
-  title
+  title "$1"
 
   rc
   directory
   ssh
   container
-  shell "$2" "$3"
+  shell "$2"
   vcs
   user
 

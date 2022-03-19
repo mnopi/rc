@@ -1,3 +1,0 @@
-# shellcheck shell=bash
-
-PS1="\$(prompt \$? '${SH}' ${SH_RC})"
