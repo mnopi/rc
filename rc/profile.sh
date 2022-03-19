@@ -47,8 +47,8 @@ export RC_PROFILE_D="${RC}/profile.d"
 #
 export RC_SHARE="${RC}/share"
 
-for _rc_profile in "${RC_PROFILE_D}"/*.sh; do
-  . "${_rc_profile}"
-done; unset _rc_profile
+for __profile_d in "${RC_PROFILE_D}"/*.sh; do
+  . "${__profile_d}"
+done; unset __profile_d
 
-eval "$("${RC}/bin/pathsd")"
+eval "$("${RC_BIN}/pathsd")"

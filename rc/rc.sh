@@ -8,9 +8,9 @@
 [ "${RC_DEBUG-0}" -eq 0 ] || echo Sourced File: "${RC?}/rc.sh"
 
 
-for _rc_d in "${RC_D}"/*.sh; do
-  . "${_rc_d}"
-done; unset _rc_d
+for __rc_d in "${RC_D}"/*.sh; do
+  . "${__rc_d}"
+done; unset __rc_d
 
 ! test -f "${RC_D}/${RC_SH-}" || . "${RC_D}/${RC_SH}"
 
