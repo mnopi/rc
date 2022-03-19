@@ -1,9 +1,0 @@
-[alias]
-  echo = rev-parse
-  submodule-add-test = '! git submodule add --quiet \"${1:+${1}/}$(basename \"$1\" .git)\"'
-
-  submodule-add-main = '! git submodule add --quiet --name \"$(basename \"$1\" .git)\" --branch main \"$1\" \"${2:+${2}/}$(basename \"$1\" .git)\"'
-  name = "! : git config; git url | xargs -I {} basename \"{}\" .git | filefirst #"
-
-  #submodule-add-master = config -f .gitmodules --name $(basename $1 .git) --branch master $1 submodule.$1.path
-  submodule-path = config -f .gitmodules submodule.$1.path
