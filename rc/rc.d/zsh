@@ -1,9 +1,9 @@
 # shellcheck shell=zsh disable=SC2034
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
-[ ! -f /etc/zshrc ] || source /etc/zshrc
 
 # Path to your oh-my-zsh installation.
+#export ZSH="${RC_D}/.oh-my-zsh"
 export ZSH="${RC_D}/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
@@ -74,6 +74,14 @@ ZSH_THEME="robbyrussell"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git)
 
+# Allow inline comments like the following one
+#
+setopt INTERACTIVE_COMMENTS  # allow inline comments like this one
+
+# Skip the verification of insecure directories with group write permissions
+#
+ZSH_DISABLE_COMPFIX="true"
+
 source "${ZSH}/oh-my-zsh.sh"
 
 # User configuration
@@ -102,7 +110,4 @@ source "${ZSH}/oh-my-zsh.sh"
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-precmd_functions+=(_title)
 set -y
-
-export ZSH="$HOME/.oh-my-zsh"

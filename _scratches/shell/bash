@@ -1,0 +1,11 @@
+#!/bin/bash
+echo "# bash"
+echo 0: $0
+echo ZSH_ARGZERO: $ZSH_ARGZERO
+echo ZSH_EVAL_CONTEXT: $ZSH_EVAL_CONTEXT
+echo BASH: $BASH
+echo BASH_VERSION: $BASH_VERSION
+echo KSH: $KSH_VERSION
+printf '%s' '$$: '; ps -p $$
+printf '%s' '$PPID: '; ps -p $PPID
+echo

@@ -1,5 +1,4 @@
-
-set -v
+#!/bin/zsh
 
 . ./s
 za() {

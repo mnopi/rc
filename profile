@@ -1,7 +1,8 @@
-# shellcheck shell=sh disable=SC3040,SC3054,SC2296,SC2034,SC3028,SC2046
+# shellcheck shell=sh disable=SC3040,SC3054,SC2296,SC2034,SC3028,SC2046,SC2139
 
 #
-# System /etc/profile
+# System profile for bash, busybox, dash, ksh, sh and zsh.
+#
 # https://www.gnu.org/software/bash/manual/html_node/Bash-POSIX-Mode.html
 # https://www.gnu.org/software/bash/manual/html_node/The-Shopt-Builtin.html
 # https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html
@@ -16,6 +17,8 @@
 # /bin/sh uses $ENV
 # sudo su (with SHELL /bin/sh) uses $ENV
 # Ideally .bashrc, although if I log in and no vars depending on the user...
+
+[ "${RC_DEBUG-0}" -eq 0 ] || echo Sourced File: profile
 
 # RC Installation Directory
 #
@@ -47,13 +50,13 @@ export ENV="${RC_PREFIX:-${RC_INSTALL}}/${RC_PROFILE}"
 # RC="${ETC}/${RC_NAME}"
 export RC
 
-# profile has been sourced (only at login shell and only one if called from /etc/profile, ~/.profile, ~/.bashrc ...)
+# Forces RC_PROMPT even if starship or zsh prompt are configured.
 #
-export PROFILE_SOURCED
+export RC_PROMPT="${RC_PROMPT:-0}"
 
-# 1 if Sourced From Script and Not the Shell, 0 if sourced by a shell (as far as we know)
+# profile has been sourced (only at interactive shell and only once if called also from ~/.bashrc)
 #
-: "${MAIN=1}"
+: "${PROFILE_SOURCED=0}"
 
 # rc.d has been sourced (only at interactive shell and only once if called also from ~/.bashrc)
 #
@@ -61,63 +64,61 @@ export PROFILE_SOURCED
 
 # Running shell (when is 'bash sh' will be set to 'bash')
 #
-export SH=""
+: "${SH=""}"
 
-# Has been sourced (for the shell that has been used check $SH)
+# Hooks SH name for eval and init hooks (bash when sh is BASH), zsh for zsh, unset for posix (busybox, dash, ksh and sh)
+: "${SH_HOOK=""}"
+
+# rc.d filename based on shell to source if different to $SH: bash, bash4, posix (busybox, dash, ksh) and zsh.
 #
-: "${SOURCED=0}"
+: "${SH_RC=""}"
 
-# Default trap signal, EXIT for posix or ERR for BASH
-#
-export TRAP_SIGNAL="EXIT"
+if [ "${PROFILE_SOURCED-0}" -eq 0 ]; then
+  _profile_bash () {
+    ENV="${BASH_SOURCE[0]}"
+    SH="${BASH##*/}"
+    SH_HOOK="bash"
+    SH_RC="${SH}"
+    [ "${BASH_VERSINFO[0]}" -lt 4 ] || { SH_RC="bash4"; shopt -s inherit_errexit; }
+    set -o errtrace
+  }
 
-rebash() { unset PROFILE_SOURCED RC_SOURCED; . "${ENV}"; }
-
-if [ "${RC_SOURCED-0}" -eq 0 ]; then
-  RC_SOURCED=1; _interactive_source=1
+  PROFILE_SOURCED=1; _interactive_source=1
   SH="${ZSH_ARGZERO:-${0##*/}}"
   case "${SH}" in
     ash|bash|busybox|dash|ksh|sh)
-      MAIN=0
-      [ ! "${BASH_SOURCE-}" ] || ENV="${BASH_SOURCE[0]}"
+      SH_RC="posix"
+      [ ! "${BASH_SOURCE-}" ] || _profile_bash
       [ ! "${KSH_VERSION-}" ] || ENV="${.sh.file}"
-      SOURCED=1
       ;;
     -zsh|zsh)
-      MAIN=0
-      ENV="$0"
+      [ "${ZSH_EVAL_CONTEXT}" = "file" ] || ENV="$0"  # login ZSH_EVAL_CONTEXT=file
       SH="zsh"
-      SOURCED=1
+      SH_HOOK="zsh"
+      SH_RC="${SH}"
       ;;
     *)
       if [ "${BASH-}" ]; then
-        case "${BASH##*/}" in
-          bash|sh)
-            ENV="${BASH_SOURCE[0]}"
-            SH="${BASH##*/}"
-            ! (return 0 2>/dev/null) || SOURCED=1
-            ;;
-        esac
+        _profile_bash
       elif [ "${ZSH_EVAL_CONTEXT-}" ]; then
         ENV="${ZSH_ARGZERO}"
         SH="zsh"
-        case "${ZSH_EVAL_CONTEXT}" in
-          *:file) ENV="$0"; SH="zsh"; SOURCED=1 ;;
-        esac
+        SH_RC="${SH}"
       elif [ "${KSH_VERSION-}" ]; then
         ENV="${.sh.file}"
         SH="ksh"
-        [ "$0" = "${ENV}" ] || SOURCED=1
+        SH_RC="${SH}"
       else
-        SH="$(cat /proc/$$/comm 2>/dev/null || ps -o pid= -o comm= 2>/dev/null | sed -n "s/^ \{0,\}$$ //p")"
+        SH="$(command cat /proc/$$/comm 2>/dev/null \
+          || command ps -o pid= -o comm= 2>/dev/null | command sed -n "s/^ \{0,\}$$ //p")"
         case "${SH}" in
-         ash|*/ash|busybox|*/busybox|sh|*/sh|dash|*/dash) : ;;
-         *) SH="" ;;
+         ash|*/ash|busybox|*/busybox|sh|*/sh|dash|*/dash) SH_HOOK=""; SH_RC="posix" ;;
+         *) SH=""; SH_HOOK=""; SH_RC="" ;;
         esac
       fi
       ;;
   esac
-  _shell="$(readlink "$(command -pv "${SH}")" 2>/dev/null)"; _shell="${_shell##*/}"
+  _shell="$(command readlink "$(command -pv "${SH}")" 2>/dev/null)"; _shell="${_shell##*/}"
 
   SH="${_shell:-${SH##*/}}"; unset _shell
 
@@ -126,90 +127,22 @@ if [ "${RC_SOURCED-0}" -eq 0 ]; then
   ENV="${ETC}/${RC_PROFILE}"
   RC="${ETC}/${RC_NAME}"
 
-  if [ "${BASH-}" ]; then
-    TRAP_SIGNAL="ERR"
-    set -o errtrace
-    if [ "${BASH_VERSINFO[0]}" -ge 4 ]; then
-      BASH4=1
-      shopt -s inherit_errexit
-    fi
+  if [ "${RC_DEBUG-0}" -eq 1 ]; then
+    for i in 0 ETC ENV RC SH SH_RC; do
+      echo "${i}: $(eval echo \$$i)"
+    done; unset i
   fi
-
-#  for i in 0 ETC ENV RC SH MAIN SOURCED; do
-#    echo "${i}: $(eval echo \$$i)"
-#  done; unset i
 fi
 
-if [ "${PROFILE_SOURCED-0}" -eq 0 ]; then
-  PROFILE_SOURCED=1
+. "${RC}/profile.sh"
 
-  # RC Bin Directory for $PATH
-  #
-  export RC_BIN="${RC}/bin"
+. "${RC}/rc.sh"
 
-  # RC Colors Installation Directory for $PATH
-  #
-  export RC_COLOR="${RC}/color"
+{ { [ "${PS1-}" ] || echo $- | command grep -q i; } && [ "${_interactive_source-0}" -eq 1 ]; } || return 0
 
-  # Configuration for Tools that can be set with Global Variable and are not dynamically updated.
-  #
-  export RC_CONFIG="${RC}/config"
-
-  # RC completions sourced on each interactive sh
-  #
-  export RC_COMPLETIONS_D="${RC}/completions.d"
-
-  # rc.d compat dir sourced on each interactive sh
-  #
-  export RC_D="${RC}/rc.d"
-
-  # RC Lib to be sourced for $PATH
-  #
-  export RC_LIB="${RC}/lib"
-
-  # RC $PATH compat dir sourced on each login shell after $RC_PROFILE_D
-  #
-  export RC_PATHS_D="${RC}/paths.d"
-
-  # RC profile.d compat dir sourced on each login shell
-  #
-  export RC_PROFILE_D="${RC}/profile.d"
-
-  # RC share
-  #
-  export RC_SHARE="${RC}/share"
-
-  for _rc_profile in "${RC_PROFILE_D}"/*.sh; do
-    . "${_rc_profile}"
-  done; unset _rc_profile
-
-  eval "$("${RC}/bin/pathsd")"
-fi
-
-{ { [ "${PS1-}" ] || echo $- | grep -q i; } && [ "${_interactive_source-0}" -eq 1 ]; } || return 0
-
-[ ! "${BASH-}" ] || shopt -s checkwinsize execfail histappend
-
-for _rc_d in "${RC_D}"/*.sh; do
-  . "${_rc_d}"
-done; unset _rc_d
-
-# TODO: Y esto jode el dash por estar exportada las de direnv.
-#    Y encima el PS1 sale mal en dash. y aun no he conseguido el PS2
-#     ... igual los escapes no le gustan pero sale vacio, mirar en alpine
-#     en color guardar los symbolos solos para el ps2 y lo hado a mano
-#  mejor poner lo colores en una libreria y que hago el source el . helper.sh
-#  y en el profile hacer un (. .source;
-#   A="$(. ./color.sh; echo "${BlackEsc}")" y quitar los scripts de scaped!
-#  mirar como poner las variables del profile para que salgan en bashpro
-#[ ! "${BASH_VERSION-}" ] || declare -fx $(compgen -A function)  # to have them in sudo if I do not add .bashrc
-
-# zsh -i -c '. ./profile'
-# bash -c '. ./profile'
-# dash -c '. ./profile'
-# ksh -c '. ./profile'
-# sh -c '. ./profile'
-# docker run -it --rm -e RC_PREFIX=/rc -v "$PWD:/rc" alpine sh -c '. /rc/profile'
-
-alias bash4="/usr/bin/env bash --rcfile \${ENV}"
-alias bash="/bin/bash --rcfile \${ENV}"
+alias bash4="/usr/bin/env bash --rcfile ${ENV}"
+alias bash="/bin/bash --rcfile ${ENV}"
+alias zsh='/bin/zsh --no-globalrcs'
+alias alpine="cd ${RC_PREFIX} && container run alpine"
+# RC_PREFIX=$PROJECT_DIR$;ZDOTDIR=$PROJECT_DIR$/.idea
+# /bin/bash --rcfile /Users/j5pu/rc/profile

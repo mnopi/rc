@@ -1,16 +1,3 @@
-#!/bin/sh
-
-STDERR=1 . helper.sh
-
-#######################################
-# updates inputrc
-# Arguments:
-#   None
-#######################################
-main() {
-  file=/etc/inputrc
-  tmp="$(mktemp)"
-  cat >"${tmp}" <<EOT
 # shellcheck shell=sh
 
 # See https://tiswww.case.edu/php/chet/readline/readline.html
@@ -52,7 +39,7 @@ TAB: complete
 set editing-mode emacs
 
 ## Some defaults / modifications for the emacs mode
-\$if mode=emacs
+$if mode=emacs
 
 # allow the use of the Home/End keys
 "\e[1~": beginning-of-line
@@ -89,12 +76,12 @@ set editing-mode emacs
 
 C-q: quoted-insert
 
-\$if term=rxvt
+$if term=rxvt
 "\e[7~": beginning-of-line
 "\e[8~": end-of-line
 "\eOc": forward-word
 "\eOd": backward-word
-\$endif
+$endif
 
 # for non RH/Debian xterm, can't hurt for RH/Debian xterm
 # "\eOH": beginning-of-line
@@ -103,10 +90,10 @@ C-q: quoted-insert
 # for freebsd console
 # "\e[H": beginning-of-line
 # "\e[F": end-of-line
-\$endif
+$endif
 
 # Macros that are convenient for shell interaction
-\$if Bash
+$if Bash
 # edit the path
 "\C-xp": "PATH=${PATH}\e\C-e\C-a\ef\C-f"
 # prepare to type a quoted word --
@@ -122,15 +109,4 @@ C-q: quoted-insert
 "\C-xr": redraw-current-line
 # Edit variable on current line.
 "\M-\C-v": "\C-a\C-k$\C-y\M-\C-e\C-a\C-y="
-\$endif
-
-
-EOT
-  if ! compare "${tmp}" "${file}" 2>/dev/null ; then
-    show --start Inputrc: Installing
-    sudo mv "${tmp}" "${file}" || show Inputrc: Not Installed || exit 1
-    show --completed Inputrc: Installed
-  fi
-}
-
-main "$@"
+$endif

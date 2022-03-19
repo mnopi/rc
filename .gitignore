@@ -1,7 +1,10 @@
 node_modules/
+rc/rc.d/.oh-my-zsh/
 tests/output/
 tests/release/
 tmp/
+.idea/.zsh_history
+.idea/.zsh_sessions
 *DS_Store*
 
 # Created by .ignore support plugin (hsz.mobi)

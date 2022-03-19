@@ -5,8 +5,6 @@ export ENV=/etc/profile
 
 set -eu
 
-# [ "$(cat /etc/profile 2>/dev/null || true)" = "${RC}/profile" ] || cp "${RC}/profile" /etc/profile
-
 if [ "$#" -eq 0 ] || [ "${1#-}" != "$1" ] || \
   type "$1" 2>/dev/null | grep -q -E "is a function|is aliased to|is a shell keyword"; then
   # first arg has '-' (`-f` or `--some-option`): `container run alpine -c 'echo hi'`

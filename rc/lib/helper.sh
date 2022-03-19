@@ -494,7 +494,8 @@ strict() {
   set "${_set:-+o}" errexit nounset
   if [ "${BASH_VERSION-}" ]; then
     if [ "${_set- }" ]; then
-      trap _strict "${TRAP_SIGNAL:-EXIT}"
+      # shellcheck disable=SC3047
+      trap _strict ERR
     fi
     set "${_set:-+o}" errtrace
     set "${_set:-+o}" pipefail

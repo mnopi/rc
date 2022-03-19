@@ -378,10 +378,8 @@ system() {
 
   if [ "${SSH_CLIENT-}" ] || [ "${SSH_CONNECTION-}" ] || [ "${SSH_TTY-}" ]; then
     SSH=1
-    HOST_PROMPT="⇌"
   elif [ -f '/.dockerenv' ]; then
     CONTAINER=1
-    HOST_PROMPT="❒"
     [ ! "${DEBIAN_LIKE-}" ] || DEBIAN_FRONTEND='noninteractive'
     if [ "${NO_CACHE-}" ]; then
       PM_INSTALL="${PM_INSTALL} ${NO_CACHE}"

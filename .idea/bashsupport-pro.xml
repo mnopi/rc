@@ -18,6 +18,8 @@
     </scriptLibraries>
     <globalVariables>
       <var name=".sh.file" />
+      <var name="endif" />
+      <var name="if" />
     </globalVariables>
   </component>
 </project>

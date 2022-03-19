@@ -125,7 +125,7 @@ __git_ps1_show_upstream ()
 		bash.showupstream)
 			GIT_PS1_SHOWUPSTREAM="$value"
 			if [[ -z "${GIT_PS1_SHOWUPSTREAM}" ]]; then
-				p=""
+				zopen=""
 				return
 			fi
 			;;
@@ -281,7 +281,7 @@ __git_ps1_colorize_gitstring ()
 		i="$ok_color$i"
 	fi
 	if [ -n "$s" ]; then
-		s="$flags_color$s"
+		zclose="$flags_color$s"
 	fi
 	if [ -n "$u" ]; then
 		u="$bad_color$u"
@@ -508,11 +508,11 @@ __git_ps1 ()
 
 	local w=""
 	local i=""
-	local s=""
+	local zclose=""
 	local u=""
 	local h=""
 	local c=""
-	local p=""
+	local zopen=""
 
 	if [ "true" = "$inside_gitdir" ]; then
 		if [ "true" = "$bare_repo" ]; then
@@ -533,7 +533,7 @@ __git_ps1 ()
 		if [ -n "${GIT_PS1_SHOWSTASHSTATE-}" ] &&
 		   git rev-parse --verify --quiet refs/stash >/dev/null
 		then
-			s="$"
+			zclose="$"
 		fi
 
 		if [ -n "${GIT_PS1_SHOWUNTRACKEDFILES-}" ] &&
@@ -567,8 +567,8 @@ __git_ps1 ()
 		__git_ps1_branch_name=$b
 		b="\${__git_ps1_branch_name}"
 	fi
-	local f="$h$w$i$s$u"
-	local gitstring="$c$b${f:+$z$f}${sparse}$r$p"
+	local string="$h$w$i$zclose$u"
+	local gitstring="$c$b${string:+$z$string}${sparse}$r$zopen"
 
 	if [ $pcmode = yes ]; then
 		if [ "${__git_printf_supports_v-}" != yes ]; then

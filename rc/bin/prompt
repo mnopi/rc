@@ -3,55 +3,102 @@
 
 ellipsis() { value="${2:+$1}$(echo "${2:-"${pwd}"}" | tr '/' '\n' | tail -3 | newline-to "/")"; }
 
-main() {
-  rc="$(($1))"
-  esc="esc"
+brackets() {
+  zopen; "grey${esc}" "${zclose}[${zopen}"; zclose
+  zopen; "cyan${esc}" "${zclose}$1${zopen}"; zclose
+  zopen; "grey${esc}" "${zclose}] ${zopen}"; zclose
+}
 
-  case "${SH-}" in
-    dash|ksh) esc=""; printf -- "%b" '\033]0;\h@\u: \w\a' ;;
-    *) printf -- "%s" "\[\e]0;\h@\u: \w\a\]" ;;
-  esac
+container() { [ "${CONTAINER-0}" -eq 0 ] || { host "${container}"; brackets "${DIST_ID}"; }; }
 
-  if [ "${rc}" -eq 0 ]; then
-    "green${esc}" "✔ "
-  else
-    "red${esc}" "$1 "
-  fi
-
-  # TODO: /Library/Developer/CommandLineTools/usr/share/git-core
-  #   substituir por ... o directamente quitarle el /
-  root=true; [ "$(id -u)" -eq 0 ] || root=false
+directory() {
   pwd="$(pwd)"
   home="$(echo "${HOME}" | awk -v RS=/ 'END{print NR-1}')"
-  length="$(echo "${pwd}" | awk -v RS=/ 'END{print NR-1}')"
+  total="$(echo "${pwd}" | awk -v RS=/ 'END{print NR-1}')"
   function="blue"; test -w "${pwd}" || function="yellow"
-  max=3
   case "${pwd}" in
     "/") function="red"; value="/" ;;
     "${HOME}") value="${TildeIcon}" ;;
     "${HOME}"*)
       value="${pwd##"${HOME}/"}"
       home="$(echo "${HOME}" | awk -v RS=/ 'END{print NR-1}')"
-      final="$((length-home))"
-      [ $final -lt "$((max+1))" ] || ellipsis "${EllipsisIcon} " "${value}"
+      final="$((total-home))"
+      [ $final -lt "$((directory+1))" ] || ellipsis "${EllipsisIcon} " "${value}"
       ;;
     *)
       value="${pwd#?}"
-      final="$((length-home))"
-      [ "${length}" -lt "$((max))" ] || ellipsis "${EllipsisIcon} " "${value}"
+      final="$((total-home))"
+      [ "${total}" -lt "$((directory))" ] || ellipsis "${EllipsisIcon} " "${value}"
       ;;
   esac
-  set +x
-  "${function}${esc}" "${value} "
+  zopen; "${function}${esc}" "${zclose}${value} ${zopen}"; zclose
+}
 
-  if [ "${HOST_PROMPT-}" ]; then
-    "cyan${esc}" "${HOST_PROMPT} ${HOST}${CONTAINER:- }"
-    [ "${CONTAINER-0}" -eq 0 ] || { "grey${esc}" "["; "cyan${esc}" "${DIST_ID}"; "grey${esc}" "] "; }
+host() { zopen; "cyan${esc}" "${zclose}$1 ${HOST}${CONTAINER:- }${zopen}"; zclose; }
+
+ps2() {
+  printf -- "%${string}" "${zopen}${open}${Magenta}${close}${zclose}${ps2}${zopen}${open}${Normal}${close}${zclose}";
+}
+
+rc() {
+  zopen
+  if [ "${rc}" -eq 0 ]; then
+    "green${esc}" "${zclose}${OkIcon} ${zopen}"
+  else
+    "red${esc}" "${zclose}${rc} ${zopen}"
   fi
-  [ "${BASH4:-${SH}}" = "1" ] || [ ! "${SH-}" ] || "grey${esc}" "${SH} "
+  zclose
+}
 
-  function="red"; $root || function="green"
-  "${function}${esc}" "〉"
+shell() { [ "$2" = "bash4" ] || [ ! "${1-}" ] || { zopen; "grey${esc}" "${zclose}$1 ${zopen}"; zclose; }; }
+
+ssh() { [ "${SSH-0}" -eq 0 ] || host "${ssh}"; }
+
+tittle() { printf -- "%${string}" "${zopen}${open}\033]0;\h@\u: \w\a${close}${zclose}"; }
+
+user() {
+  function="red"; [ "$(id -u)" -eq 0 ] || function="green"
+  zopen; "${function}${esc}" "${zclose}${ps1}${zopen}"; zclose
+}
+
+vcs() { cmd git || return 0 ; }
+
+zopen() { printf -- "%${string}" "${zopen}"; }
+
+zclose() { printf -- "%${string}" "${zclose}"; }
+
+main() {
+  rc="$(($1))"
+  directory=3
+  esc=""
+  container="❒"  # Cube
+  ps1="〉"  # Right 〈
+  ps2=${VerboseIcon}
+  ssh="⇌"  # Harpoon
+  string="b"
+  open=""
+  close=""
+  zopen=""
+  zclose=""
+
+  case "$2" in
+    dash|ksh) : ;;  # printf -- "%b" '\033]0;\h@\u: \w\a'
+    zsh) zopen='%{'; zclose='%}' ;;  # b
+    *) esc="esc"; string="s"; open="\["; close="\]" ;;  # printf -- "%s" "\[\e]0;\h@\u: \w\a\]"
+  esac
+
+  [ "${1-}" != "ps2" ] || { ps2; exit; }
+
+  tittle
+
+  rc
+  directory
+  ssh
+  container
+  shell "$2" "$3"
+  vcs
+  user
+
   exit $rc
 }
 
