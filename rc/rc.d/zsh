@@ -25,7 +25,7 @@ ENABLE_CORRECTION="true"
 plugins=(
   brew colored-man-pages colorize command-not-found
   debian direnv docker docker-compose
-  gh git grc httpie history iterm2
+  gh git grc httpie iterm2
   keychain macos pip python rsync sudo systemd
   textmate ubuntu ufw urltools
   web-search zsh-interactive-cd zsh-navigation-tools
