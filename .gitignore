@@ -3,6 +3,7 @@ rc/rc.d/.oh-my-zsh/
 tests/output/
 tests/release/
 tmp/
+.idea/.zcompdump*
 .idea/.zsh_history
 .idea/.zsh_sessions
 *DS_Store*

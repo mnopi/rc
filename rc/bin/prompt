@@ -1,95 +1,77 @@
 #!/bin/sh
-# shellcheck disable=SC3028,SC3054
+# shellcheck disable=SC3028,SC3054,SC2153
 
-ellipsis() { value="${2:+$1}$(echo "${2:-"${pwd}"}" | tr '/' '\n' | tail -3 | newline-to "/")"; }
+. color.sh
 
-brackets() {
-  zopen; "grey${esc}" "${zclose}[${zopen}"; zclose
-  zopen; "cyan${esc}" "${zclose}$1${zopen}"; zclose
-  zopen; "grey${esc}" "${zclose}] ${zopen}"; zclose
-}
+brackets() { show "${Grey}" "["; show "$1" "$2"; show "${Grey}" "] "; }
 
-container() { [ "${CONTAINER-0}" -eq 0 ] || { host "${container}"; brackets "${DIST_ID}"; }; }
+container() { [ "${CONTAINER-0}" -eq 0 ] || { host "${CubeIcon}"; brackets "${host}" "${DIST_ID}"; }; }
 
 directory() {
   pwd="$(pwd)"
   home="$(echo "${HOME}" | awk -v RS=/ 'END{print NR-1}')"
   total="$(echo "${pwd}" | awk -v RS=/ 'END{print NR-1}')"
-  function="blue"; test -w "${pwd}" || function="yellow"
+  color="${Blue}"; test -w "${pwd}" || color="${Blue}"
   case "${pwd}" in
-    "/") function="red"; value="/" ;;
-    "${HOME}") value="${TildeIcon}" ;;
+    "/") color="${Red}"; directories="/" ;;
+    "${HOME}") directories="${TildeIcon}" ;;
     "${HOME}"*)
-      value="${pwd##"${HOME}/"}"
+      directories="${pwd##"${HOME}/"}"
       home="$(echo "${HOME}" | awk -v RS=/ 'END{print NR-1}')"
       final="$((total-home))"
-      [ $final -lt "$((directory+1))" ] || ellipsis "${EllipsisIcon} " "${value}"
+      [ $final -lt "$((directory+1))" ] || ellipsis "${EllipsisIcon} " "${directories}"
       ;;
     *)
-      value="${pwd#?}"
+      directories="${pwd#?}"
       final="$((total-home))"
-      [ "${total}" -lt "$((directory))" ] || ellipsis "${EllipsisIcon} " "${value}"
+      [ "${total}" -lt "$((directory))" ] || ellipsis "${EllipsisIcon} " "${directories}"
       ;;
   esac
-  zopen; "${function}${esc}" "${zclose}${value} ${zopen}"; zclose
+  show "${color}" "${directories} "
 }
 
-host() { zopen; "cyan${esc}" "${zclose}$1 ${HOST}${CONTAINER:- }${zopen}"; zclose; }
+ellipsis() { directories="${2:+$1}$(echo "${2:-"${pwd}"}" | tr '/' '\n' | tail -3 | newline-to "/")"; }
 
-ps2() {
-  printf -- "%${string}" "${zopen}${open}${Magenta}${close}${zclose}${ps2}${zopen}${open}${Normal}${close}${zclose}";
-}
+host() { show "${host}" "$1 ${HOST} "; }
+
+ps2() { [ "${1-}" != "ps2" ] || { show "${Magenta}" "${VerboseIcon}"; exit; }; }
 
 rc() {
-  zopen
   if [ "${rc}" -eq 0 ]; then
-    "green${esc}" "${zclose}${OkIcon} ${zopen}"
+    show "${Green}" "${OkIcon} "
   else
-    "red${esc}" "${zclose}${rc} ${zopen}"
+    show "${Red}" "${rc} "
   fi
-  zclose
 }
 
-shell() { [ "$2" = "bash4" ] || [ ! "${1-}" ] || { zopen; "grey${esc}" "${zclose}$1 ${zopen}"; zclose; }; }
+shell() { [ "$2" = "bash4" ] || [ ! "${1-}" ] || show "${Grey}" "$1 "; }
 
-ssh() { [ "${SSH-0}" -eq 0 ] || host "${ssh}"; }
+show() { printf -- "%${string}" "${open}${1}${close}" "${2}" "${normal}"; }
 
-tittle() { printf -- "%${string}" "${zopen}${open}\033]0;\h@\u: \w\a${close}${zclose}"; }
+ssh() { [ "${SSH-0}" -eq 0 ] || host "${HarpoonIcon}"; }
 
-user() {
-  function="red"; [ "$(id -u)" -eq 0 ] || function="green"
-  zopen; "${function}${esc}" "${zclose}${ps1}${zopen}"; zclose
-}
+title() { printf -- "%${string}" "${open}\033]0;\h@\u: \w\a${close}"; }
+
+user() { color="${Red}"; [ "$(id -u)" -eq 0 ] || color="${Green}"; show "${color}" "${RightIcon}"; }
 
 vcs() { cmd git || return 0 ; }
-
-zopen() { printf -- "%${string}" "${zopen}"; }
-
-zclose() { printf -- "%${string}" "${zclose}"; }
 
 main() {
   rc="$(($1))"
   directory=3
-  esc=""
-  container="❒"  # Cube
-  ps1="〉"  # Right 〈
-  ps2=${VerboseIcon}
-  ssh="⇌"  # Harpoon
+  host="${CyanDim}"
   string="b"
-  open=""
-  close=""
-  zopen=""
-  zclose=""
-
+  suffix=""
   case "$2" in
-    dash|ksh) : ;;  # printf -- "%b" '\033]0;\h@\u: \w\a'
-    zsh) zopen='%{'; zclose='%}' ;;  # b
-    *) esc="esc"; string="s"; open="\["; close="\]" ;;  # printf -- "%s" "\[\e]0;\h@\u: \w\a\]"
+    dash|ksh) open=""; close="" ;;  # printf -- "%b" '\033]0;\h@\u: \w\a'
+    zsh) suffix="Zsh"; open="%{"; close="%}" ;;
+    *) string="s"; open="\["; close="\]" ;;  # printf -- "%s" "\[\e]0;\h@\u: \w\a\]"
   esac
+  normal="${open}${Normal}${close}"
 
-  [ "${1-}" != "ps2" ] || { ps2; exit; }
+  ps2 "$1"
 
-  tittle
+  title
 
   rc
   directory

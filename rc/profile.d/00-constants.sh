@@ -8,3 +8,4 @@ export PROMPT_COMMAND="history -a; history -c; history -r"
 #export LANG=C.UTF-8
 #export LC_COLLATE=C
 #export HISTFILE (formato diferente para zsh)
+#export LANG=en_US.UTF-8
