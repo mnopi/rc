@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# <html><h2>[7;31m✘[0m</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>
+# Show arguments separated with space, prefixed with Critical symbol.
+# All arguments in Red:
+# </dt>
+# <dd>
+# <pre><code class="language-bash">Critical Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+rc=$?
+[ "${QUIET-0}" -ne 1 ] || exit $rc
+
+msg="$(red "$@")"
+printf -- '%s' "[7;31m✘[0m" "${msg:+ "${msg}"}"
+[ ! "${msg-}" ] || echo
+exit $rc

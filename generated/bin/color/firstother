@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# <html><h2>firstitalic</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>
+# First Argument in Bold and rest Italic:
+# </dt>
+# <dd>
+# <pre><code class="language-bash">firstother Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+
+[ $# -ne 0 ] || exit 0
+first="$(bold "$1")"; shift
+[ $# -eq 0 ] || sep=" "
+printf -- "${first}%s\n" "${sep-}$(italic "$@")"

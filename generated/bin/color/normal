@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# <html><h2>normal</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments with space in Normal:</dt>
+# <dd>
+# <pre><code class="language-bash">normal Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+[ $# -eq 0 ] || printf -- '%b' "\033[0m"; printf '%b' "$*"; printf -- '%b' "\033[0m"

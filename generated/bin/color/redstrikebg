@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# <html><h2>redstrikebg</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments with space in RedStrikeBg:</dt>
+# <dd>
+# <pre><code class="language-bash">redstrikebg Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+[ $# -eq 0 ] || printf -- '%b' "\033[9;41m"; printf '%b' "$*"; printf -- '%b' "\033[0m"

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# <html><h2>blackinvert</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments with space in BlackInvert:</dt>
+# <dd>
+# <pre><code class="language-bash">blackinvert Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+[ $# -eq 0 ] || printf -- '%b' "\033[7;30m"; printf '%b' "$*"; printf -- '%b' "\033[0m"

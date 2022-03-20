@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# <html><h2>greenbolditalic</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments with space in GreenBoldItalic:</dt>
+# <dd>
+# <pre><code class="language-bash">greenbolditalic Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+[ $# -eq 0 ] || printf -- '%b' "\033[3m\033[1;32m"; printf '%b' "$*"; printf -- '%b' "\033[0m"

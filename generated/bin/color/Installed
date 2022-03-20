@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# <html><h2>Installed</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>
+# Prefix output with Finish, suffix output with Installed in Italic format, and arguments in Bold:
+# </dt>
+# <dd>
+# <pre><code class="language-bash">Installed Brew
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+Finish "$*:" "Installed"

@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# <html><h2>Installing</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>
+# Prefix output with Start, suffix output with Installing in Italic format, and arguments in Bold:
+# </dt>
+# <dd>
+# <pre><code class="language-bash">Installing Brew
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+Start "$*:" "Installing"

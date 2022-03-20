@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# <html><h2>magentaunder</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments with space in MagentaUnder:</dt>
+# <dd>
+# <pre><code class="language-bash">magentaunder Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+[ $# -eq 0 ] || printf -- '%b' "\033[4;35m"; printf '%b' "$*"; printf -- '%b' "\033[0m"

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# <html><h2>greenstrike</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments with space in GreenStrike:</dt>
+# <dd>
+# <pre><code class="language-bash">greenstrike Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+[ $# -eq 0 ] || printf -- '%b' "\033[9;32m"; printf '%b' "$*"; printf -- '%b' "\033[0m"

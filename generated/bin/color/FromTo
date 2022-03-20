@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# <html><h2>FromTo</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>
+# Prefix: Ok symbol
+# 1st argument: Bold (adds ':')
+# 2nd argument: Italic
+# Separator: [1;35m=>[0m
+# 3rd argument: Italic
+# </dt>
+# <dd>
+# <pre><code class="language-bash">FromTo " :" false true
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+[ "${QUIET-0}" -ne 1 ] || exit $rc
+printf -- '%s' "[1;32m✔[0m " "$(Bold "$1"): " "$(Italic "$2") " "[1;35m=>[0m " "$(Italic "$3")"
+echo

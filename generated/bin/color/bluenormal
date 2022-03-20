@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# <html><h2>bluenormal</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments with space in BlueNormal:</dt>
+# <dd>
+# <pre><code class="language-bash">bluenormal Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+[ $# -eq 0 ] || printf -- '%b' "\033[0;34m"; printf '%b' "$*"; printf -- '%b' "\033[0m"

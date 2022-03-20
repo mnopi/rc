@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# <html><h2>[1;32m✔[0m</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>
+# Show arguments separated with space, prefixed with Ok symbol.
+# First argument in Bold, other Italic:
+# </dt>
+# <dd>
+# <pre><code class="language-bash">Ok Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+rc=$?
+[ "${QUIET-0}" -ne 1 ] || exit $rc
+
+msg="$(firstother "$@")"
+printf -- '%s' "[1;32m✔[0m" "${msg:+ "${msg}"}"
+[ ! "${msg-}" ] || echo
+exit $rc

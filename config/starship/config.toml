@@ -1,0 +1,194 @@
+add_newline = false
+command_timeout = 2000
+
+[aws]
+format = '\[[$symbol($profile)(\($region\))(\[$duration\])]($style)\]'
+symbol = "  "
+
+[battery]
+disabled = true
+
+[character]
+format = " $symbol "
+
+[cmake]
+format = '\[[$symbol]($style)\]'
+
+[cmd_duration]
+format = '\[[$duration]($style)\] '
+
+[cobol]
+format = '\[[$symbol]($style)\]'
+
+[conda]
+format = '\[[$symbol$environment]($style)\]'
+symbol = " "
+
+[crystal]
+format = '\[[$symbol]($style)\]'
+
+[dart]
+format = '\[[$symbol]($style)\]'
+symbol = " "
+
+[deno]
+format = '\[[$symbol]($style)\]'
+
+[directory]
+read_only = " "
+style = "italic cyan"
+
+[directory.substitutions]
+"/Volumes/USB-2TB/Backups.backupdb/pro" = "/Backups"
+"/Volumes/USB-2TB" = "/USB"
+
+[docker_context]
+format = '\[[$symbol$context]($style)\]'
+symbol = " "
+
+[dotnet]
+format = '\[[$symbol($tfm)]($style)\]'
+disabled = false
+
+[elixir]
+format = '\[[$symbol($version \(OTP $otp_version\))]($style)\]'
+symbol = " "
+
+[elm]
+format = '\[[$symbol]($style)\]'
+symbol = " "
+
+[erlang]
+format = '\[[$symbol]($style)\]'
+
+[gcloud]
+format = '[$symbol$account(@$domain)(\($region\))]($style)'
+disabled = true
+
+[git_branch]
+format = "[$symbol$branch]($style) "
+symbol = " "
+style = "purple"
+disabled = false
+
+[git_commit]
+format = "[\\($tag\\)]($style) "
+tag_disabled = false
+disabled = false
+
+[git_status]
+style = "yellow"
+
+[golang]
+format = '[$symbol]($style)'
+symbol = " "
+
+[helm]
+format = '[$symbol]($style)'
+
+[hg_branch]
+format = '[$symbol$branch]($style)'
+symbol = " "
+
+[java]
+format = '[$symbol]($style)'
+symbol = " "
+
+[julia]
+format = '[$symbol]($style)'
+symbol = " "
+
+[kotlin]
+format = '[$symbol]($style)'
+
+[kubernetes]
+format = '[$symbol$context( \($namespace\))]($style)'
+
+[line_break]
+disabled = true
+
+[lua]
+format = '[$symbol]($style)'
+
+[memory_usage]
+symbol = " "
+
+[nim]
+format = '[$symbol]($style)'
+symbol = " "
+
+[nix_shell]
+format = '[$symbol$state( \($name\))]($style)'
+symbol = " "
+
+[nodejs]
+format = '[$symbol]($style)'
+
+[ocaml]
+format = '[$symbol(\($switch_indicator$switch_name\))]($style)'
+
+[openstack]
+format = '[$symbol$cloud(\($project\))]($style)'
+
+[package]
+format = '[$symbol$version]($style)'
+symbol = " "
+
+[perl]
+format = '[$symbol]($style)'
+symbol = " "
+
+[php]
+format = '[$symbol]($style)'
+symbol = " "
+
+[python]
+format = "[${symbol}(\\($virtualenv\\) )]($style)"
+symbol = " "
+
+[red]
+format = '[$symbol]($style)'
+
+[ruby]
+format = '[$symbol]($style)'
+symbol = " "
+
+[rust]
+format = '[$symbol]($style)'
+symbol = " "
+
+[scala]
+format = '[$symbol]($style)'
+symbol = " "
+
+[shlvl]
+symbol = " "
+
+[status]
+format = "[$symbol$status]($style)"
+pipestatus = true
+pipestatus_format = "\\[$pipestatus\\] [➜](bright-black) [$symbol$maybe_int]($style) "
+success_symbol = "[✔](bold green)"
+disabled = false
+
+[swift]
+format = '[$symbol]($style)'
+symbol = "ﯣ "
+
+[terraform]
+format = '[$symbol$workspace]($style)'
+
+[time]
+format = '[$time]($style)'
+
+[username]
+format = '[$user]($style)'
+
+[vagrant]
+format = '[$symbol]($style)'
+
+[vlang]
+format = '[$symbol]($style)'
+
+[zig]
+format = '[$symbol]($style)'

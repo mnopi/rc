@@ -1,5 +1,6 @@
 tap "homebrew/bundle"
 tap "homebrew/core"
+tap "j5pu/bats-libs"
 if RUBY_PLATFORM[/darwin/]
   tap "caarlos0/tap"
   tap "dopplerhq/cli"
@@ -91,3 +92,4 @@ if RUBY_PLATFORM[/darwin/]
   mas "Magnet", id: 441258766
   mas "WhatFont", id: 1437138382
 end
+brew "j5pu/bats-libs/bats-libs"

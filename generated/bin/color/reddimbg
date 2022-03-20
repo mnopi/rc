@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# <html><h2>reddimbg</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments with space in RedDimBg:</dt>
+# <dd>
+# <pre><code class="language-bash">reddimbg Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+[ $# -eq 0 ] || printf -- '%b' "\033[2;41m"; printf '%b' "$*"; printf -- '%b' "\033[0m"

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# <html><h2>cyaninvert</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments with space in CyanInvert:</dt>
+# <dd>
+# <pre><code class="language-bash">cyaninvert Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+[ $# -eq 0 ] || printf -- '%b' "\033[7;36m"; printf '%b' "$*"; printf -- '%b' "\033[0m"

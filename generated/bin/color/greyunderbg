@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# <html><h2>greyunderbg</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments with space in GreyUnderBg:</dt>
+# <dd>
+# <pre><code class="language-bash">greyunderbg Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+[ $# -eq 0 ] || printf -- '%b' "\033[4;47m"; printf '%b' "$*"; printf -- '%b' "\033[0m"

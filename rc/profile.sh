@@ -24,11 +24,19 @@ export RC_CONFIG="${RC_SRC}/config"
 
 # RC completions sourced on each interactive sh
 #
-export RC_COMPLETIONS_D="${RC_SRC}/completions.d"
+export RC_COMPLETIONS_D="${RC}/completions.d"
+
+# Custom Installation Completions Compat Directory  in git and sourced by suffix (*.sh, *.bash, *.zsh)
+#
+export RC_COMPLETIONS="${RC_COMPLETIONS_D}/custom"
 
 # rc.d compat dir sourced on each interactive sh
 #
 export RC_D="${RC_SRC}/rc.d"
+
+# Custom Installation Interactive Compat Directory ignored in git and sourced by suffix (*.sh, *.bash, *.zsh)
+#
+export CUSTOM_RC="${RC_D}/custom"
 
 # RC Lib to be sourced for $PATH
 #
@@ -38,9 +46,17 @@ export RC_LIB="${RC_SRC}/lib"
 #
 export RC_PATHS_D="${RC_SRC}/paths.d"
 
+# Custom Installation Paths Compat Directory in git
+#
+export RC_PATHS="${RC_PATHS_D}/custom"
+
 # RC profile.d compat dir sourced on each login shell
 #
 export RC_PROFILE_D="${RC_SRC}/profile.d"
+
+# Custom Installation Profile Compat Directory ignored in git and sourced by suffix (*.sh, *.bash, *.zsh)
+#
+export RC_PROFILE="${RC_PROFILE_D}/custom"
 
 # RC share
 #

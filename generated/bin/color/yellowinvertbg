@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# <html><h2>yellowinvertbg</h2>
+# <h3>Examples</h3>
+# <dl>
+# <dt>Show arguments with space in YellowInvertBg:</dt>
+# <dd>
+# <pre><code class="language-bash">yellowinvertbg Show Text
+# </code></pre>
+# </dd>
+# </dl>
+# </html>
+[ $# -eq 0 ] || printf -- '%b' "\033[7;43m"; printf '%b' "$*"; printf -- '%b' "\033[0m"

@@ -1,29 +1,32 @@
-node_modules/
-
-rc/completions.d/completions/*
-!rc/completions.d/custom/.gitkeep
-
-rc/paths.d/custom/*
-!rc/paths.d/custom/.gitkeep
-
-rc/profile.d/custom/*
-!rc/profile.d/custom/.gitkeep
-
-rc/rc.d/.oh-my-zsh/
-
-rc/rc.d/custom/*
-!rc/rc.d/custom/.gitkeep
-
-tests/output/
-tests/release/
-tmp/
+### Project
+.oh-my-zsh/
 
 .idea/.zcompdump*
 .idea/.zsh_history
 .idea/.zsh_sessions
+
+completions.d/custom/
+!completions.d/custom/.gitkeep
+
+paths.d/custom/
+!paths.d/custom/.gitkeep
+
+profile.d/custom/
+!profile.d/custom/.gitkeep
+
+rc.d/custom/
+!rc/rc.d/custom/.gitkeep
+
+share/custom/
+!share/custom/.gitkeep
+tests/output/
+tests/release/
+
 *DS_Store*
 
-# Created by .ignore support plugin (hsz.mobi)
+### Node
+node_modules/
+
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/

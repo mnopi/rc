@@ -1,0 +1,5 @@
+${RC}/bin
+${RC}/lib
+${RC_GENERATED}/bin
+${RC_GENERATED}/bin/color
+${RC_GENERATED}/lib
