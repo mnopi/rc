@@ -1,0 +1,4 @@
+# shellcheck shell=zsh disable=SC2034
+
+PROMPT='$(prompt $? "${SH}")'
+PROMPT2='$(prompt ps2 "${SH}" )'
