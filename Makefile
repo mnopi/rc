@@ -7,8 +7,7 @@ SHELL := $(shell bash -c 'command -v bash') -e
 brew:
 	@brew bundle --file packages/Brewfile --quiet --cleanup --no-lock
 
-tests:
-	@brew bundle --file tests/Brewfile --quiet --no-lock >/dev/null
+tests: brew
 	@bats tests --print-output-on-failure  --recursive
 
 publish: tests

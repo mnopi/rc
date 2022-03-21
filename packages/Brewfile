@@ -1,7 +1,14 @@
 tap "homebrew/bundle"
 tap "homebrew/core"
 tap "bats-core/bats-core"
-if RUBY_PLATFORM[/darwin/]
+
+brew "makeself"
+brew "bats-core"
+brew "bats-core/bats-core/bats-assert"
+brew "bats-core/bats-core/bats-file"
+brew "bats-core/bats-core/bats-support"
+
+if RUBY_PLATFORM[/darwin/] && ! ENV["GITHUB_RUN_ID"]
   tap "caarlos0/tap"
   tap "dopplerhq/cli"
   tap "homebrew/autoupdate"
@@ -16,13 +23,11 @@ if RUBY_PLATFORM[/darwin/]
   tap "mongodb/brew"
   brew "ack"
   brew "asciidoctor"
-  brew "bash"
   brew "bash-completion@2"
   brew "bat"
   brew "brew-cask-completion"
   brew "bundler-completion"
   brew "coreutils"
-  brew "dash"
   brew "direnv"
   brew "duf"
   brew "exiftool"
@@ -43,7 +48,6 @@ if RUBY_PLATFORM[/darwin/]
   brew "nmap"
   brew "openssh"
   brew "openjdk"
-  brew "parallel"
   brew "pip-completion"
   brew "python@3.10", overwrite: true
   brew "qpdf"
@@ -58,12 +62,11 @@ if RUBY_PLATFORM[/darwin/]
   brew "watchman"
   brew "wget"
   brew "whalebrew"
-  brew "bats-core/bats-core/bats-assert"
-  brew "bats-core/bats-core/bats-file"
-  brew "bats-core/bats-core/bats-support"
+
   brew "caarlos0/tap/svu"
   brew "dopplerhq/cli/doppler"
   brew "mongodb/brew/mongodb-community", restart_service: true
+
   cask "appcleaner"
   cask "adobe-acrobat-reader"
   cask "adoptopenjdk"
@@ -90,12 +93,20 @@ if RUBY_PLATFORM[/darwin/]
   cask "telegram-desktop"
   cask "tor-browser"
   cask "whatsapp"
+
   mas "Bear", id: 1091189122
   mas "HP Smart", id: 1474276998
   mas "Magnet", id: 441258766
   mas "WhatFont", id: 1437138382
 end
-brew "bats-core"
-brew "bats-core/bats-core/bats-assert"
-brew "bats-core/bats-core/bats-file"
-brew "bats-core/bats-core/bats-support"
+
+if RUBY_PLATFORM[/darwin/]
+  brew "bash"
+  brew "dash"
+  brew "parallel"
+end
+
+if RUBY_PLATFORM[/linux/]
+  brew "ksh"
+  brew "zsh"
+end
