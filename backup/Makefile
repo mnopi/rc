@@ -25,16 +25,8 @@ rc:
 	# make image=bash docker
 	@docker build --build-arg image=$(image) --target rc --tag $(NAME) . && docker run -it --name $(NAME) --rm $(NAME)
 
-brew:
-	@brew bundle --quiet --cleanup --no-lock
-
 color:
 	@color generate
-
-publish: tests
-	@git add .
-	@git commit --quiet -a -m "test" || true
-	@git push --quiet
 
 release:
 	@makeself release
