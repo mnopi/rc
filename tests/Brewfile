@@ -12,7 +12,7 @@ if RUBY_PLATFORM[/darwin/]
   brew "bash"
   brew "dash"
   brew "parallel"
-else RUBY_PLATFORM[/linux/]
+else
   brew "ksh"
   brew "zsh"
 end
