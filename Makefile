@@ -8,7 +8,7 @@ brew:
 	@brew bundle --file packages/Brewfile --quiet --cleanup --no-lock
 
 tests:
-	@brew bundle --file packages/Brewfile --quiet --no-lock
+	@brew bundle --file packages/Brewfile --quiet --no-lock | grep -v "^Using"
 	@bats tests --print-output-on-failure  --recursive
 
 publish: tests
