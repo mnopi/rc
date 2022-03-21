@@ -1,0 +1,26 @@
+### Project
+.oh-my-zsh/
+
+completions.d/custom/
+!completions.d/custom/.gitkeep
+
+paths.d/custom/
+!paths.d/custom/.gitkeep
+
+profile.d/custom/
+!profile.d/custom/.gitkeep
+
+rc.d/custom/
+!rc/rc.d/custom/.gitkeep
+
+share/custom/
+!share/custom/.gitkeep
+
+tests/output/
+tests/release/
+
+*DS_Store*
+
+### JetBrains
+.idea/
+!.idea/.zshrc

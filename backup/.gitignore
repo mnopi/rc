@@ -1,4 +1,5 @@
 ### Project
+.oh-my-zsh/
 
 .idea/.z*
 !.idea/.zshrc

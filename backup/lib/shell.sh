@@ -73,4 +73,4 @@ esac
 
 unset -f __bash __real
 unset __ps
-
+set +x

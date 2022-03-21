@@ -1,0 +1,13 @@
+tap "homebrew/bundle"
+tap "homebrew/core"
+tap "bats-core/bats-core"
+if RUBY_PLATFORM[/darwin/]
+  brew "bash"
+  brew "dash"
+  brew "parallel"
+end
+brew "makeself"
+brew "bats-core"
+brew "bats-core/bats-core/bats-assert"
+brew "bats-core/bats-core/bats-file"
+brew "bats-core/bats-core/bats-support"

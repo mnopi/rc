@@ -1,0 +1,204 @@
+#!/usr/bin/env bash
+
+# TODO: --help or man page y --help en bats.bash
+# TODO: add docker password
+# TODO: add fzf ?
+
+. arrays.bash
+. helper.sh
+. base-images.bash
+
+trap "pkill -f 'Docker Desktop' || true" EXIT
+
+#######################################
+# run all jobs
+# Arguments:
+#   @   arguments to container
+# Alternative:
+#  export description dest entrypoint IMAGES t opts volume
+#  export -f run
+#  parallel --keep-order --halt now,fail=1 -j "${#IMAGES[@]}" run "{}" "$@" :::< <(printf '%s\n' "${IMAGES[@]}") ||r=$?
+#######################################
+all() {
+  local false i out pid status=0 true
+  declare -A jobs
+  t=()  # background not tty
+  out="$(mktemp -d)"
+  true="$(show)"
+  false="$(false || show || true)"
+
+  [ $# -gt 1 ] || show All: requires an argument or pipe with commands to run || exit 1
+
+  for i in ${aliases}; do
+    run "${IMAGES[${i}]}" "$@" >"${out}/${i}.stdout" 2>"${out}/${i}.stderr" &
+    jobs[${i}]=$!
+  done
+
+  for alias in "${!jobs[@]}"; do
+    pid="${jobs[${alias}]}"
+
+    if wait "${pid}"; then
+      desc "${true}" "${out}/${alias}.stdout" "${out}/${alias}.stderr" "$@"
+    else
+      status=$?
+      desc "${false}" "${out}/${alias}.stdout" "${out}/${alias}.stderr" "$@"
+    fi
+  done
+  exit $status
+}
+
+#######################################
+# check argument or die
+# Arguments:
+#   1   message
+#   2   argument
+#######################################
+check() { [ "${2-}" ] || die "$1"; }
+
+#######################################
+# shows description to fd3 or fd2 with symbol based on return code and shows either stdout or stderr
+# Arguments:
+#   symbol        true or false symbol
+#   arguments     container arguments to show
+#######################################
+desc() {
+  local color stderr="$3" stdout="$2" symbol="$1"; shift 3
+  color="[$(magenta "${IMAGES[${alias}]}")][$(green "${*:-"$(cat </dev/stdin)"}")]"
+  if fd3; then
+    >&3 echo "      ${symbol} ${color}"
+  else
+    >&2 echo "${symbol} ${color}"
+  fi
+  ! test -s "${stdout}" || cat "${stdout}"
+  ! test -s "${stderr}" || >&2 cat "${stderr}"
+}
+
+#######################################
+# parse alias/image and run command in one container
+# Arguments:
+#   @   arguments to container
+#######################################
+one() {
+  image="${IMAGES["${alias}"]-}"
+  if [ ! "${image-}" ]; then
+    if inarray "${alias}" IMAGES 2>/dev/null || docker manifest inspect --insecure "${alias}"; then
+      image="${alias}"
+    else
+      die "${msg}, or Invalid Manifest [docker manifest inspect --insecure ${alias}]"
+    fi
+  fi
+  run "${image}" "$@"
+}
+
+#######################################
+# run the command in the container
+# Arguments:
+#  image
+#######################################
+run() {
+  local im="$1"; shift
+  echo "${volume}:${dest}"
+  "${docker[@]}" run -i "${t[@]}" "${opts[@]}" "${entrypoint[@]}" -v "${volume}:${dest}" "${im}" "$@"
+}
+
+#######################################
+# run command in a container, with no arguments for run will go to console/terminal
+# Globals:
+#   IMAGES
+# Arguments:
+#   all       run all images using ./entrypoint.sh or default image entrypoint.
+#   run       run image/alias (alias must be in $IMAGES) using ./entrypoint.sh or default image entrypoint.
+#   sh        run image/alias (alias must be in $IMAGES) using /bin/sh entrypoint, overwriting default image entrypoint.
+#             oversees ./entrypoint.sh
+# Examples:
+#   [./rc/entrypoint.sh] cd ~/rc; container all -c 'echo $DIST_ID'
+#   [./rc/entrypoint.sh] cd ~/rc; container all ls -1
+#   [./rc/entrypoint.sh] cd ~/rc; container run alpine ls -1
+#   [./rc/entrypoint.sh] cd ~/rc; container run alpine -c "ls -1"
+#   [./rc/entrypoint.sh] cd ~/rc; container run alpine -c 'echo $DIST_ID'
+#   [./rc/entrypoint.sh] cd ~/rc; container sh alpine -c 'echo $DIST_ID'
+#   [sh] cd ~; container sh alpine -c "ls -1"
+#   [sh] cd ~/rc; container sh alpine -c "ls -1"
+#   [sh] cd ~; container sh alpine --help
+#   [depending on image entrypoint] cd ~; container run alpine sh --help
+#   [depending on image entrypoint] [FAIL] cd ~; container run alpine --help
+#   [depending on image entrypoint] [FAIL] cd ~; container all --help
+#   [depending on image entrypoint] cd ~; container run bash --version
+#   [depending on image entrypoint] cd ~; container run 3.10 ls -1
+#   [depending on image entrypoint] [FAIL] cd ~; container run 3.10 --help
+# Caution:
+#  When doing 'while read -r i; do container ....; done < input' since takes stdin, instad use ': | container'
+#######################################
+main() {
+  local command commands="commands image images run" executable=() func='one' image images
+  docker=(docker)
+  entrypoint=()
+  t=()
+  opts=(--rm)
+  aliases="$(sort -t ' ' <<<"${!IMAGES[*]}")"
+  images="$(sort -t ' ' <<<"${IMAGES[*]}")"
+
+  [ ! "${1-}" = '--dry-run' ] || { docker=( echo "${docker[@]}" ); shift; }
+
+  check "Invalid Command: '${1-}', Valid Commands: [${commands}]" "${1-}" || exit
+  command="$1"
+  shift
+  alias="${1-}"
+  msg="Invalid Alias/Image: '${alias}', Valid Aliases: [${aliases}], Valid Images [${images}]"
+
+  case "${command}" in
+    alias)
+      msg="Invalid Image: '${alias}', Valid Images: [${images}]"
+      check "${msg}" "${alias}" || exit
+      set +u
+      image="${IMAGES["${alias}"]}"
+      set -u
+      check "${msg}" "${image}" || exit
+      echo "${image}" && exit
+      ;;
+    aliases) printf '%s\n' "${!IMAGES[@]}" | sort && exit ;;
+    all)
+      if [ "${GITHUB_RUN_ID-}" ] || [ "${TESTS_LOCAL:-1}" -eq 0 ]; then
+        exit
+      fi
+      func=all
+      ;;
+    commands) tr ' ' '\n' <<<"${commands}" && exit ;;
+    image)
+      msg="Invalid Alias: '${alias}', Valid Aliases: [${aliases}]"
+      check "${msg}" "${alias}" || exit
+      getkey "${alias}" IMAGES 2>/dev/null || die "${msg}"
+      echo && exit
+      ;;
+    images) printf '%s\n' "${IMAGES[@]}" | sort && exit ;;
+    run|sh)
+      check "${msg}" "${alias}" || exit
+      shift
+      [ "${command}" != 'sh' ] || entrypoint=(--entrypoint /bin/sh)
+      ;;
+    *) false || die "Invalid Command: '${command}', Valid Commands: [${commands}]" ;;
+  esac
+
+  volume="$(git super 2>/dev/null || true)"
+  volume="${volume:-${PWD}}"
+  dest="/${volume##*/}"
+
+  if [ -f "${volume}/entrypoint.sh" ] && [ ! "${entrypoint-}" ]; then
+    entrypoint=(--entrypoint "${dest}/entrypoint.sh")
+  fi
+
+  if test -t 0; then
+    t=(-t)
+  else
+    mapfile -t -u 0
+    # TODO: si eso cambiar el sh -c por el entry point...
+    [ ! "${entrypoint-}" ] || executable=( "${entrypoint[1]}")
+    [ ! "${MAPFILE-}" ] || MAPFILE=( "${executable[@]}" "${MAPFILE[@]}")
+  fi
+  set -- "$@" "${MAPFILE[@]}"
+
+  "${func}" "$@"
+}
+
+main "$@"
+

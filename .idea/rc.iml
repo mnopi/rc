@@ -3,7 +3,8 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/bats.bash" />
-      <excludeFolder url="file://$MODULE_DIR$/rc/rc.d/.oh-my-zsh" />
+      <excludeFolder url="file://$MODULE_DIR$/backup/rc/rc.d/.oh-my-zsh" />
+      <excludeFolder url="file://$MODULE_DIR$/backup" />
       <excludePattern pattern=".zsh_history" />
       <excludePattern pattern=".zsh_sessions" />
       <excludePattern pattern=".zshrc" />

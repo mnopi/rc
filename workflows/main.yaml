@@ -1,0 +1,21 @@
+name: main
+
+env:
+  DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.TOKEN }}
+
+on:
+  push:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, macos-10.15, ubuntu-latest, ubuntu-18.04]
+    steps:
+      - uses: actions/checkout@v2
+      - run: make tests

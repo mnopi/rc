@@ -1,3 +1,0 @@
-${RC_BIN:+${RC_BIN}}
-${RC_COLOR:+${RC_COLOR}}
-${RC_LIB:+${RC_LIB}}

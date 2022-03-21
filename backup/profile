@@ -27,5 +27,7 @@ export ENV="${RC?Must be set with RC repository path or sourced by /etc/profile 
 export RC
 
 . "${RC}/lib/shell.sh"
+. "${RC}/profile.sh"
+. "${RC}/rc.sh"
 
 export BASH_ENV="${ENV}"
