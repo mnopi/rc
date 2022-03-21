@@ -6,6 +6,9 @@ if RUBY_PLATFORM[/darwin/]
   brew "dash"
   brew "parallel"
 end
+if RUBY_PLATFORM[/linux/]
+  brew "zsh"
+end
 brew "makeself"
 brew "bats-core"
 brew "bats-core/bats-core/bats-assert"
