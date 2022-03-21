@@ -7,6 +7,7 @@ if RUBY_PLATFORM[/darwin/]
   brew "parallel"
 end
 if RUBY_PLATFORM[/linux/]
+  brew "ksh"
   brew "zsh"
 end
 brew "makeself"
