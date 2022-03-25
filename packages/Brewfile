@@ -72,6 +72,7 @@ if RUBY_PLATFORM[/darwin/] && ! ENV["GITHUB_RUN_ID"]
   cask "adoptopenjdk"
   cask "autofirma"
   cask "beardedspice"
+  cask "linearmouse", quarantine: false  # mousefix
   cask "docker"
   cask "electron"
   cask "electrum"
