@@ -27,6 +27,7 @@ if RUBY_PLATFORM[/darwin/] && ! ENV["GITHUB_RUN_ID"]
   brew "bat"
   brew "brew-cask-completion"
   brew "bundler-completion"
+  brew "cloudflare-wrangler"
   brew "coreutils"
   brew "direnv"
   brew "duf"
@@ -59,6 +60,7 @@ if RUBY_PLATFORM[/darwin/] && ! ENV["GITHUB_RUN_ID"]
   brew "telnet"
   brew "tor", restart_service: true
   brew "tree"
+  brew "vercel-cli"
   brew "vim"
   brew "watchman"
   brew "wget"
