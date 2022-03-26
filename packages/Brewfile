@@ -34,6 +34,7 @@ if RUBY_PLATFORM[/darwin/] && ! ENV["GITHUB_RUN_ID"]
   brew "fzf"
   brew "gem-completion"
   brew "gh"
+  brew "git"
   brew "gpg"
   brew "grc"
   brew "htop"
