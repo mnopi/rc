@@ -13,7 +13,8 @@ brew "bats-core/bats-core/bats-support"
 if RUBY_PLATFORM[/darwin/] && ! ENV["GITHUB_RUN_ID"]
   tap "caarlos0/tap"
   tap "dopplerhq/cli"
-  tap "homebrew/autoupdate"
+  tap "microsoft/git"
+  # tap "homebrew/autoupdate"
   tap "homebrew/cask"
   tap "homebrew/cask-drivers"
   tap "homebrew/cask-fonts"
@@ -35,9 +36,11 @@ if RUBY_PLATFORM[/darwin/] && ! ENV["GITHUB_RUN_ID"]
   brew "duf"
   brew "exiftool"
   brew "fzf"
+  brew "gdm"  # required for install-python
   brew "gem-completion"
   brew "gh"
   brew "git"
+  brew "gnupg"
   brew "gpg"
   brew "grc"
   brew "htop"
@@ -48,19 +51,22 @@ if RUBY_PLATFORM[/darwin/] && ! ENV["GITHUB_RUN_ID"]
   brew "makeself"
   brew "mas"
   brew "most"
+  brew "mpdecimal"  # required for install-python
   brew "ncdu"
   brew "nmap"
   brew "openssh"
-  brew "openssl"
+  brew "openssl@1.1"  # required for install-python
   brew "openjdk"
   brew "pip-completion"
   brew "python@3.9", link: false
-#   brew "python@3.10", overwrite: true
+  # brew "python@3.10", overwrite: true
   brew "qpdf"
+  brew "rbenv"
+  brew "readline"  # required for install-python
   brew "rsync"
   brew "ruby-completion"
   brew "speedtest-cli"
-  brew "sqlite"
+  brew "sqlite"  # required for install-python
   brew "starship"
   brew "telnet"
   brew "tor", restart_service: true
@@ -70,6 +76,7 @@ if RUBY_PLATFORM[/darwin/] && ! ENV["GITHUB_RUN_ID"]
   brew "watchman"
   brew "wget"
   brew "whalebrew"
+  brew "xz"  # required for install-python
 
   brew "caarlos0/tap/svu"
   brew "dopplerhq/cli/doppler"
@@ -93,6 +100,7 @@ if RUBY_PLATFORM[/darwin/] && ! ENV["GITHUB_RUN_ID"]
   cask "font-jetbrains-mono-nerd-font"
   cask "google-chrome-canary"
   cask "iterm2"
+  cask "keka"
   cask "keepingyouawake"
   cask "opera-developer"
   cask "paintbrush"
@@ -102,6 +110,7 @@ if RUBY_PLATFORM[/darwin/] && ! ENV["GITHUB_RUN_ID"]
   cask "telegram-desktop"
   cask "tor-browser"
   cask "whatsapp"
+  # cask "microsoft/git/git-credential-manager-core"
 
   mas "Bear", id: 1091189122
   mas "HP Smart", id: 1474276998
