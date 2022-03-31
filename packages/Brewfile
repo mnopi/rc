@@ -1,6 +1,8 @@
 tap "homebrew/bundle"
 tap "homebrew/core"
 tap "bats-core/bats-core"
+tap "j5pu/cmd"
+tap "j5pu/tap"
 
 brew "makeself"
 brew "bats-core"
@@ -49,13 +51,16 @@ if RUBY_PLATFORM[/darwin/] && ! ENV["GITHUB_RUN_ID"]
   brew "ncdu"
   brew "nmap"
   brew "openssh"
+  brew "openssl"
   brew "openjdk"
   brew "pip-completion"
-  brew "python@3.10", overwrite: true
+  brew "python@3.9", link: false
+#   brew "python@3.10", overwrite: true
   brew "qpdf"
   brew "rsync"
   brew "ruby-completion"
   brew "speedtest-cli"
+  brew "sqlite"
   brew "starship"
   brew "telnet"
   brew "tor", restart_service: true
