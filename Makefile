@@ -7,6 +7,8 @@ SHELL := $(shell bash -c 'command -v bash') -e
 brew:
 	@brew bundle --file packages/Brewfile --quiet --cleanup --no-lock
 	@brew cleanup
+	@brew upgrade
+	@brew autoremove
 
 tests:
 	@brew bundle --file packages/Brewfile --quiet --no-lock | grep -v "^Using"

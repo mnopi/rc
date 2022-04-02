@@ -51,9 +51,11 @@ if RUBY_PLATFORM[/darwin/] && ! ENV["GITHUB_RUN_ID"]
   brew "makeself"
   brew "mas"
   brew "most"
-  brew "mpdecimal"  # required for install-python
+  # brew "mpdecimal"  # required for install-python
   brew "ncdu"
   brew "nmap"
+  brew "node", link: false
+  brew "npm", link: false
   brew "openssh"
   brew "openssl@1.1"  # required for install-python
   brew "openjdk"
@@ -62,7 +64,7 @@ if RUBY_PLATFORM[/darwin/] && ! ENV["GITHUB_RUN_ID"]
   # brew "python@3.10", overwrite: true
   brew "qpdf"
   brew "rbenv"
-  brew "readline"  # required for install-python
+  # brew "readline"  # required for install-python
   brew "rsync"
   brew "ruby-completion"
   brew "speedtest-cli"
@@ -82,36 +84,36 @@ if RUBY_PLATFORM[/darwin/] && ! ENV["GITHUB_RUN_ID"]
   brew "dopplerhq/cli/doppler"
   brew "mongodb/brew/mongodb-community", restart_service: true
 
-  cask "appcleaner"
-  cask "adobe-acrobat-reader"
-  cask "adoptopenjdk"
-  cask "autofirma"
-  cask "beardedspice"
+  cask "appcleaner", quarantine: false
+  cask "adobe-acrobat-reader", quarantine: false
+  cask "adoptopenjdk", quarantine: false
+  cask "autofirma", quarantine: false
+  cask "beardedspice", quarantine: false
+  cask "docker", quarantine: false
+  cask "electron", quarantine: false
+  cask "electrum", quarantine: false
+  cask "firefox-developer-edition", quarantine: false
+  cask "font-archivo-black", quarantine: false
+  cask "font-lato", quarantine: false
+  cask "font-nova-mono", quarantine: false
+  cask "font-share-tech", quarantine: false
+  cask "font-share-tech-mono", quarantine: false
+  cask "font-jetbrains-mono-nerd-font", quarantine: false
+  cask "google-chrome-canary", quarantine: false
+  cask "iterm2", quarantine: false
   cask "linearmouse", quarantine: false  # mousefix
-  cask "docker"
-  cask "electron"
-  cask "electrum"
-  cask "firefox-developer-edition"
-  cask "font-archivo-black"
-  cask "font-lato"
-  cask "font-nova-mono"
-  cask "font-share-tech"
-  cask "font-share-tech-mono"
-  cask "font-jetbrains-mono-nerd-font"
-  cask "google-chrome-canary"
-  cask "iterm2"
-  cask "keka"
-  cask "kekaexternalhelper"
-  cask "keepingyouawake"
-  cask "opera-developer"
-  cask "paintbrush"
-  cask "skype"
-  cask "slack"
-  cask "spotify"
-  cask "telegram-desktop"
-  cask "tor-browser"
-  cask "whatsapp"
-  # cask "microsoft/git/git-credential-manager-core"
+  cask "keka", quarantine: false
+  cask "kekaexternalhelper", quarantine: false
+  cask "keepingyouawake", quarantine: false
+  cask "opera-developer", quarantine: false
+  cask "paintbrush", quarantine: false
+  cask "skype", quarantine: false
+  cask "slack", quarantine: false
+  cask "spotify", quarantine: false
+  cask "telegram-desktop", quarantine: false
+  cask "tor-browser", quarantine: false
+  cask "whatsapp", quarantine: false
+  # cask "microsoft/git/git-credential-manager-core", quarantine: false
 
   mas "Bear", id: 1091189122
   mas "HP Smart", id: 1474276998
