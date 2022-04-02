@@ -1,5 +1,5 @@
 #!/bin/sh
-# shellcheck disable=SC3054,SC3028,SC3040
+# shellcheck disable=SC3054,SC3028,SC3040,SC3044
 
 #
 # System and users profile for bash, busybox, dash, ksh, sh and zsh (/etc/profile and /etc/zprofile).
