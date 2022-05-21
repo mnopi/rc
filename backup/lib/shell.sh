@@ -65,7 +65,7 @@ case "${SH}" in
         SH="$("${__ps}" -o pid= -o comm= | command sed -n "s/^ \{0,\}$$ //p")"
       fi
       case "${SH##*/}" in
-        ash|busybox|dash|sh) __real "${SH}" ;;
+        ash|busybox|dash|sh) __real "${SH#-}" ;;
       esac
     fi
     ;;
