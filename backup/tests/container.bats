@@ -10,7 +10,7 @@ setup_file() {
 
 teardown_file() {
   rm -rf "${repo}"
-  pkill -f 'Docker Desktop' || true
+  pkill -f 'Docker' || true
 }
 
 @test "$(description::file container parsing '->' failure)" {
